@@ -3,6 +3,8 @@ import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-route
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Armchair,
+  BarChart3,
+  Boxes,
   ChefHat,
   ClipboardList,
   Monitor,
@@ -70,7 +72,15 @@ const NAV: NavItem[] = [
     feature: 'cash_register',
   },
   { to: '/admin/cardapio', label: 'Cardápio', icon: UtensilsCrossed, permission: 'catalog:read' },
+  {
+    to: '/admin/estoque',
+    label: 'Estoque',
+    icon: Boxes,
+    permission: 'catalog:read',
+    feature: 'inventory',
+  },
   { to: '/admin/clientes', label: 'Clientes', icon: Users, permission: 'customers:read' },
+  { to: '/admin/relatorios', label: 'Relatórios', icon: BarChart3, permission: 'analytics:read' },
   {
     to: '/admin/crescimento',
     label: 'Crescimento',

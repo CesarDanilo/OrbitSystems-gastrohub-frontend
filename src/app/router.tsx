@@ -340,6 +340,26 @@ const tableOrderRoute = createRoute({
   ),
 });
 
+const inventoryRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'estoque',
+  beforeLoad: requirePermission('catalog:read'),
+  component: lazyRouteComponent(
+    () => import('../features/admin/pages/inventory-page'),
+    'InventoryPage',
+  ),
+});
+
+const reportsRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'relatorios',
+  beforeLoad: requirePermission('analytics:read'),
+  component: lazyRouteComponent(
+    () => import('../features/admin/pages/reports-page'),
+    'ReportsPage',
+  ),
+});
+
 const kitchenRoute = createRoute({
   getParentRoute: () => adminRoute,
   path: 'cozinha',
@@ -409,6 +429,8 @@ const routeTree = rootRoute.addChildren([
     planRoute,
     posRoute,
     kitchenRoute,
+    inventoryRoute,
+    reportsRoute,
     tablesRoute,
     tableQrRoute,
     cashRoute,

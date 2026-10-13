@@ -46,6 +46,15 @@ export interface AdminProduct {
   availableFrom: string | null;
   availableTo: string | null;
   optionGroups: (Omit<OptionGroupInput, 'options'> & { id: string; options: AdminOption[] })[];
+  isCombo: boolean;
+  allowCoupons: boolean;
+  validFrom: string | null;
+  validUntil: string | null;
+  comboItems: {
+    componentProductId: string;
+    quantity: number;
+    component: { id: string; name: string };
+  }[];
 }
 
 export interface RestaurantSettings {

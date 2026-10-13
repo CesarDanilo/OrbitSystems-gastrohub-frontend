@@ -20,7 +20,7 @@ import {
   Switch,
   Textarea,
 } from '../../../components/ui';
-import { useSession } from '../../auth/session';
+import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type AdminProduct } from '../api';
 import { ImageUpload } from '../components/image-upload';
 
@@ -47,6 +47,14 @@ function toDraft(product?: AdminProduct) {
     availableDays: product?.availableDays ?? [],
     availableFrom: product?.availableFrom ?? '',
     availableTo: product?.availableTo ?? '',
+    isCombo: product?.isCombo ?? false,
+    allowCoupons: product?.allowCoupons ?? true,
+    validFrom: product?.validFrom?.slice(0, 10) ?? '',
+    validUntil: product?.validUntil?.slice(0, 10) ?? '',
+    comboItems: (product?.comboItems ?? []).map((c) => ({
+      productId: c.componentProductId,
+      quantity: c.quantity,
+    })),
     groups: (product?.optionGroups ?? []).map((g): GroupDraft => ({
       key: nextKey(),
       name: g.name,
@@ -129,6 +137,11 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
       availableDays: limitedHours ? draft.availableDays : [],
       availableFrom: limitedHours && draft.availableFrom ? draft.availableFrom : null,
       availableTo: limitedHours && draft.availableTo ? draft.availableTo : null,
+      isCombo: draft.isCombo,
+      allowCoupons: draft.allowCoupons,
+      validFrom: draft.validFrom ? new Date(`${draft.validFrom}T00:00:00`).toISOString() : null,
+      validUntil: draft.validUntil ? new Date(`${draft.validUntil}T23:59:59`).toISOString() : null,
+      comboItems: draft.isCombo ? draft.comboItems : [],
       optionGroups: draft.groups.map((g) => ({
         name: g.name,
         minSelect: g.minSelect,
@@ -495,8 +508,234 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
               </div>
             )}
           </Card>
+          <ComboCard
+            draft={draft}
+            selfId={product?.id}
+            error={err('comboItems') ?? err('validUntil')}
+            onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
+          />
+          {product && <RecipeCard productId={product.id} />}
         </div>
       </div>
     </form>
+  );
+}
+
+type Draft = ReturnType<typeof toDraft>;
+
+/** Combo composition, coupon compatibility and validity of a promotion. */
+function ComboCard({
+  draft,
+  selfId,
+  error,
+  onChange,
+}: {
+  draft: Draft;
+  selfId?: string;
+  error?: string;
+  onChange: (patch: Partial<Draft>) => void;
+}) {
+  const session = useSession();
+  const { hasFeature } = useCan();
+  const products = useQuery(adminQueries.products(session.restaurant.id));
+  if (!hasFeature('combos')) return null;
+  const choices = (products.data ?? []).filter((p) => p.id !== selfId && !p.isCombo);
+  const setItem = (productId: string, quantity: number) =>
+    onChange({
+      comboItems:
+        quantity <= 0
+          ? draft.comboItems.filter((c) => c.productId !== productId)
+          : draft.comboItems.some((c) => c.productId === productId)
+            ? draft.comboItems.map((c) => (c.productId === productId ? { ...c, quantity } : c))
+            : [...draft.comboItems, { productId, quantity }],
+    });
+  return (
+    <Card className="space-y-3 p-5">
+      <Switch
+        checked={draft.isCombo}
+        onChange={(v) => onChange({ isCombo: v })}
+        label="É um combo"
+        description="Produtos fixos por um preço único. Use os complementos para as escolhas (ex.: bebida)."
+      />
+      {draft.isCombo && (
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">O que vem no combo</p>
+          {choices.map((p) => {
+            const item = draft.comboItems.find((c) => c.productId === p.id);
+            return (
+              <div key={p.id} className="flex items-center justify-between gap-2 text-sm">
+                <span>{p.name}</span>
+                <Select
+                  aria-label={`Quantidade de ${p.name} no combo`}
+                  className="w-24"
+                  value={String(item?.quantity ?? 0)}
+                  onChange={(e) => setItem(p.id, Number(e.target.value))}
+                >
+                  {[0, 1, 2, 3, 4].map((n) => (
+                    <option key={n} value={n}>
+                      {n === 0 ? '—' : `${n}×`}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <Switch
+        checked={draft.allowCoupons}
+        onChange={(v) => onChange({ allowCoupons: v })}
+        label="Aceita cupom"
+        description="Desligue para combos e promoções que já têm desconto."
+      />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Válido de">
+          <Input
+            type="date"
+            value={draft.validFrom}
+            onChange={(e) => onChange({ validFrom: e.target.value })}
+          />
+        </Field>
+        <Field label="Válido até">
+          <Input
+            type="date"
+            value={draft.validUntil}
+            onChange={(e) => onChange({ validUntil: e.target.value })}
+          />
+        </Field>
+      </div>
+      {error && <Alert tone="danger">{error}</Alert>}
+    </Card>
+  );
+}
+
+interface Ingredient {
+  id: string;
+  name: string;
+  unit: 'UNIT' | 'GRAM' | 'MILLILITER';
+}
+
+/** Ficha técnica: ingredients used by one unit of the product (base units). */
+function RecipeCard({ productId }: { productId: string }) {
+  const session = useSession();
+  const { hasFeature, can } = useCan();
+  const rid = session.restaurant.id;
+  const enabled = hasFeature('inventory');
+  const ingredients = useQuery({
+    queryKey: ['admin', rid, 'inventory', 'ingredients'],
+    queryFn: () => api.get<Ingredient[]>('/admin/inventory/ingredients'),
+    enabled,
+  });
+  const recipe = useQuery({
+    queryKey: ['admin', rid, 'inventory', 'recipe', productId],
+    queryFn: () =>
+      api.get<{ items: { ingredientId: string; quantity: number }[]; costCents: number }>(
+        `/admin/products/${productId}/recipe`,
+      ),
+    enabled,
+  });
+  const [items, setItems] = useState<{ ingredientId: string; quantity: string }[] | null>(null);
+  const current =
+    items ??
+    recipe.data?.items.map((i) => ({
+      ingredientId: i.ingredientId,
+      quantity: String(i.quantity),
+    })) ??
+    [];
+  const save = useAdminMutation({
+    mutationFn: () =>
+      api.put(`/admin/products/${productId}/recipe`, {
+        items: current
+          .filter((i) => i.ingredientId && Number(i.quantity) > 0)
+          .map((i) => ({ ingredientId: i.ingredientId, quantity: Number(i.quantity) })),
+      }),
+    invalidate: [['admin', rid, 'inventory']],
+    success: 'Ficha técnica salva',
+    onSuccess: () => setItems(null),
+  });
+  if (!enabled) return null;
+  const unitOf = (id: string) => ingredients.data?.find((i) => i.id === id)?.unit;
+  return (
+    <Card className="space-y-3 p-5">
+      <div>
+        <p className="font-semibold">Ficha técnica</p>
+        <p className="text-sm text-muted">
+          Quanto de cada insumo uma unidade usa. Custo atual:{' '}
+          <strong className="tabular">
+            {((recipe.data?.costCents ?? 0) / 100).toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </strong>
+        </p>
+      </div>
+      {current.map((item, index) => (
+        <div key={index} className="flex items-end gap-2">
+          <Field label="Insumo" className="flex-1">
+            <Select
+              value={item.ingredientId}
+              onChange={(e) =>
+                setItems(
+                  current.map((c, i) => (i === index ? { ...c, ingredientId: e.target.value } : c)),
+                )
+              }
+            >
+              <option value="">Escolha</option>
+              {ingredients.data?.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field
+            label={
+              unitOf(item.ingredientId) === 'UNIT'
+                ? 'Unid.'
+                : unitOf(item.ingredientId) === 'MILLILITER'
+                  ? 'ml'
+                  : 'g'
+            }
+            className="w-24"
+          >
+            <Input
+              inputMode="numeric"
+              value={item.quantity}
+              onChange={(e) =>
+                setItems(
+                  current.map((c, i) =>
+                    i === index ? { ...c, quantity: e.target.value.replace(/\D/g, '') } : c,
+                  ),
+                )
+              }
+            />
+          </Field>
+          <IconButton
+            label="Remover insumo"
+            variant="ghost"
+            onClick={() => setItems(current.filter((_, i) => i !== index))}
+          >
+            <Trash2 className="size-4" />
+          </IconButton>
+        </div>
+      ))}
+      {can('inventory:write') && (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            leftIcon={<Plus className="size-4" />}
+            onClick={() => setItems([...current, { ingredientId: '', quantity: '' }])}
+          >
+            Adicionar insumo
+          </Button>
+          {items && (
+            <Button size="sm" onClick={() => save.mutate(undefined)} loading={save.isPending}>
+              Salvar ficha
+            </Button>
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
