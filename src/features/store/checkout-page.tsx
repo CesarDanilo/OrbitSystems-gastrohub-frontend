@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Bike, ShoppingBag } from 'lucide-react';
 import {
   calculateTotals,
@@ -9,9 +9,11 @@ import {
   type CheckoutInput,
   type FulfillmentType,
   type PaymentMethod,
+  type PostalAddressView,
+  type QuoteView,
 } from '@hamb/shared';
 import { cn } from '../../lib/cn';
-import { ApiError, errorMessage } from '../../lib/api';
+import { api, ApiError, errorMessage } from '../../lib/api';
 import { centsToInput, formatBRL, parseMoneyToCents } from '../../lib/format';
 import { queryKeys } from '../../lib/query-keys';
 import { Alert, Button, Field, Input, Radio, Switch, Textarea } from '../../components/ui';
@@ -95,12 +97,37 @@ export function CheckoutPage() {
       void navigate({ to: '/s/$slug', params: { slug }, replace: true });
   }, [lines.length, navigate, slug]);
 
-  const totals = calculateTotals({
+  const flatTotals = calculateTotals({
     lines: [{ totalCents: cart.subtotalCents }],
     settings: store.delivery,
     fulfillment,
     coupon: null,
   });
+  // The delivery fee depends on the address (zones by CEP): the server computes it.
+  const zipDigits = address.zipCode.replace(/D/g, '');
+  const quoteItems = lines.map((l) => ({
+    productId: l.productId,
+    quantity: l.quantity,
+    optionIds: l.optionIds,
+  }));
+  const quote = useQuery({
+    queryKey: ['quote', slug, zipDigits, quoteItems],
+    queryFn: ({ signal }) =>
+      api.post<QuoteView>(
+        `/public/stores/${slug}/quote`,
+        { fulfillment: 'DELIVERY', zipCode: zipDigits, items: quoteItems },
+        { signal },
+      ),
+    enabled: fulfillment === 'DELIVERY' && zipDigits.length === 8 && quoteItems.length > 0,
+    retry: false,
+    staleTime: 60_000,
+  });
+  const zoneError =
+    fulfillment === 'DELIVERY' && quote.error instanceof ApiError ? quote.error.message : null;
+  const totals =
+    fulfillment === 'DELIVERY' && quote.data
+      ? { ...flatTotals, deliveryFeeCents: quote.data.deliveryFeeCents }
+      : flatTotals;
   const discount = coupon ? Math.min(coupon.discountCents, cart.subtotalCents) : 0;
   const total = totals.subtotalCents - discount + totals.deliveryFeeCents;
 
@@ -108,23 +135,13 @@ export function CheckoutPage() {
     const digits = zip.replace(/\D/g, '');
     if (digits.length !== 8) return;
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`, {
-        signal: AbortSignal.timeout(4000),
-      });
-      const data = (await response.json()) as {
-        erro?: boolean;
-        logradouro?: string;
-        bairro?: string;
-        localidade?: string;
-        uf?: string;
-      };
-      if (data.erro) return;
+      const data = await api.get<PostalAddressView>(`/public/postal-codes/${digits}`);
       setAddress((a) => ({
         ...a,
-        street: a.street || data.logradouro || '',
-        neighborhood: a.neighborhood || data.bairro || '',
-        city: data.localidade || a.city,
-        state: data.uf || a.state,
+        street: a.street || data.street,
+        neighborhood: a.neighborhood || data.neighborhood,
+        city: data.city || a.city,
+        state: data.state || a.state,
       }));
     } catch {
       // CEP lookup is a convenience; the customer can type the address.
@@ -332,7 +349,12 @@ export function CheckoutPage() {
 
         {fulfillment === 'DELIVERY' ? (
           <FormSection title="Endereço de entrega">
-            <Field label="CEP" error={fieldError('address.zipCode')} required>
+            <Field
+              label="CEP"
+              error={fieldError('address.zipCode') ?? zoneError}
+              hint={quote.data?.zoneName ? `Entrega: ${quote.data.zoneName}` : undefined}
+              required
+            >
               <Input
                 id="f-address.zipCode"
                 inputMode="numeric"

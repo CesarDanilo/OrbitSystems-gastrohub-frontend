@@ -41,6 +41,7 @@ import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type RestaurantSettings } from '../api';
 import { FeatureGate } from '../components/feature-gate';
 import { ImageUpload } from '../components/image-upload';
+import { DeliveryZones } from './delivery-zones';
 
 type Tab = 'store' | 'delivery' | 'hours' | 'payments' | 'integrations' | 'team';
 
@@ -87,7 +88,12 @@ export function SettingsPage() {
               <AppearanceForm settings={settings.data} />
             </>
           )}
-          {tab === 'delivery' && <DeliveryForm settings={settings.data} />}
+          {tab === 'delivery' && (
+            <>
+              <DeliveryForm settings={settings.data} />
+              <DeliveryZones />
+            </>
+          )}
           {tab === 'hours' && <HoursForm settings={settings.data} />}
           {tab === 'payments' && <PaymentsForm settings={settings.data} />}
           {tab === 'integrations' && <IntegrationsForm />}
