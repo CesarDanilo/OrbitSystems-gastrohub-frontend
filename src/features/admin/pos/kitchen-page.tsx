@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bell, ChefHat } from 'lucide-react';
+import { Bell, ChefHat, Clock, TriangleAlert } from 'lucide-react';
 import {
   canRoleSetStatus,
   ORDER_CHANNEL_LABEL,
@@ -10,7 +10,7 @@ import {
 } from '@hamb/shared';
 import { api, errorMessage } from '../../../lib/api';
 import { cn } from '../../../lib/cn';
-import { formatTime } from '../../../lib/format';
+import { formatTime, formatWait } from '../../../lib/format';
 import {
   Button,
   EmptyState,
@@ -26,7 +26,7 @@ import { playNewOrderSound } from '../realtime';
 
 const COLUMNS: { status: OrderStatus; title: string; next: OrderStatus; action: string }[] = [
   { status: 'CONFIRMED', title: 'Novos', next: 'PREPARING', action: 'Iniciar preparo' },
-  { status: 'PREPARING', title: 'Em preparo', next: 'READY', action: 'Pronto' },
+  { status: 'PREPARING', title: 'Em preparo', next: 'READY', action: 'Marcar como pronto' },
   { status: 'READY', title: 'Prontos', next: 'READY', action: '' },
 ];
 
@@ -49,7 +49,7 @@ export function KitchenPage() {
     <>
       <PageHeader
         title="Cozinha"
-        description="Pedidos confirmados em ordem de chegada. Atualiza sozinho."
+        description="Em ordem de chegada. Atualiza sozinha."
         actions={
           !alerts ? (
             <Button
@@ -99,9 +99,9 @@ function Board() {
 
   if (query.isPending)
     return (
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {COLUMNS.map((c) => (
-          <Skeleton key={c.status} className="h-80" />
+          <Skeleton key={c.status} className="h-80 rounded-lg" />
         ))}
       </div>
     );
@@ -117,96 +117,116 @@ function Board() {
     );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
       {COLUMNS.map((column) => {
         const orders = query.data.items.filter((o) => o.status === column.status);
         return (
-          <section
-            key={column.status}
-            aria-labelledby={`col-${column.status}`}
-            className="rounded-lg bg-surface-2 p-3"
-          >
+          <section key={column.status} aria-labelledby={`col-${column.status}`} className="min-w-0">
             <h2
               id={`col-${column.status}`}
-              className="mb-3 flex items-center justify-between px-1 font-bold"
+              className="mb-3 flex items-center gap-2 px-1 text-base font-semibold"
             >
               {column.title}
-              <span className="rounded-full bg-surface px-2.5 text-sm tabular">
+              <span className="rounded-full bg-surface-muted px-2 text-xs text-foreground tabular">
                 {orders.length}
               </span>
             </h2>
-            <ul className="space-y-3">
-              {orders.map((order) => {
-                const minutes = Math.floor((now - new Date(order.createdAt).getTime()) / 60_000);
-                const late = minutes >= order.estimatedMinutesMax;
-                const warn = !late && minutes >= order.estimatedMinutesMin;
-                const nextAllowed =
-                  column.status !== 'READY' && canRoleSetStatus(session.role, column.next);
-                return (
-                  <li
-                    key={order.id}
-                    className="rounded-md border border-border bg-surface p-3 shadow-xs"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-xl font-bold">#{order.number}</p>
-                        <p className="text-sm font-semibold">{orderWho(order)}</p>
-                        <p className="text-xs text-muted">
-                          {ORDER_CHANNEL_LABEL[order.channel]} · {formatTime(order.createdAt)}
-                        </p>
+            {orders.length === 0 ? (
+              <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+                {column.status === 'CONFIRMED'
+                  ? 'Nenhum pedido esperando.'
+                  : column.status === 'PREPARING'
+                    ? 'Nada em preparo.'
+                    : 'Nenhum pedido pronto.'}
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {orders.map((order) => {
+                  const minutes = Math.floor((now - new Date(order.createdAt).getTime()) / 60_000);
+                  const late = minutes >= order.estimatedMinutesMax;
+                  const warn = !late && minutes >= order.estimatedMinutesMin;
+                  const nextAllowed =
+                    column.status !== 'READY' && canRoleSetStatus(session.role, column.next);
+                  return (
+                    <li
+                      key={order.id}
+                      className={cn(
+                        'rounded-lg border bg-surface p-4',
+                        late ? 'border-destructive/60' : 'border-border',
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-2xl leading-none font-semibold tabular">
+                            #{order.number}
+                          </p>
+                          <p className="mt-1.5 truncate font-medium">{orderWho(order)}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {ORDER_CHANNEL_LABEL[order.channel]} · {formatTime(order.createdAt)}
+                          </p>
+                        </div>
+                        <span
+                          className={cn(
+                            'flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-sm font-semibold tabular',
+                            late
+                              ? 'bg-destructive text-destructive-foreground'
+                              : warn
+                                ? 'bg-warning-soft text-warning'
+                                : 'bg-surface-muted text-muted-foreground',
+                          )}
+                          aria-label={`${minutes} minutos de espera${late ? ', atrasado' : ''}`}
+                        >
+                          {late ? (
+                            <TriangleAlert aria-hidden className="size-4" />
+                          ) : (
+                            <Clock aria-hidden className="size-4" />
+                          )}
+                          {formatWait(minutes)}
+                          {late && ' · atrasado'}
+                        </span>
                       </div>
-                      <span
-                        className={cn(
-                          'rounded-md px-2 py-1 text-sm font-bold tabular',
-                          late
-                            ? 'bg-danger text-white'
-                            : warn
-                              ? 'bg-warning-soft text-warning'
-                              : 'bg-surface-2',
-                        )}
-                        aria-label={`${minutes} minutos de espera`}
-                      >
-                        {minutes} min
-                      </span>
-                    </div>
-                    <ul className="mt-3 space-y-1.5">
-                      {order.items
-                        .filter((i) => i.status === 'ACTIVE')
-                        .map((item) => (
-                          <li key={item.id} className="text-[0.9375rem] leading-snug">
-                            <span className="font-bold">{item.quantity}×</span> {item.productName}
-                            {item.options.length > 0 && (
-                              <span className="block pl-5 text-sm text-muted">
-                                {item.options.map((o) => o.optionName).join(', ')}
-                              </span>
-                            )}
-                            {item.notes && (
-                              <span className="block pl-5 text-sm font-bold text-warning">
-                                {item.notes}
-                              </span>
-                            )}
-                          </li>
-                        ))}
-                    </ul>
-                    {order.notes && (
-                      <p className="mt-2 rounded bg-warning-soft p-2 text-sm font-semibold text-warning">
-                        {order.notes}
-                      </p>
-                    )}
-                    {nextAllowed && (
-                      <Button
-                        block
-                        className="mt-3"
-                        loading={move.isPending && move.variables?.id === order.id}
-                        onClick={() => move.mutate({ id: order.id, status: column.next })}
-                      >
-                        {column.action}
-                      </Button>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+                      <ul className="mt-4 space-y-2">
+                        {order.items
+                          .filter((i) => i.status === 'ACTIVE')
+                          .map((item) => (
+                            <li key={item.id} className="text-lg leading-snug">
+                              <span className="font-semibold tabular">{item.quantity}×</span>{' '}
+                              {item.productName}
+                              {item.options.length > 0 && (
+                                <span className="block pl-7 text-[0.9375rem] text-muted-foreground">
+                                  {item.options.map((o) => o.optionName).join(', ')}
+                                </span>
+                              )}
+                              {item.notes && (
+                                <span className="block pl-7 text-[0.9375rem] font-semibold text-warning">
+                                  Obs.: {item.notes}
+                                </span>
+                              )}
+                            </li>
+                          ))}
+                      </ul>
+                      {order.notes && (
+                        <p className="mt-3 rounded-md bg-warning-soft px-3 py-2 text-[0.9375rem] font-semibold text-warning">
+                          {order.notes}
+                        </p>
+                      )}
+                      {nextAllowed && (
+                        <Button
+                          block
+                          size="lg"
+                          variant={column.status === 'CONFIRMED' ? 'primary' : 'secondary'}
+                          className="mt-4"
+                          loading={move.isPending && move.variables?.id === order.id}
+                          onClick={() => move.mutate({ id: order.id, status: column.next })}
+                        >
+                          {column.action}
+                        </Button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </section>
         );
       })}

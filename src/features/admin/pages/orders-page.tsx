@@ -15,6 +15,7 @@ import {
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL, formatPhone, formatRelative, formatTime } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';
+import { cn } from '../../../lib/cn';
 import { useDebounced } from '../../../lib/use-debounced';
 import {
   Button,
@@ -92,10 +93,7 @@ export function OrdersPage() {
 
   return (
     <>
-      <PageHeader
-        title="Pedidos"
-        description="Acompanhe e avance cada pedido. A lista atualiza sozinha."
-      />
+      <PageHeader title="Pedidos" description="Atualiza sozinha quando chega pedido novo." />
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <Tabs
           label="Situação dos pedidos"
@@ -125,13 +123,13 @@ export function OrdersPage() {
       {query.isPending ? (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (
-            <Skeleton key={i} className="h-44" />
+            <Skeleton key={i} className="h-48 rounded-lg" />
           ))}
         </div>
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : query.data.items.length === 0 ? (
-        <Card>
+        <div className="rounded-lg border border-dashed border-border">
           <EmptyState
             icon={ClipboardList}
             title={
@@ -147,7 +145,7 @@ export function OrdersPage() {
                 : undefined
             }
           />
-        </Card>
+        </div>
       ) : (
         <>
           <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -167,7 +165,7 @@ export function OrdersPage() {
               <Button variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
                 Anterior
               </Button>
-              <span className="text-sm text-muted">
+              <span className="text-sm text-muted-foreground tabular">
                 Página {page} de {Math.ceil(query.data.total / query.data.pageSize)}
               </span>
               <Button
@@ -258,49 +256,70 @@ function OrderCard({
   const itemsCount = order.items
     .filter((i) => i.status === 'ACTIVE')
     .reduce((s, i) => s + i.quantity, 0);
+  const isNew = order.status === 'PENDING';
+  const active = order.items.filter((i) => i.status === 'ACTIVE');
   return (
-    <Card className="flex h-full flex-col p-4">
+    <Card
+      className={cn(
+        'flex h-full flex-col p-4 transition-colors duration-150',
+        isNew && 'border-primary/50 bg-primary-muted/25',
+      )}
+    >
       <button
         type="button"
         onClick={onOpen}
-        className="text-left"
+        className="-m-1 rounded-md p-1 text-left"
         aria-label={`Abrir pedido ${order.number} de ${orderWho(order)}`}
       >
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="text-lg font-bold">#{order.number}</p>
-            <p className="text-sm text-muted">
-              {formatTime(order.createdAt)} · {formatRelative(order.createdAt)}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="flex items-baseline gap-2">
+              <span className="text-lg font-semibold tabular">#{order.number}</span>
+              <span className="text-sm text-muted-foreground tabular">
+                {formatTime(order.createdAt)} · {formatRelative(order.createdAt)}
+              </span>
             </p>
+            <p className="mt-0.5 truncate font-medium">{orderWho(order)}</p>
           </div>
           <OrderStatusBadge status={order.status} />
         </div>
-        <p className="mt-3 font-semibold">{orderWho(order)}</p>
-        <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted">
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
           <FulfillmentIcon order={order} />
-          {order.fulfillment === 'DELIVERY'
-            ? `Entrega · ${order.address?.neighborhood ?? ''}`
-            : FULFILLMENT_LABEL[order.fulfillment]}
-          {order.channel !== 'ONLINE_STORE' && ` · ${ORDER_CHANNEL_LABEL[order.channel]}`}
+          <span className="truncate">
+            {order.fulfillment === 'DELIVERY'
+              ? `Entrega · ${order.address?.neighborhood ?? ''}`
+              : FULFILLMENT_LABEL[order.fulfillment]}
+            {order.channel !== 'ONLINE_STORE' && ` · ${ORDER_CHANNEL_LABEL[order.channel]}`}
+          </span>
         </p>
-        <p className="mt-2 line-clamp-2 text-sm">
-          {order.items
-            .filter((i) => i.status === 'ACTIVE')
-            .map((i) => `${i.quantity}× ${i.productName}`)
-            .join(', ')}
-        </p>
-        <p className="mt-2 text-sm text-muted">
-          {itemsCount} {itemsCount === 1 ? 'item' : 'itens'} ·{' '}
-          <span className="font-semibold text-fg tabular">
+        <ul className="mt-3 space-y-0.5 text-sm">
+          {active.slice(0, 3).map((i) => (
+            <li key={i.id} className="truncate">
+              <span className="font-semibold tabular">{i.quantity}×</span> {i.productName}
+            </li>
+          ))}
+          {active.length > 3 && (
+            <li className="text-muted-foreground">+ {active.length - 3} itens</li>
+          )}
+        </ul>
+        <p className="mt-3 flex items-baseline justify-between gap-2 border-t border-border pt-3 text-sm">
+          <span className="truncate text-muted-foreground">
+            {itemsCount} {itemsCount === 1 ? 'item' : 'itens'} · {paymentLine(order)}
+          </span>
+          <span className="text-base font-semibold text-foreground tabular">
             {formatBRL(order.totals.totalCents)}
-          </span>{' '}
-          · {paymentLine(order)}
+          </span>
         </p>
       </button>
       {(forward || destructive.length > 0) && (
         <div className="mt-auto flex gap-2 pt-4">
           {forward && (
-            <Button block onClick={() => onChange(forward)} loading={pending}>
+            <Button
+              block
+              variant={isNew ? 'primary' : 'secondary'}
+              onClick={() => onChange(forward)}
+              loading={pending}
+            >
               {NEXT_ACTION_LABEL[forward]}
             </Button>
           )}
@@ -308,7 +327,7 @@ function OrderCard({
             <Menu
               trigger={(props) => (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   aria-label={`Mais ações do pedido ${order.number}`}
                   {...props}
                   className="w-11 shrink-0 px-0"
@@ -364,7 +383,7 @@ function OrderDetail({
       }
     >
       <OrderStatusBadge status={order.status} />
-      <section className="mt-4">
+      <section className="mt-5">
         <h3 className="text-sm font-semibold text-muted">
           {order.customer ? 'Cliente' : 'Atendimento'}
         </h3>

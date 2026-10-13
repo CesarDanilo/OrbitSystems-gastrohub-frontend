@@ -43,13 +43,29 @@ export function Section({
   actions,
   children,
   className,
+  variant = 'boxed',
 }: {
   title: string;
   description?: ReactNode;
   actions?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** 'plain': heading and actions only, for content that already has its own containers. */
+  variant?: 'boxed' | 'plain';
 }) {
+  if (variant === 'plain')
+    return (
+      <section className={className} aria-label={title}>
+        <header className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold">{title}</h2>
+            {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
+          </div>
+          {actions}
+        </header>
+        {children}
+      </section>
+    );
   return (
     <section
       className={cn('rounded-lg border border-border bg-surface', className)}

@@ -259,3 +259,12 @@ describe('ProductOptionsDialog', () => {
     );
   });
 });
+
+describe('formatWait', () => {
+  it('keeps kitchen waits readable at any length', async () => {
+    const { formatWait } = await import('../../../../lib/format');
+    expect(formatWait(12)).toBe('12 min');
+    expect(formatWait(125)).toBe('2 h 05');
+    expect(formatWait(10230)).toBe('7 dias');
+  });
+});

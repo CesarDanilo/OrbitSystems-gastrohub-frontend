@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Armchair, MoreVertical, Plus, QrCode, ReceiptText } from 'lucide-react';
+import { Armchair, ChefHat, MoreVertical, Plus, QrCode, ReceiptText } from 'lucide-react';
 import {
   POS_PAYMENT_METHOD_LABEL,
   type AdminOrder,
@@ -13,7 +13,6 @@ import { cn } from '../../../lib/cn';
 import {
   Badge,
   Button,
-  Card,
   Dialog,
   EmptyState,
   ErrorState,
@@ -49,7 +48,7 @@ export function TablesPage() {
     <>
       <PageHeader
         title="Mesas e comandas"
-        description="Abra mesas, acompanhe a conta, transfira e feche atendimentos."
+        description="Toque numa mesa livre para abrir, ou numa ocupada para ver a conta."
         actions={
           can('tables:manage') ? (
             <Button leftIcon={<Plus className="size-4" />} onClick={() => setCreating(true)}>
@@ -80,7 +79,7 @@ function Floor() {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {Array.from({ length: 8 }, (_, i) => (
-          <Skeleton key={i} className="h-28" />
+          <Skeleton key={i} className="h-32 rounded-lg" />
         ))}
       </div>
     );
@@ -88,65 +87,104 @@ function Floor() {
     return <ErrorState message={tables.error.message} onRetry={() => void tables.refetch()} />;
   if (tables.data.length === 0)
     return (
-      <Card>
+      <div className="rounded-lg border border-dashed border-border">
         <EmptyState
           icon={Armchair}
           title="Nenhuma mesa cadastrada"
           description="Cadastre as mesas do salão para lançar pedidos e controlar as contas."
         />
-      </Card>
+      </div>
     );
+
+  const byArea = new Map<string, TableView[]>();
+  for (const t of tables.data) {
+    const area = t.area?.trim() || 'Salão';
+    byArea.set(area, [...(byArea.get(area) ?? []), t]);
+  }
+  const groups = [...byArea.entries()];
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6" aria-label="Mesas">
-        {tables.data.map((table) => (
-          <li key={table.id} className="relative">
-            <button
-              type="button"
-              onClick={() =>
-                table.session
-                  ? setSessionId(table.session.id)
-                  : table.active && setOpeningTable(table)
-              }
-              className={cn(
-                'flex h-28 w-full flex-col justify-between rounded-lg border p-3 text-left transition-colors',
-                table.state === 'OCCUPIED' && 'border-brand bg-brand-soft',
-                table.state === 'FREE' && 'border-border bg-surface hover:border-brand',
-                table.state === 'INACTIVE' && 'border-dashed border-border bg-surface opacity-60',
-              )}
-            >
-              <span className="text-lg font-bold">{table.label}</span>
-              {table.session ? (
-                <span className="text-sm">
-                  <span className="block font-semibold tabular">
-                    {formatBRL(table.session.balanceCents)}
-                  </span>
-                  <span className="text-muted">
-                    {formatRelative(table.session.openedAt)}
-                    {table.session.ordersInKitchen > 0 &&
-                      ` · ${table.session.ordersInKitchen} na cozinha`}
-                  </span>
-                </span>
-              ) : (
-                <span className="text-sm text-muted">
-                  {table.state === 'INACTIVE' ? 'Desativada' : 'Livre'}
-                </span>
-              )}
-            </button>
-            {can('tables:manage') && (
-              <button
-                type="button"
-                aria-label={`Configurar ${table.label}`}
-                onClick={() => setEditing(table)}
-                className="absolute top-1.5 right-1.5 flex size-9 items-center justify-center rounded-md text-muted hover:bg-surface-2"
-              >
-                <QrCode className="size-4" />
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+      {groups.map(([area, list]) => (
+        <section
+          key={area}
+          aria-label={groups.length > 1 ? area : undefined}
+          className="mb-6 last:mb-0"
+        >
+          {groups.length > 1 && (
+            <h2 className="mb-2 text-sm font-semibold text-muted-foreground">{area}</h2>
+          )}
+          <ul
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6"
+            aria-label={groups.length > 1 ? `Mesas · ${area}` : 'Mesas'}
+          >
+            {list.map((table) => (
+              <li key={table.id} className="relative">
+                <button
+                  type="button"
+                  onClick={() =>
+                    table.session
+                      ? setSessionId(table.session.id)
+                      : table.active && setOpeningTable(table)
+                  }
+                  disabled={table.state === 'INACTIVE'}
+                  className={cn(
+                    'flex h-32 w-full flex-col justify-between rounded-lg border p-3.5 text-left transition-colors duration-150',
+                    table.state === 'OCCUPIED' &&
+                      'border-border bg-surface hover:border-border-strong',
+                    table.state === 'FREE' &&
+                      'border-dashed border-border-strong hover:border-primary/60 hover:bg-surface',
+                    table.state === 'INACTIVE' &&
+                      'cursor-not-allowed border-dashed border-border opacity-50',
+                  )}
+                >
+                  <span className="pr-8 text-lg leading-tight font-semibold">{table.label}</span>
+                  {table.session ? (
+                    <span className="text-sm">
+                      <span className="flex items-center gap-1.5 font-medium text-primary">
+                        <span aria-hidden className="size-2 rounded-full bg-primary" />
+                        Ocupada · {formatRelative(table.session.openedAt)}
+                      </span>
+                      <span className="mt-0.5 flex items-baseline justify-between gap-2">
+                        <span className="text-base font-semibold text-foreground tabular">
+                          {formatBRL(table.session.balanceCents)}
+                        </span>
+                        {table.session.ordersInKitchen > 0 && (
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <ChefHat aria-hidden className="size-3.5" />
+                            {table.session.ordersInKitchen}
+                            <span className="sr-only"> na cozinha</span>
+                          </span>
+                        )}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span
+                        aria-hidden
+                        className="size-2 rounded-full border border-muted-foreground"
+                      />
+                      {table.state === 'INACTIVE'
+                        ? 'Desativada'
+                        : `Livre${table.capacity ? ` · ${table.capacity} lugares` : ''}`}
+                    </span>
+                  )}
+                </button>
+                {can('tables:manage') && (
+                  <button
+                    type="button"
+                    aria-label={`Configurar ${table.label}`}
+                    onClick={() => setEditing(table)}
+                    className="absolute top-2 right-2 flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                  >
+                    <QrCode className="size-4" />
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
       {openingTable && (
         <OpenTableDialog
           table={openingTable}
@@ -663,7 +701,8 @@ function Tabs() {
   return (
     <Section
       title="Comandas abertas"
-      className="mt-8"
+      variant="plain"
+      className="mt-10"
       actions={
         <Button size="sm" variant="outline" onClick={() => setOpenNew(true)}>
           Abrir comanda
@@ -686,7 +725,7 @@ function Tabs() {
               <button
                 type="button"
                 onClick={() => setTabId(tab.id)}
-                className="flex w-full items-center justify-between rounded-lg border border-border bg-surface p-3 text-left hover:border-brand"
+                className="flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3.5 text-left transition-colors duration-150 hover:border-border-strong"
               >
                 <span>
                   <span className="block font-bold">{tab.code}</span>
@@ -703,9 +742,9 @@ function Tabs() {
           ))}
         </ul>
       ) : (
-        <Card>
+        <div className="rounded-lg border border-dashed border-border">
           <EmptyState icon={ReceiptText} title="Nenhuma comanda aberta" />
-        </Card>
+        </div>
       )}
       {openNew && <OpenTabDialog tableSessionId={null} onClose={() => setOpenNew(false)} />}
       {tabId && <TabDialog tabId={tabId} onClose={() => setTabId(null)} />}

@@ -16,6 +16,15 @@ export function formatRelative(iso: string, now = Date.now()): string {
   return relative.format(Math.round(diffSeconds / 86400), 'day');
 }
 
+/** Waiting time for the kitchen: "12 min", "2 h 05", "3 dias". */
+export function formatWait(minutes: number): string {
+  if (minutes < 60) return `${Math.max(minutes, 0)} min`;
+  if (minutes < 24 * 60)
+    return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, '0')}`;
+  const days = Math.floor(minutes / (24 * 60));
+  return `${days} ${days === 1 ? 'dia' : 'dias'}`;
+}
+
 export function formatPhone(digits: string): string {
   const d = digits.replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '');
   if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;

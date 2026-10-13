@@ -13,12 +13,12 @@ import { Button } from './button';
 export type Tone = 'neutral' | 'brand' | 'info' | 'success' | 'warning' | 'danger';
 
 const toneClasses: Record<Tone, string> = {
-  neutral: 'bg-surface-2 text-fg',
-  brand: 'bg-brand-soft text-brand',
+  neutral: 'bg-surface-muted text-muted-foreground',
+  brand: 'bg-primary-muted text-primary',
   info: 'bg-info-soft text-info',
   success: 'bg-success-soft text-success',
   warning: 'bg-warning-soft text-warning',
-  danger: 'bg-danger-soft text-danger',
+  danger: 'bg-destructive-soft text-destructive',
 };
 
 export function Badge({

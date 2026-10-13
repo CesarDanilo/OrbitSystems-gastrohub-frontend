@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Wallet } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, ChevronDown, Wallet } from 'lucide-react';
+import { cn } from '../../../lib/cn';
 import { CASH_MOVEMENT_LABEL, PAYMENT_METHOD_LABEL, type PaymentMethod } from '@hamb/shared';
 import { formatBRL, formatDateTime, formatTime, parseMoneyToCents } from '../../../lib/format';
 import {
@@ -30,7 +31,7 @@ export function CashPage() {
     <>
       <PageHeader
         title="Caixa"
-        description="Abertura, sangrias, reforços e fechamento com conferência."
+        description="Abertura, sangria, reforço e fechamento com conferência."
       />
       <FeatureGate
         feature="cash_register"
@@ -60,15 +61,18 @@ function CashScreen() {
       ) : (
         <>
           {!mine && (
-            <Card className="flex flex-col items-start gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+            <div className="flex flex-col items-start gap-4 rounded-lg border border-dashed border-border-strong p-5 sm:flex-row sm:items-center">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-muted-foreground">
+                <Wallet aria-hidden className="size-5" />
+              </span>
+              <div className="flex-1">
                 <p className="font-semibold">Você não tem um caixa aberto</p>
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground">
                   Abra o caixa para receber pagamentos em dinheiro.
                 </p>
               </div>
               <Button onClick={() => setOpening(true)}>Abrir caixa</Button>
-            </Card>
+            </div>
           )}
           {open.data.length === 0 ? null : (
             <div className="grid gap-4 lg:grid-cols-2">
@@ -85,49 +89,73 @@ function CashScreen() {
       )}
 
       {can('cash:manage') && (
-        <Section title="Histórico">
+        <Section title="Histórico" variant="plain">
           {history.isPending ? (
             <Skeleton className="h-32" />
           ) : history.data && history.data.length > 0 ? (
-            <Table label="Histórico de caixas">
-              <thead>
-                <tr>
-                  <Th>Caixa</Th>
-                  <Th>Aberto por</Th>
-                  <Th>Período</Th>
-                  <Th className="text-right">Esperado</Th>
-                  <Th className="text-right">Contado</Th>
-                  <Th className="text-right">Diferença</Th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <ul className="divide-y divide-border rounded-lg border border-border bg-surface md:hidden">
                 {history.data.map((row) => (
-                  <tr key={row.id}>
-                    <Td>
-                      {row.name} {row.status === 'OPEN' && <Badge tone="success">aberto</Badge>}
-                    </Td>
-                    <Td>{row.openedBy}</Td>
-                    <Td>
-                      {formatDateTime(row.openedAt)}
+                  <li key={row.id} className="p-3.5 text-sm">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-medium">
+                        {row.name} {row.status === 'OPEN' && <Badge tone="success">aberto</Badge>}
+                      </span>
+                      <Difference cents={row.differenceCents} />
+                    </div>
+                    <p className="mt-0.5 text-muted-foreground">
+                      {row.openedBy} · {formatDateTime(row.openedAt)}
                       {row.closedAt && ` – ${formatTime(row.closedAt)}`}
-                    </Td>
-                    <Td className="text-right tabular">
-                      {row.expectedCents === null ? '—' : formatBRL(row.expectedCents)}
-                    </Td>
-                    <Td className="text-right tabular">
-                      {row.countedCents === null ? '—' : formatBRL(row.countedCents)}
-                    </Td>
-                    <Td className="text-right tabular" title={row.closingNote ?? undefined}>
-                      {row.differenceCents === null ? '—' : formatBRL(row.differenceCents)}
-                    </Td>
-                  </tr>
+                    </p>
+                    <p className="mt-1 text-muted-foreground tabular">
+                      Esperado {row.expectedCents === null ? '—' : formatBRL(row.expectedCents)} ·
+                      Contado {row.countedCents === null ? '—' : formatBRL(row.countedCents)}
+                    </p>
+                  </li>
                 ))}
-              </tbody>
-            </Table>
+              </ul>
+              <div className="hidden md:block">
+                <Table label="Histórico de caixas">
+                  <thead>
+                    <tr>
+                      <Th>Caixa</Th>
+                      <Th>Aberto por</Th>
+                      <Th>Período</Th>
+                      <Th className="text-right">Esperado</Th>
+                      <Th className="text-right">Contado</Th>
+                      <Th className="text-right">Diferença</Th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.data.map((row) => (
+                      <tr key={row.id}>
+                        <Td>
+                          {row.name} {row.status === 'OPEN' && <Badge tone="success">aberto</Badge>}
+                        </Td>
+                        <Td>{row.openedBy}</Td>
+                        <Td>
+                          {formatDateTime(row.openedAt)}
+                          {row.closedAt && ` – ${formatTime(row.closedAt)}`}
+                        </Td>
+                        <Td className="text-right tabular">
+                          {row.expectedCents === null ? '—' : formatBRL(row.expectedCents)}
+                        </Td>
+                        <Td className="text-right tabular">
+                          {row.countedCents === null ? '—' : formatBRL(row.countedCents)}
+                        </Td>
+                        <Td className="text-right" title={row.closingNote ?? undefined}>
+                          <Difference cents={row.differenceCents} />
+                        </Td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </>
           ) : (
-            <Card>
+            <div className="rounded-lg border border-dashed border-border">
               <EmptyState icon={Wallet} title="Nenhum caixa fechado ainda" />
-            </Card>
+            </div>
           )}
         </Section>
       )}
@@ -152,47 +180,68 @@ function CashCard({ cash, canOperate }: { cash: CashSessionView; canOperate: boo
           Aberto
         </Badge>
       </div>
-      <p className="mt-4 text-sm text-muted">Dinheiro esperado na gaveta</p>
-      <p className="text-3xl font-bold tabular">{formatBRL(cash.expectedCents)}</p>
+      <p className="mt-5 text-sm text-muted-foreground">Dinheiro esperado na gaveta</p>
+      <p className="text-3xl font-semibold tracking-tight tabular">
+        {formatBRL(cash.expectedCents)}
+      </p>
       {Object.keys(cash.receiptsByMethod).length > 0 && (
-        <ul className="mt-3 flex flex-wrap gap-2 text-sm">
+        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 border-t border-border pt-4 text-sm sm:grid-cols-3">
           {Object.entries(cash.receiptsByMethod).map(([method, cents]) => (
-            <li key={method} className="rounded-full bg-surface-2 px-3 py-1">
-              {PAYMENT_METHOD_LABEL[method as PaymentMethod] ?? method}:{' '}
-              <strong className="tabular">{formatBRL(cents)}</strong>
-            </li>
+            <div key={method}>
+              <dt className="text-muted-foreground">
+                {PAYMENT_METHOD_LABEL[method as PaymentMethod] ?? method}
+              </dt>
+              <dd className="font-semibold tabular">{formatBRL(cents)}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
       )}
-      <details className="mt-4 text-sm">
-        <summary className="cursor-pointer font-semibold">
+      <details className="group mt-4 border-t border-border pt-3 text-sm">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-sm py-1 font-medium [&::-webkit-details-marker]:hidden">
           Movimentações ({cash.movements.length})
+          <ChevronDown
+            aria-hidden
+            className="size-4 text-muted-foreground transition-transform duration-150 group-open:rotate-180"
+          />
         </summary>
         <ul className="mt-2 divide-y divide-border">
-          {cash.movements.map((m) => (
-            <li key={m.id} className="flex justify-between gap-2 py-1.5">
-              <span>
-                {formatTime(m.createdAt)} · {CASH_MOVEMENT_LABEL[m.type]}
-                {m.method && ` · ${PAYMENT_METHOD_LABEL[m.method as PaymentMethod] ?? m.method}`}
-                {m.note && <span className="text-muted"> · {m.note}</span>}
-              </span>
-              <span className="tabular">
-                {m.type === 'WITHDRAWAL' || m.type === 'REFUND' ? '−' : ''}
-                {formatBRL(m.amountCents)}
-              </span>
-            </li>
-          ))}
+          {cash.movements.map((m) => {
+            const out = m.type === 'WITHDRAWAL' || m.type === 'REFUND';
+            const Icon = out ? ArrowUpRight : ArrowDownLeft;
+            return (
+              <li key={m.id} className="flex items-center gap-3 py-2">
+                <Icon
+                  aria-hidden
+                  className={cn('size-4 shrink-0', out ? 'text-destructive' : 'text-success')}
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="font-medium">{CASH_MOVEMENT_LABEL[m.type]}</span>
+                  <span className="text-muted-foreground">
+                    {' '}
+                    · {formatTime(m.createdAt)}
+                    {m.method &&
+                      ` · ${PAYMENT_METHOD_LABEL[m.method as PaymentMethod] ?? m.method}`}
+                    {m.note && ` · ${m.note}`}
+                  </span>
+                </span>
+                <span className={cn('font-semibold tabular', out && 'text-destructive')}>
+                  {out ? '−' : '+'}
+                  {formatBRL(m.amountCents)}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </details>
       {canOperate && (
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <Button variant="outline" size="sm" onClick={() => setMovement('WITHDRAWAL')}>
+          <Button variant="secondary" onClick={() => setMovement('WITHDRAWAL')}>
             Sangria
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setMovement('REINFORCEMENT')}>
+          <Button variant="secondary" onClick={() => setMovement('REINFORCEMENT')}>
             Reforço
           </Button>
-          <Button size="sm" onClick={() => setClosing(true)}>
+          <Button variant="outline" onClick={() => setClosing(true)}>
             Fechar caixa
           </Button>
         </div>
@@ -335,5 +384,17 @@ function CloseCashDialog({ cash, onClose }: { cash: CashSessionView; onClose: ()
         </Field>
       </div>
     </Dialog>
+  );
+}
+
+/** Count minus expected: zero is checked, a difference is spelled out, not only coloured. */
+function Difference({ cents }: { cents: number | null }) {
+  if (cents === null) return <span className="text-muted-foreground">—</span>;
+  if (cents === 0) return <span className="font-medium text-success">Conferido</span>;
+  return (
+    <span className={cn('font-semibold tabular', cents < 0 ? 'text-destructive' : 'text-warning')}>
+      {cents < 0 ? 'Falta ' : 'Sobra '}
+      {formatBRL(Math.abs(cents))}
+    </span>
   );
 }
