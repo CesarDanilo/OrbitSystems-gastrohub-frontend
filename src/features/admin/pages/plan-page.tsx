@@ -1,13 +1,52 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import { LIMIT_KEYS, LIMIT_LABEL } from '@hamb/shared';
-import { api } from '../../../lib/api';
+import { api, ApiError, errorMessage } from '../../../lib/api';
 import { formatBRL, formatDateTime } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';
-import { Alert, Button, ErrorState, PageHeader, Section, Skeleton } from '../../../components/ui';
+import {
+  Alert,
+  Button,
+  Dialog,
+  ErrorState,
+  Field,
+  Input,
+  PageHeader,
+  Section,
+  Skeleton,
+  Table,
+  Td,
+  Th,
+  toast,
+} from '../../../components/ui';
 import { useSession } from '../../auth/session';
 import { PricingCards, publicPlansQuery, type Interval } from '../../marketing/pricing';
 import { adminQueries, useAdminMutation } from '../api';
 import { UsageMeter } from '../components/feature-gate';
+
+type ChangeResult =
+  | { action: 'checkout'; checkoutUrl: string | null; invoiceId: string }
+  | { action: 'scheduled'; effectiveAt: string }
+  | Record<string, unknown>;
+
+interface InvoiceRow {
+  id: string;
+  description: string;
+  status: 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELED' | 'REFUNDED';
+  amountCents: number;
+  dueDate: string;
+  paidAt: string | null;
+  paymentUrl: string | null;
+}
+
+const INVOICE_STATUS = {
+  PENDING: 'Aguardando pagamento',
+  PAID: 'Paga',
+  OVERDUE: 'Em atraso',
+  CANCELED: 'Cancelada',
+  REFUNDED: 'Reembolsada',
+} as const;
 
 const STATUS_LABEL = {
   ACTIVE: 'Ativa',
@@ -25,20 +64,33 @@ export function PlanPage() {
   const catalog = useQuery(publicPlansQuery);
   const afterChange = () =>
     void queryClient.invalidateQueries({ queryKey: queryKeys.admin.all(rid) });
-  const change = useAdminMutation({
-    mutationFn: ({ planCode, interval }: { planCode: string; interval: Interval }) =>
-      api.post<{ checkoutUrl?: string | null }>('/admin/billing/change-plan', {
-        planCode,
-        interval,
-      }),
-    invalidate: [queryKeys.session, queryKeys.admin.billing(rid)],
-    success: 'Plano atualizado',
-    onSuccess: (result) => {
-      if (result && typeof result === 'object' && 'checkoutUrl' in result && result.checkoutUrl) {
-        window.location.assign(result.checkoutUrl);
+  const [details, setDetails] = useState<{ planCode: string; interval: Interval } | null>(null);
+  const change = useMutation({
+    mutationFn: (input: {
+      planCode: string;
+      interval: Interval;
+      document?: string;
+      email?: string;
+    }) => api.post<ChangeResult>('/admin/billing/change-plan', input),
+    onSuccess: async (result) => {
+      setDetails(null);
+      if (result && 'action' in result && result.action === 'checkout') {
+        toast.success('Cobrança criada. Conclua o pagamento para ativar o plano.');
+        if (typeof result.checkoutUrl === 'string') window.location.assign(result.checkoutUrl);
+      } else if (result && 'action' in result && result.action === 'scheduled') {
+        toast.success(`Mudança agendada para ${formatDateTime(result.effectiveAt as string)}.`);
+      } else {
+        toast.success('Plano atualizado');
+      }
+      await queryClient.invalidateQueries({ queryKey: queryKeys.session });
+      afterChange();
+    },
+    onError: (error, input) => {
+      if (error instanceof ApiError && error.code === 'BILLING_DETAILS_REQUIRED') {
+        setDetails({ planCode: input.planCode, interval: input.interval });
         return;
       }
-      afterChange();
+      toast.error(errorMessage(error));
     },
   });
   const cancel = useAdminMutation({
@@ -157,6 +209,131 @@ export function PlanPage() {
           }
         />
       )}
+
+      <Invoices />
+
+      {details && (
+        <BillingDetailsDialog
+          loading={change.isPending}
+          onClose={() => setDetails(null)}
+          onSubmit={(document, email) => change.mutate({ ...details, document, email })}
+        />
+      )}
     </>
+  );
+}
+
+/** CPF/CNPJ and e-mail needed by the billing provider to issue the charge. */
+function BillingDetailsDialog({
+  loading,
+  onClose,
+  onSubmit,
+}: {
+  loading: boolean;
+  onClose: () => void;
+  onSubmit: (document: string, email: string) => void;
+}) {
+  const [document, setDocument] = useState('');
+  const [email, setEmail] = useState('');
+  const digits = document.replace(/\D/g, '');
+  const valid = (digits.length === 11 || digits.length === 14) && /\S+@\S+\.\S+/.test(email);
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      title="Dados para a cobrança"
+      description="Usados apenas para emitir a cobrança da assinatura."
+      footer={
+        <Button
+          block
+          disabled={!valid}
+          loading={loading}
+          onClick={() => onSubmit(digits, email.trim())}
+        >
+          Continuar para o pagamento
+        </Button>
+      }
+    >
+      <div className="space-y-3">
+        <Field label="CPF ou CNPJ">
+          <Input
+            inputMode="numeric"
+            value={document}
+            onChange={(e) => setDocument(e.target.value)}
+          />
+        </Field>
+        <Field label="E-mail de cobrança">
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+      </div>
+    </Dialog>
+  );
+}
+
+function Invoices() {
+  const session = useSession();
+  const rid = session.restaurant.id;
+  const queryClient = useQueryClient();
+  const { cobranca } = useSearch({ strict: false }) as { cobranca?: string };
+  const invoices = useQuery({
+    queryKey: ['admin', rid, 'invoices'],
+    queryFn: () => api.get<InvoiceRow[]>('/admin/billing/invoices'),
+  });
+  // Sandbox only: the fake billing provider pays the charge through a signed webhook.
+  const simulate = useMutation({
+    mutationFn: () =>
+      api.post(`/webhooks/dev/simulate-billing/${cobranca}`, { kind: 'invoice.paid' }),
+    onSuccess: () => {
+      toast.success('Pagamento de teste confirmado');
+      void queryClient.invalidateQueries({ queryKey: ['admin', rid] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.session });
+    },
+    onError: (e) => toast.error(errorMessage(e)),
+  });
+  if (!invoices.data || (invoices.data.length === 0 && !cobranca)) return null;
+  return (
+    <Section title="Cobranças da assinatura" className="mt-10">
+      {cobranca && import.meta.env.DEV && (
+        <Alert
+          tone="info"
+          className="mb-4"
+          title="Ambiente de testes"
+          action={
+            <Button size="sm" onClick={() => simulate.mutate()} loading={simulate.isPending}>
+              Simular pagamento
+            </Button>
+          }
+        >
+          Nenhum provedor real está conectado: simule a confirmação do pagamento.
+        </Alert>
+      )}
+      <Table label="Cobranças">
+        <thead>
+          <tr>
+            <Th>Descrição</Th>
+            <Th>Vencimento</Th>
+            <Th>Situação</Th>
+            <Th className="text-right">Valor</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {invoices.data.map((i) => (
+            <tr key={i.id}>
+              <Td>{i.description}</Td>
+              <Td>{formatDateTime(i.dueDate)}</Td>
+              <Td>
+                {INVOICE_STATUS[i.status]}
+                {i.paymentUrl && (
+                  <a href={i.paymentUrl} className="ml-2 font-semibold text-brand">
+                    Pagar
+                  </a>
+                )}
+              </Td>
+              <Td className="text-right tabular">{formatBRL(i.amountCents)}</Td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Section>
   );
 }

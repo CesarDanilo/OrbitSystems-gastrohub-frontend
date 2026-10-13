@@ -42,6 +42,7 @@ import { adminQueries, useAdminMutation, type RestaurantSettings } from '../api'
 import { FeatureGate } from '../components/feature-gate';
 import { ImageUpload } from '../components/image-upload';
 import { DeliveryZones } from './delivery-zones';
+import { PaymentAccount } from './payment-account';
 
 type Tab = 'store' | 'delivery' | 'hours' | 'payments' | 'integrations' | 'team';
 
@@ -95,7 +96,12 @@ export function SettingsPage() {
             </>
           )}
           {tab === 'hours' && <HoursForm settings={settings.data} />}
-          {tab === 'payments' && <PaymentsForm settings={settings.data} />}
+          {tab === 'payments' && (
+            <>
+              <PaymentsForm settings={settings.data} />
+              <PaymentAccount />
+            </>
+          )}
           {tab === 'integrations' && <IntegrationsForm />}
           {tab === 'team' && <TeamSection />}
         </div>
