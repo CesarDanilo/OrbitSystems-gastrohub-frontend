@@ -9,16 +9,16 @@ import {
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
-import { ChevronDown, CircleAlert, Search } from 'lucide-react';
+import { ChevronDown, CircleAlert, Search, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 
 const controlBase =
-  'w-full rounded-md border bg-surface text-fg placeholder:text-muted/80 transition-colors duration-150 ' +
-  'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring ' +
-  'disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-muted aria-invalid:border-danger';
+  'w-full rounded-md border bg-surface text-foreground placeholder:text-muted-foreground/80 transition-colors duration-150 ' +
+  'hover:border-border-strong focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus-ring ' +
+  'disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted-foreground aria-invalid:border-destructive';
 
 /** 44px tall and 16px text: meets touch target size and avoids iOS zoom on focus. */
-export const inputClass = cn(controlBase, 'h-11 px-3.5 text-base border-border-strong');
+export const inputClass = cn(controlBase, 'h-11 px-3.5 text-base border-input');
 
 interface FieldProps {
   label: ReactNode;
@@ -149,7 +149,7 @@ export function SearchField({
     <div className={cn('relative', className)}>
       <Search
         aria-hidden
-        className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-muted"
+        className="pointer-events-none absolute top-1/2 left-3.5 size-[1.125rem] -translate-y-1/2 text-muted-foreground"
       />
       <input
         type="search"
@@ -157,8 +157,28 @@ export function SearchField({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className={cn(inputClass, 'pl-11')}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && value) {
+            e.preventDefault();
+            onChange('');
+          }
+        }}
+        className={cn(
+          inputClass,
+          'pl-10 [&::-webkit-search-cancel-button]:hidden',
+          value && 'pr-11',
+        )}
       />
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange('')}
+          aria-label="Limpar busca"
+          className="absolute top-1/2 right-1 flex size-9 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+        >
+          <X aria-hidden className="size-4" />
+        </button>
+      )}
     </div>
   );
 }
