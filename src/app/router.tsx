@@ -87,6 +87,77 @@ const signupRoute = createRoute({
   component: lazyRouteComponent(() => import('../features/auth/auth-pages'), 'SignupPage'),
 });
 
+const pricingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/planos',
+  component: lazyRouteComponent(() => import('../features/marketing/pricing'), 'PricingPage'),
+});
+
+// ---------- Platform owner (separate identity, MFA) ----------
+
+const platformRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/platform-admin',
+  component: lazyRouteComponent(
+    () => import('../features/platform/platform-layout'),
+    'PlatformLayout',
+  ),
+});
+
+const platformDashboardRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: '/',
+  component: lazyRouteComponent(
+    () => import('../features/platform/dashboard-page'),
+    'PlatformDashboardPage',
+  ),
+});
+
+const platformRestaurantsRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'restaurantes',
+  component: lazyRouteComponent(
+    () => import('../features/platform/restaurants-page'),
+    'PlatformRestaurantsPage',
+  ),
+});
+
+const platformRestaurantRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'restaurantes/$id',
+  component: lazyRouteComponent(
+    () => import('../features/platform/restaurants-page'),
+    'PlatformRestaurantPage',
+  ),
+});
+
+const platformPlansRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'planos',
+  component: lazyRouteComponent(
+    () => import('../features/platform/plans-page'),
+    'PlatformPlansPage',
+  ),
+});
+
+const platformFeaturesRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'funcionalidades',
+  component: lazyRouteComponent(
+    () => import('../features/platform/features-audit-page'),
+    'PlatformFeaturesPage',
+  ),
+});
+
+const platformAuditRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'auditoria',
+  component: lazyRouteComponent(
+    () => import('../features/platform/features-audit-page'),
+    'PlatformAuditPage',
+  ),
+});
+
 // ---------- Storefront (customer, mobile first) ----------
 
 function StoreNotFound({ error }: ErrorComponentProps) {
@@ -310,6 +381,15 @@ const routeTree = rootRoute.addChildren([
   landingRoute,
   loginRoute,
   signupRoute,
+  pricingRoute,
+  platformRoute.addChildren([
+    platformDashboardRoute,
+    platformRestaurantsRoute,
+    platformRestaurantRoute,
+    platformPlansRoute,
+    platformFeaturesRoute,
+    platformAuditRoute,
+  ]),
   storeRoute.addChildren([
     storeMenuRoute.addChildren([storeIndexRoute, productRoute]),
     cartRoute,

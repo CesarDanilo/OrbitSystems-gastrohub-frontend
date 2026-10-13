@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import { BarChart3, Check, MessageCircle, Smartphone, Sparkles, Store, Users } from 'lucide-react';
+import { BarChart3, MessageCircle, Smartphone, Sparkles, Store, Users } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Logo } from './logo';
+import { PricingCards, publicPlansQuery } from './pricing';
 
 const benefits = [
   {
@@ -102,36 +104,18 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section aria-labelledby="planos" className="mx-auto max-w-4xl px-4 py-16">
+        <section aria-labelledby="planos" className="mx-auto max-w-6xl px-4 py-16">
           <h2 id="planos" className="text-center text-2xl font-bold sm:text-3xl">
-            Comece grátis, cresça quando quiser
+            Um plano para cada fase do seu restaurante
           </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            <PlanCard
-              name="Free"
-              price="R$ 0"
-              items={[
-                'Loja online e QR Code',
-                'Até 20 produtos e 5 categorias',
-                'Até 50 pedidos por mês',
-                'Painel de pedidos',
-                'Dashboard básico',
-              ]}
-            />
-            <PlanCard
-              name="Pro"
-              price="R$ 119/mês"
-              highlight
-              items={[
-                'Produtos e pedidos ilimitados',
-                'WhatsApp automático e IA',
-                'Pix e cartão online',
-                'Cupons e recompra',
-                'Insights e relatórios avançados',
-                'White-label completo e equipe',
-              ]}
-            />
-          </div>
+          <p className="mx-auto mt-3 max-w-xl text-center text-muted">
+            Sem comissão por pedido. Compare tudo na{' '}
+            <Link to="/planos" className="font-semibold text-brand">
+              página de planos
+            </Link>
+            .
+          </p>
+          <PlansPreview />
         </section>
       </main>
       <footer className="border-t border-border py-8 text-center text-sm text-muted">
@@ -141,45 +125,29 @@ export function LandingPage() {
   );
 }
 
-function PlanCard({
-  name,
-  price,
-  items,
-  highlight,
-}: {
-  name: string;
-  price: string;
-  items: string[];
-  highlight?: boolean;
-}) {
+/** Plans from the catalog configured by the platform owner. */
+function PlansPreview() {
+  const plans = useQuery(publicPlansQuery);
+  if (!plans.data || plans.data.length === 0) return null;
   return (
-    <div
-      className={
-        highlight
-          ? 'rounded-xl border-2 border-brand bg-surface p-6 shadow-md'
-          : 'rounded-xl border border-border bg-surface p-6'
-      }
-    >
-      <h3 className="text-lg font-bold">{name}</h3>
-      <p className="mt-2 text-3xl font-bold tabular">{price}</p>
-      <ul className="mt-5 space-y-2.5">
-        {items.map((item) => (
-          <li key={item} className="flex gap-2 text-[0.9375rem]">
-            <Check aria-hidden className="mt-0.5 size-5 shrink-0 text-success" />
-            {item}
-          </li>
-        ))}
-      </ul>
-      <Link
-        to="/cadastro"
-        className={
-          highlight
-            ? 'mt-6 inline-flex h-11 w-full items-center justify-center rounded-md bg-brand font-semibold text-brand-fg'
-            : 'mt-6 inline-flex h-11 w-full items-center justify-center rounded-md border border-border-strong font-semibold'
-        }
-      >
-        {highlight ? 'Começar com o Pro' : 'Começar grátis'}
-      </Link>
+    <div className="mt-10">
+      <PricingCards
+        plans={plans.data}
+        renderAction={(plan) => (
+          <Link
+            to="/cadastro"
+            className={
+              plan.highlighted
+                ? 'inline-flex h-11 w-full items-center justify-center rounded-md bg-brand font-semibold text-brand-fg'
+                : 'inline-flex h-11 w-full items-center justify-center rounded-md border border-border-strong font-semibold'
+            }
+          >
+            {plan.trialDays > 0
+              ? `Testar ${plan.trialDays} dias grátis`
+              : `Começar com o ${plan.name}`}
+          </Link>
+        )}
+      />
     </div>
   );
 }

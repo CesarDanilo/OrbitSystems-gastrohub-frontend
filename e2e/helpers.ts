@@ -3,6 +3,7 @@ import { expect, type APIRequestContext, type Page } from '@playwright/test';
 /** Seeded demo accounts (see apps/api/prisma/seed.ts). Test values for local/CI only. */
 export const BRASA = { email: 'dono@brasa.dev', password: 'demo12345', slug: 'brasa' };
 export const BELLA = { email: 'dono@bella.dev', password: 'demo12345', slug: 'bella' };
+export const PLATFORM = { email: 'dono@plataforma-e2e.dev', password: 'senha-plataforma-e2e-123' };
 
 export async function login(page: Page, account: { email: string; password: string }) {
   await page.goto('/entrar');

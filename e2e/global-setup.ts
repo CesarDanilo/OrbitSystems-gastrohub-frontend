@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process';
+import { PLATFORM } from './helpers';
 
 /** Fresh, seeded test database for every E2E run. */
 export default function globalSetup() {
@@ -10,4 +11,13 @@ export default function globalSetup() {
   run('npx prisma migrate deploy');
   run('npx tsx e2e-reset.ts');
   run('npx tsx prisma/seed.ts');
+  // Test-only platform owner (local/CI test database).
+  execSync(
+    'npx tsx scripts/create-platform-admin.ts --email dono@plataforma-e2e.dev --name "Dono E2E"',
+    {
+      cwd: '../api',
+      stdio: 'inherit',
+      env: { ...env, PLATFORM_ADMIN_PASSWORD: PLATFORM.password },
+    },
+  );
 }
