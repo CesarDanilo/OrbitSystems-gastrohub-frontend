@@ -30,6 +30,7 @@ import {
   Switch,
   Tabs,
   toast,
+  confirm,
 } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type AdminCategory, type AdminProduct } from '../api';
@@ -392,7 +393,10 @@ function CategoriesTab() {
                     label={`Excluir ${c.name}`}
                     className="text-danger"
                     onClick={() => {
-                      if (window.confirm(`Excluir a categoria "${c.name}"?`)) remove.mutate(c.id);
+                      void confirm({
+                        title: `Excluir a categoria "${c.name}"?`,
+                        confirmLabel: 'Excluir categoria',
+                      }).then((ok) => ok && remove.mutate(c.id));
                     }}
                   >
                     <Trash2 aria-hidden className="size-5" />

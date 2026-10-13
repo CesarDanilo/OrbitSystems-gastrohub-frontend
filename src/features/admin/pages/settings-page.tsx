@@ -36,6 +36,7 @@ import {
   Switch,
   Tabs,
   Textarea,
+  confirm,
 } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type RestaurantSettings } from '../api';
@@ -762,8 +763,10 @@ function TeamSection() {
                       label={`Remover ${m.user.name}`}
                       className="text-danger"
                       onClick={() => {
-                        if (window.confirm(`Remover ${m.user.name} da equipe?`))
-                          remove.mutate(m.id);
+                        void confirm({
+                          title: `Remover ${m.user.name} da equipe?`,
+                          confirmLabel: 'Remover',
+                        }).then((ok) => ok && remove.mutate(m.id));
                       }}
                     >
                       <Trash2 aria-hidden className="size-5" />

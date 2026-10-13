@@ -2,7 +2,16 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, errorMessage } from '../../../lib/api';
 import { formatDateTime } from '../../../lib/format';
-import { Alert, Badge, Button, Field, Input, Section, toast } from '../../../components/ui';
+import {
+  Alert,
+  Badge,
+  Button,
+  Field,
+  Input,
+  Section,
+  toast,
+  confirm,
+} from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { FeatureGate } from '../components/feature-gate';
 
@@ -130,8 +139,11 @@ function AccountForm() {
                 type="button"
                 variant="ghost"
                 onClick={() =>
-                  window.confirm('Desconectar a conta? O Pix online sai da loja.') &&
-                  disconnect.mutate()
+                  void confirm({
+                    title: 'Desconectar a conta?',
+                    description: 'O Pix online sai da loja até você conectar de novo.',
+                    confirmLabel: 'Desconectar',
+                  }).then((ok) => ok && disconnect.mutate())
                 }
               >
                 Desconectar

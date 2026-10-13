@@ -431,7 +431,7 @@ function PosScreen() {
       </div>
 
       {!ticketOpen && lines.length > 0 && (
-        <div className="fixed inset-x-4 bottom-20 z-20 lg:hidden">
+        <div className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-20 lg:hidden">
           <Button
             block
             size="lg"

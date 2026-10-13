@@ -28,6 +28,7 @@ import {
   Skeleton,
   Tabs,
   toast,
+  confirm,
 } from '../../../components/ui';
 import { useSession } from '../../auth/session';
 import { adminQueries } from '../api';
@@ -319,12 +320,11 @@ function OrderCard({
                 label: status === 'REJECTED' ? 'Recusar pedido' : 'Cancelar pedido',
                 danger: true,
                 onSelect: () => {
-                  if (
-                    window.confirm(
-                      `Tem certeza que deseja ${status === 'REJECTED' ? 'recusar' : 'cancelar'} o pedido #${order.number}?`,
-                    )
-                  )
-                    onChange(status);
+                  void confirm({
+                    title: `${status === 'REJECTED' ? 'Recusar' : 'Cancelar'} o pedido #${order.number}?`,
+                    description: 'O cliente é avisado da mudança.',
+                    confirmLabel: status === 'REJECTED' ? 'Recusar pedido' : 'Cancelar pedido',
+                  }).then((ok) => ok && onChange(status));
                 },
               }))}
             />

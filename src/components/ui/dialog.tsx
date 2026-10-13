@@ -78,13 +78,18 @@ export function Dialog({
       {open && (
         <div
           className={cn(
-            'flex max-h-[92dvh] w-full flex-col bg-surface shadow-lg',
+            'flex max-h-[92dvh] w-full flex-col bg-surface-elevated shadow-lg',
             variant === 'sheet'
               ? 'animate-sheet-up rounded-t-xl sm:h-dvh sm:max-h-none sm:max-w-md sm:rounded-none'
               : cn('animate-sheet-up rounded-t-xl sm:animate-pop sm:rounded-xl', widths[size]),
           )}
         >
-          <header className="flex items-start gap-3 border-b border-border px-5 pt-4 pb-3">
+          <header
+            className={cn(
+              'flex items-start gap-3 px-5 pt-4 pb-3',
+              children != null && 'border-b border-border',
+            )}
+          >
             <div className="min-w-0 flex-1 pt-1.5">
               <h2 id={titleId} className="text-lg font-semibold">
                 {title}
@@ -95,7 +100,9 @@ export function Dialog({
               <X className="size-5" aria-hidden />
             </IconButton>
           </header>
-          <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4">{children}</div>
+          {children != null && (
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4">{children}</div>
+          )}
           {footer && (
             <footer className="border-t border-border px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               {footer}

@@ -19,6 +19,7 @@ import {
   Td,
   Th,
   toast,
+  confirm,
 } from '../../../components/ui';
 import { useSession } from '../../auth/session';
 import { PricingCards, publicPlansQuery, type Interval } from '../../marketing/pricing';
@@ -161,9 +162,11 @@ export function PlanPage() {
               className="mt-4 text-danger"
               loading={cancel.isPending}
               onClick={() =>
-                window.confirm(
-                  'Cancelar a assinatura? Você mantém o plano até o fim do período.',
-                ) && cancel.mutate(undefined)
+                void confirm({
+                  title: 'Cancelar a assinatura?',
+                  description: 'Você mantém o plano até o fim do período.',
+                  confirmLabel: 'Cancelar assinatura',
+                }).then((ok) => ok && cancel.mutate(undefined))
               }
             >
               Cancelar assinatura

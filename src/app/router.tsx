@@ -12,7 +12,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { hasPermission, type Permission } from '@hamb/shared';
 import { ApiError } from '../lib/api';
-import { ErrorState, PageSpinner, Toaster } from '../components/ui';
+import { ConfirmHost, ErrorState, PageSpinner, Toaster } from '../components/ui';
 import { sessionQuery } from '../features/auth/session';
 import { storeQuery } from '../features/store/queries';
 
@@ -25,6 +25,7 @@ function RootLayout() {
     <>
       <Outlet />
       <Toaster />
+      <ConfirmHost />
     </>
   );
 }

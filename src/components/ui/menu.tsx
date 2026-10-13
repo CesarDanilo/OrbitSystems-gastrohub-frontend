@@ -101,26 +101,3 @@ export function Menu({
     </div>
   );
 }
-
-/** Tooltip shown on hover and keyboard focus; content is linked with aria-describedby. */
-export function Tooltip({
-  content,
-  children,
-}: {
-  content: string;
-  children: (props: { 'aria-describedby': string }) => ReactNode;
-}) {
-  const id = useId();
-  return (
-    <span className="group relative inline-flex">
-      {children({ 'aria-describedby': id })}
-      <span
-        id={id}
-        role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-sm bg-fg px-2 py-1 text-xs font-medium whitespace-nowrap text-bg opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100"
-      >
-        {content}
-      </span>
-    </span>
-  );
-}

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
+  Menu as MenuIcon,
   ScrollText,
   ShieldCheck,
   Tags,
@@ -14,7 +15,17 @@ import {
 } from 'lucide-react';
 import { api, errorMessage } from '../../lib/api';
 import { cn } from '../../lib/cn';
-import { Alert, Button, Card, Field, Input, PageSpinner } from '../../components/ui';
+import {
+  Alert,
+  Button,
+  Card,
+  Drawer,
+  Field,
+  IconButton,
+  Input,
+  PageSpinner,
+} from '../../components/ui';
+import { ThemeToggle } from '../../components/theme-toggle';
 import { platformKeys, platformQueries, type PlatformMe } from './platform-api';
 
 const NAV: { to: string; label: string; icon: LucideIcon; exact?: boolean }[] = [
@@ -39,6 +50,87 @@ export function PlatformLayout() {
 
 function Shell({ me }: { me: PlatformMe }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => setDrawerOpen(false), [pathname]);
+  return (
+    <div className="flex min-h-dvh bg-background">
+      <aside
+        aria-label="Menu da plataforma"
+        className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col bg-sidebar lg:flex"
+      >
+        <PlatformBrand />
+        <PlatformNav pathname={pathname} />
+        <PlatformAccount me={me} />
+      </aside>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-1 border-b border-border bg-background/95 px-2 backdrop-blur lg:hidden">
+          <IconButton label="Abrir menu" onClick={() => setDrawerOpen(true)}>
+            <MenuIcon aria-hidden className="size-5" />
+          </IconButton>
+          <span className="truncate px-1 text-[0.9375rem] font-semibold">Plataforma</span>
+        </header>
+        <main
+          id="conteudo"
+          className="mx-auto w-full max-w-7xl flex-1 px-4 pt-5 pb-12 sm:px-6 lg:px-8 lg:pt-7"
+        >
+          <Outlet />
+        </main>
+      </div>
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        label="Menu da plataforma"
+        header={<PlatformBrand compact />}
+      >
+        <PlatformNav pathname={pathname} />
+        <PlatformAccount me={me} />
+      </Drawer>
+    </div>
+  );
+}
+
+function PlatformBrand({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={cn('flex items-center gap-2.5', !compact && 'h-16 shrink-0 px-5')}>
+      <ShieldCheck aria-hidden className="size-6 text-primary" />
+      <div>
+        <p className="text-sm font-semibold leading-tight">Plataforma</p>
+        <p className="text-xs text-muted-foreground">Administração do SaaS</p>
+      </div>
+    </div>
+  );
+}
+
+function PlatformNav({ pathname }: { pathname: string }) {
+  return (
+    <nav aria-label="Plataforma" className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+      {NAV.map((item) => {
+        const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              'flex h-10 items-center gap-3 rounded-md px-3 text-[0.9375rem] font-medium transition-colors duration-150',
+              active
+                ? 'bg-sidebar-active text-foreground'
+                : 'text-sidebar-foreground hover:bg-sidebar-active/60 hover:text-foreground',
+            )}
+          >
+            <item.icon
+              aria-hidden
+              className={cn('size-[1.125rem] shrink-0', active && 'text-primary')}
+            />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function PlatformAccount({ me }: { me: PlatformMe }) {
   const queryClient = useQueryClient();
   const logout = async () => {
     await api.post('/platform/auth/logout').catch(() => undefined);
@@ -46,52 +138,21 @@ function Shell({ me }: { me: PlatformMe }) {
     void queryClient.invalidateQueries({ queryKey: platformKeys.me });
   };
   return (
-    <div className="min-h-dvh bg-bg lg:grid lg:grid-cols-[15rem_1fr]">
-      <aside className="flex flex-col bg-[#1c1917] text-white lg:sticky lg:top-0 lg:h-dvh">
-        <div className="flex h-16 items-center gap-2 px-5">
-          <ShieldCheck aria-hidden className="size-6 text-orange-300" />
-          <div>
-            <p className="text-sm font-bold leading-tight">Plataforma</p>
-            <p className="text-xs text-white/60">Administração do SaaS</p>
-          </div>
+    <div className="shrink-0 space-y-0.5 border-t border-border/60 p-3">
+      <ThemeToggle />
+      <div className="flex items-center gap-3 px-1 pt-2">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold">{me.name}</p>
+          <p className="truncate text-xs text-muted-foreground">{me.email}</p>
         </div>
-        <nav
-          aria-label="Plataforma"
-          className="flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-1 lg:flex-col lg:overflow-visible"
+        <IconButton
+          label="Sair"
+          onClick={() => void logout()}
+          className="text-muted-foreground hover:text-destructive"
         >
-          {NAV.map((item) => {
-            const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                aria-current={active ? 'page' : undefined}
-                className={cn(
-                  'flex h-11 shrink-0 items-center gap-3 rounded-md px-3 text-sm font-medium',
-                  active ? 'bg-white/15 text-white' : 'text-white/75 hover:bg-white/10',
-                )}
-              >
-                <item.icon aria-hidden className="size-5" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="hidden border-t border-white/10 p-4 text-sm lg:block">
-          <p className="font-semibold">{me.name}</p>
-          <p className="truncate text-white/60">{me.email}</p>
-          <button
-            type="button"
-            onClick={() => void logout()}
-            className="mt-2 inline-flex min-h-11 items-center gap-2 text-white/80 hover:text-white"
-          >
-            <LogOut aria-hidden className="size-4" /> Sair
-          </button>
-        </div>
-      </aside>
-      <main id="conteudo" className="mx-auto w-full max-w-6xl px-4 py-6 lg:px-8">
-        <Outlet />
-      </main>
+          <LogOut aria-hidden className="size-[1.125rem]" />
+        </IconButton>
+      </div>
     </div>
   );
 }
@@ -223,7 +284,7 @@ function AuthCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#1c1917] px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-sidebar px-4">
       <Card className="w-full max-w-sm p-6">
         <div className="mb-5 flex items-center gap-2">
           <ShieldCheck aria-hidden className="size-6 text-brand" />

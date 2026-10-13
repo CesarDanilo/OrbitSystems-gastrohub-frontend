@@ -19,6 +19,7 @@ import {
   Select,
   Switch,
   Textarea,
+  confirm,
 } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type AdminProduct } from '../api';
@@ -186,12 +187,11 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
               className="text-danger"
               loading={remove.isPending}
               onClick={() => {
-                if (
-                  window.confirm(
-                    `Excluir "${product.name}"? Pedidos antigos continuam no histórico.`,
-                  )
-                )
-                  remove.mutate(undefined);
+                void confirm({
+                  title: `Excluir "${product.name}"?`,
+                  description: 'Pedidos antigos continuam no histórico.',
+                  confirmLabel: 'Excluir produto',
+                }).then((ok) => ok && remove.mutate(undefined));
               }}
             >
               Excluir

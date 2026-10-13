@@ -31,6 +31,7 @@ import {
   Switch,
   Tabs,
   Textarea,
+  confirm,
 } from '../../components/ui';
 import { platformQueries, usePlatformMutation, type PlanAdminView } from './platform-api';
 import { ReasonDialog } from './restaurants-page';
@@ -170,7 +171,12 @@ function PlanCard({ plan, features }: { plan: PlanAdminView; features: FeatureDe
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => window.confirm('Descartar o rascunho?') && discard.mutate(undefined)}
+                onClick={() =>
+                  void confirm({
+                    title: 'Descartar o rascunho?',
+                    confirmLabel: 'Descartar',
+                  }).then((ok) => ok && discard.mutate(undefined))
+                }
               >
                 Descartar rascunho
               </Button>

@@ -160,16 +160,20 @@ export function Tabs<T extends string>({
             }}
             tabIndex={selected ? 0 : -1}
             className={cn(
-              'inline-flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors duration-150',
-              selected ? 'bg-fg text-bg' : 'text-muted hover:bg-surface-2 hover:text-fg',
+              'inline-flex h-10 shrink-0 items-center gap-2 rounded-md px-3.5 text-sm font-medium transition-colors duration-150',
+              selected
+                ? 'bg-surface-muted text-foreground'
+                : 'text-muted-foreground hover:bg-surface-muted/60 hover:text-foreground',
             )}
           >
             {item.label}
             {item.count !== undefined && (
               <span
                 className={cn(
-                  'rounded-full px-1.5 text-xs tabular',
-                  selected ? 'bg-bg/20' : 'bg-surface-2',
+                  'min-w-5 rounded-full px-1.5 text-center text-xs font-semibold tabular',
+                  selected && item.count > 0
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-surface-muted text-muted-foreground',
                 )}
               >
                 {item.count}

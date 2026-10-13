@@ -59,13 +59,13 @@ export function Toaster() {
           key={t.id}
           role="status"
           className={cn(
-            'pointer-events-auto flex w-full max-w-sm animate-sheet-up items-center gap-3 rounded-md bg-fg py-3 pr-2 pl-4 text-sm font-medium text-bg shadow-lg',
+            'pointer-events-auto flex w-full max-w-sm animate-sheet-up items-center gap-3 rounded-md bg-surface-elevated py-3 pr-2 pl-4 text-sm font-medium text-foreground shadow-lg ring-1 ring-border',
           )}
         >
           {t.tone === 'success' ? (
-            <CircleCheck aria-hidden className="size-5 shrink-0 text-green-400" />
+            <CircleCheck aria-hidden className="size-5 shrink-0 text-success" />
           ) : (
-            <CircleAlert aria-hidden className="size-5 shrink-0 text-red-400" />
+            <CircleAlert aria-hidden className="size-5 shrink-0 text-destructive" />
           )}
           <span className="flex-1">{t.message}</span>
           <button

@@ -23,6 +23,7 @@ import {
   Select,
   Switch,
   toast,
+  confirm,
 } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { FeatureGate } from '../components/feature-gate';
@@ -109,7 +110,10 @@ function Zones() {
                       size="sm"
                       variant="ghost"
                       onClick={() =>
-                        window.confirm(`Remover a zona ${rule.name}?`) && remove.mutate(rule.id)
+                        void confirm({
+                          title: `Remover a zona ${rule.name}?`,
+                          confirmLabel: 'Remover zona',
+                        }).then((ok) => ok && remove.mutate(rule.id))
                       }
                     >
                       Remover

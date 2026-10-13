@@ -10,7 +10,7 @@ const variants: Record<ButtonVariant, string> = {
   secondary: 'bg-surface-2 text-fg hover:bg-border active:bg-border-strong',
   outline: 'border border-border-strong bg-surface text-fg hover:bg-surface-2',
   ghost: 'hover:bg-surface-2',
-  danger: 'bg-danger text-white hover:brightness-95 dark:text-[#1c1917]',
+  danger: 'bg-destructive text-destructive-foreground hover:brightness-95',
 };
 
 // md and lg meet the 44px touch target; sm is for dense desktop toolbars only.

@@ -8,3 +8,6 @@ export * from './layout';
 export * from './toast';
 export * from './menu';
 export * from './quantity-stepper';
+export * from './tooltip';
+export * from './confirm';
+export * from './drawer';

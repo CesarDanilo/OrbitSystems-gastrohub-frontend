@@ -25,6 +25,7 @@ import {
   Section,
   Select,
   Skeleton,
+  confirm,
 } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';
 import { FeatureGate } from '../components/feature-gate';
@@ -452,8 +453,11 @@ function SessionDialog({ sessionId, onClose }: { sessionId: string; onClose: () 
               variant={data.balanceCents === 0 ? 'primary' : 'outline'}
               loading={close.isPending}
               onClick={() =>
-                window.confirm(`Fechar ${data.table.label}?`) &&
-                close.mutate(undefined, { onSuccess: onClose })
+                void confirm({
+                  title: `Fechar ${data.table.label}?`,
+                  confirmLabel: 'Fechar mesa',
+                  tone: 'primary',
+                }).then((ok) => ok && close.mutate(undefined, { onSuccess: onClose }))
               }
             >
               Fechar mesa
@@ -852,9 +856,11 @@ function TableFormDialog({ table, onClose }: { table?: TableView; onClose: () =>
                 size="sm"
                 variant="ghost"
                 onClick={() =>
-                  window.confirm(
-                    'Os QR Codes impressos desta mesa vão parar de funcionar. Continuar?',
-                  ) && rotate.mutate(undefined)
+                  void confirm({
+                    title: 'Gerar novo QR?',
+                    description: 'Os QR Codes impressos desta mesa vão parar de funcionar.',
+                    confirmLabel: 'Gerar novo QR',
+                  }).then((ok) => ok && rotate.mutate(undefined))
                 }
               >
                 Gerar novo QR
