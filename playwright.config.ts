@@ -12,6 +12,8 @@ try {
 
 const API_PORT = 3341;
 const WEB_PORT = 5181;
+/** Backend checkout used by E2E; override when the repositories are separate. */
+const API_DIR = process.env.E2E_API_DIR ?? '../api';
 const databaseUrl = process.env.TEST_DATABASE_URL ?? '';
 
 export default defineConfig({
@@ -34,7 +36,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'node --import tsx src/server.ts',
-      cwd: '../api',
+      cwd: API_DIR,
       url: `http://127.0.0.1:${API_PORT}/health/ready`,
       reuseExistingServer: false,
       env: {

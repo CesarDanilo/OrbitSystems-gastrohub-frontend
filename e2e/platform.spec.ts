@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { totpCode } from '../../api/src/shared/totp';
+import { totpCode } from './totp';
 import { BRASA, PLATFORM, login } from './helpers';
 
 test('restaurant users are blocked from the platform area', async ({ page }) => {
