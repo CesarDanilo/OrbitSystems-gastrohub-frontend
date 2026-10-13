@@ -8,6 +8,7 @@ const TONE: Record<OrderStatus, Tone> = {
   READY: 'success',
   OUT_FOR_DELIVERY: 'info',
   DELIVERED: 'neutral',
+  SERVED: 'neutral',
   CANCELLED: 'danger',
   REJECTED: 'danger',
   PAYMENT_FAILED: 'danger',
@@ -28,4 +29,5 @@ export const NEXT_ACTION_LABEL: Partial<Record<OrderStatus, string>> = {
   READY: 'Marcar como pronto',
   OUT_FOR_DELIVERY: 'Saiu para entrega',
   DELIVERED: 'Concluir',
+  SERVED: 'Marcar como servido',
 };

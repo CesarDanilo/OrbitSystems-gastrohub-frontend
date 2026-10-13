@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import {
   ORDER_STATUS_LABEL,
+  ORDER_PAYMENT_STATUS_LABEL,
   PAYMENT_METHOD_LABEL,
   isTerminal,
   type OrderStatus,
@@ -120,7 +121,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
         </p>
       )}
 
-      {order.payment.method === 'PIX' &&
+      {order.payment?.method === 'PIX' &&
         order.payment.status === 'PENDING' &&
         order.payment.pixCopyPaste &&
         !failed && <PixBox order={order} />}
@@ -232,10 +233,16 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
           <div className="flex justify-between pt-1">
             <dt className="text-muted">Pagamento</dt>
             <dd>
-              {PAYMENT_METHOD_LABEL[order.payment.method]}
-              {order.payment.status === 'PAID' && ' · pago'}
-              {order.payment.changeForCents &&
-                ` · troco para ${formatBRL(order.payment.changeForCents)}`}
+              {order.payment ? (
+                <>
+                  {PAYMENT_METHOD_LABEL[order.payment.method]}
+                  {order.payment.status === 'PAID' && ' · pago'}
+                  {order.payment.changeForCents &&
+                    ` · troco para ${formatBRL(order.payment.changeForCents)}`}
+                </>
+              ) : (
+                ORDER_PAYMENT_STATUS_LABEL[order.paymentStatus]
+              )}
             </dd>
           </div>
         </dl>
@@ -281,7 +288,7 @@ function PixBox({ order }: { order: PublicOrder }) {
   const [simulating, setSimulating] = useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(order.payment.pixCopyPaste ?? '');
+      await navigator.clipboard.writeText(order.payment?.pixCopyPaste ?? '');
       toast.success('Código Pix copiado');
     } catch {
       toast.error('Não foi possível copiar. Selecione o código manualmente.');
@@ -309,7 +316,7 @@ function PixBox({ order }: { order: PublicOrder }) {
       </h2>
       <p className="mt-1 text-sm text-muted">Copie o código e cole no app do seu banco.</p>
       <p className="mt-3 rounded-md bg-surface-2 p-3 font-mono text-xs break-all select-all">
-        {order.payment.pixCopyPaste}
+        {order.payment?.pixCopyPaste}
       </p>
       <Button
         block

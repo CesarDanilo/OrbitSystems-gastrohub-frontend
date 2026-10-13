@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bike, ClipboardList, MoreVertical, ShoppingBag } from 'lucide-react';
+import { Bike, ClipboardList, MoreVertical, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 import {
   canRoleSetStatus,
+  FULFILLMENT_LABEL,
   nextStatuses,
+  ORDER_CHANNEL_LABEL,
+  ORDER_PAYMENT_STATUS_LABEL,
   PAYMENT_METHOD_LABEL,
   type AdminOrder,
   type OrderStatus,
@@ -30,6 +33,33 @@ import { useSession } from '../../auth/session';
 import { adminQueries } from '../api';
 import { NEXT_ACTION_LABEL, OrderStatusBadge } from '../components/order-status-badge';
 
+/** Who the order is for: the customer, the table/tab or the counter. */
+export function orderWho(order: AdminOrder): string {
+  if (order.customer) return order.customer.name;
+  if (order.tab) return `Comanda ${order.tab.code}${order.table ? ` · ${order.table.label}` : ''}`;
+  if (order.table) return order.table.label;
+  return ORDER_CHANNEL_LABEL[order.channel];
+}
+
+function FulfillmentIcon({ order }: { order: AdminOrder }) {
+  const Icon =
+    order.fulfillment === 'DELIVERY'
+      ? Bike
+      : order.fulfillment === 'DINE_IN'
+        ? UtensilsCrossed
+        : ShoppingBag;
+  return <Icon aria-hidden className="size-4" />;
+}
+
+function paymentLine(order: AdminOrder): string {
+  if (!order.payment) return ORDER_PAYMENT_STATUS_LABEL[order.paymentStatus];
+  const method = PAYMENT_METHOD_LABEL[order.payment.method];
+  if (order.payment.status === 'PAID') return `${method} (pago)`;
+  if (order.payment.method === 'PIX' || order.payment.method === 'CARD_ONLINE')
+    return `${method} (aguardando pagamento)`;
+  return method;
+}
+
 type Group = 'new' | 'active' | 'done' | 'cancelled';
 const GROUPS: Record<Group, { label: string; statuses: OrderStatus[] }> = {
   new: { label: 'Novos', statuses: ['PENDING'] },
@@ -37,7 +67,7 @@ const GROUPS: Record<Group, { label: string; statuses: OrderStatus[] }> = {
     label: 'Em andamento',
     statuses: ['CONFIRMED', 'PREPARING', 'READY', 'OUT_FOR_DELIVERY'],
   },
-  done: { label: 'Concluídos', statuses: ['DELIVERED'] },
+  done: { label: 'Concluídos', statuses: ['DELIVERED', 'SERVED'] },
   cancelled: { label: 'Cancelados', statuses: ['CANCELLED', 'REJECTED', 'PAYMENT_FAILED'] },
 };
 
@@ -224,14 +254,16 @@ function OrderCard({
   pending: boolean;
 }) {
   const { forward, destructive } = useActions(order);
-  const itemsCount = order.items.reduce((s, i) => s + i.quantity, 0);
+  const itemsCount = order.items
+    .filter((i) => i.status === 'ACTIVE')
+    .reduce((s, i) => s + i.quantity, 0);
   return (
     <Card className="flex h-full flex-col p-4">
       <button
         type="button"
         onClick={onOpen}
         className="text-left"
-        aria-label={`Abrir pedido ${order.number} de ${order.customer.name}`}
+        aria-label={`Abrir pedido ${order.number} de ${orderWho(order)}`}
       >
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -242,31 +274,26 @@ function OrderCard({
           </div>
           <OrderStatusBadge status={order.status} />
         </div>
-        <p className="mt-3 font-semibold">{order.customer.name}</p>
+        <p className="mt-3 font-semibold">{orderWho(order)}</p>
         <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted">
-          {order.fulfillment === 'DELIVERY' ? (
-            <Bike aria-hidden className="size-4" />
-          ) : (
-            <ShoppingBag aria-hidden className="size-4" />
-          )}
+          <FulfillmentIcon order={order} />
           {order.fulfillment === 'DELIVERY'
             ? `Entrega · ${order.address?.neighborhood ?? ''}`
-            : 'Retirada'}
+            : FULFILLMENT_LABEL[order.fulfillment]}
+          {order.channel !== 'ONLINE_STORE' && ` · ${ORDER_CHANNEL_LABEL[order.channel]}`}
         </p>
         <p className="mt-2 line-clamp-2 text-sm">
-          {order.items.map((i) => `${i.quantity}× ${i.productName}`).join(', ')}
+          {order.items
+            .filter((i) => i.status === 'ACTIVE')
+            .map((i) => `${i.quantity}× ${i.productName}`)
+            .join(', ')}
         </p>
         <p className="mt-2 text-sm text-muted">
           {itemsCount} {itemsCount === 1 ? 'item' : 'itens'} ·{' '}
           <span className="font-semibold text-fg tabular">
             {formatBRL(order.totals.totalCents)}
           </span>{' '}
-          · {PAYMENT_METHOD_LABEL[order.payment.method]}
-          {order.payment.status === 'PAID'
-            ? ' (pago)'
-            : order.payment.method === 'PIX' || order.payment.method === 'CARD_ONLINE'
-              ? ' (aguardando pagamento)'
-              : ''}
+          · {paymentLine(order)}
         </p>
       </button>
       {(forward || destructive.length > 0) && (
@@ -318,14 +345,16 @@ function OrderDetail({
   onChange: (status: OrderStatus, order: AdminOrder) => void;
 }) {
   const { forward } = useActions(order);
-  const whatsapp = `https://wa.me/55${order.customer.phone.replace(/^55/, '')}`;
+  const whatsapp = order.customer
+    ? `https://wa.me/55${order.customer.phone.replace(/^55/, '')}`
+    : null;
   return (
     <Dialog
       open
       onClose={onClose}
       variant="sheet"
       title={`Pedido #${order.number}`}
-      description={`${formatTime(order.createdAt)} · ${order.fulfillment === 'DELIVERY' ? 'Entrega' : 'Retirada'}`}
+      description={`${formatTime(order.createdAt)} · ${FULFILLMENT_LABEL[order.fulfillment]} · ${ORDER_CHANNEL_LABEL[order.channel]}${order.createdBy ? ` · por ${order.createdBy}` : ''}`}
       footer={
         forward ? (
           <Button block size="lg" onClick={() => onChange(forward, order)}>
@@ -336,16 +365,20 @@ function OrderDetail({
     >
       <OrderStatusBadge status={order.status} />
       <section className="mt-4">
-        <h3 className="text-sm font-semibold text-muted">Cliente</h3>
-        <p className="mt-1 font-semibold">{order.customer.name}</p>
-        <a
-          href={whatsapp}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-brand"
-        >
-          {formatPhone(order.customer.phone)} · WhatsApp
-        </a>
+        <h3 className="text-sm font-semibold text-muted">
+          {order.customer ? 'Cliente' : 'Atendimento'}
+        </h3>
+        <p className="mt-1 font-semibold">{orderWho(order)}</p>
+        {order.customer && whatsapp && (
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-brand"
+          >
+            {formatPhone(order.customer.phone)} · WhatsApp
+          </a>
+        )}
         {order.address && (
           <p className="text-sm">
             {order.address.street}, {order.address.number}
@@ -360,7 +393,10 @@ function OrderDetail({
         <h3 className="text-sm font-semibold text-muted">Itens</h3>
         <ul className="mt-2 divide-y divide-border">
           {order.items.map((item) => (
-            <li key={item.id} className="flex justify-between gap-3 py-2">
+            <li
+              key={item.id}
+              className={`flex justify-between gap-3 py-2 ${item.status === 'CANCELLED' ? 'text-muted line-through' : ''}`}
+            >
               <div>
                 <p className="font-semibold">
                   {item.quantity}× {item.productName}
@@ -372,6 +408,9 @@ function OrderDetail({
                 )}
                 {item.notes && (
                   <p className="text-sm font-medium text-warning">Obs.: {item.notes}</p>
+                )}
+                {item.cancelReason && (
+                  <p className="text-sm text-danger no-underline">Cancelado: {item.cancelReason}</p>
                 )}
               </div>
               <span className="text-sm tabular">{formatBRL(item.totalCents)}</span>
@@ -397,7 +436,10 @@ function OrderDetail({
         )}
         {order.totals.discountCents > 0 && (
           <div className="flex justify-between">
-            <dt className="text-muted">Desconto {order.couponCode && `(${order.couponCode})`}</dt>
+            <dt className="text-muted">
+              Desconto {order.couponCode && `(${order.couponCode})`}
+              {order.discountReason && ` · ${order.discountReason}`}
+            </dt>
             <dd className="tabular">−{formatBRL(order.totals.discountCents)}</dd>
           </div>
         )}
@@ -407,16 +449,9 @@ function OrderDetail({
         </div>
         <div className="flex justify-between">
           <dt className="text-muted">Pagamento</dt>
-          <dd>
-            {PAYMENT_METHOD_LABEL[order.payment.method]} ·{' '}
-            {order.payment.status === 'PAID'
-              ? 'pago'
-              : order.payment.status === 'FAILED'
-                ? 'falhou'
-                : 'pendente'}
-          </dd>
+          <dd>{paymentLine(order)}</dd>
         </div>
-        {order.payment.changeForCents && (
+        {order.payment?.changeForCents && (
           <div className="flex justify-between font-semibold">
             <dt>Levar troco para</dt>
             <dd className="tabular">

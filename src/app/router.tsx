@@ -260,6 +260,52 @@ const planRoute = createRoute({
   component: lazyRouteComponent(() => import('../features/admin/pages/plan-page'), 'PlanPage'),
 });
 
+const tableOrderRoute = createRoute({
+  getParentRoute: () => storeRoute,
+  path: 'mesa/$token',
+  component: lazyRouteComponent(
+    () => import('../features/store/table-order-page'),
+    'TableOrderPage',
+  ),
+});
+
+const kitchenRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'cozinha',
+  beforeLoad: requirePermission('orders:read'),
+  component: lazyRouteComponent(() => import('../features/admin/pos/kitchen-page'), 'KitchenPage'),
+});
+
+const posRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'pdv',
+  beforeLoad: requirePermission('pos:operate'),
+  validateSearch: z.object({ sessao: z.string().optional(), comanda: z.string().optional() }),
+  component: lazyRouteComponent(() => import('../features/admin/pos/pos-page'), 'PosPage'),
+});
+
+const tablesRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'mesas',
+  beforeLoad: requirePermission('pos:operate'),
+  component: lazyRouteComponent(() => import('../features/admin/pos/tables-page'), 'TablesPage'),
+});
+
+const tableQrRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'mesas/qr',
+  beforeLoad: requirePermission('tables:manage', '/admin/mesas'),
+  validateSearch: z.object({ mesa: z.string().optional() }),
+  component: lazyRouteComponent(() => import('../features/admin/pos/table-qr-page'), 'TableQrPage'),
+});
+
+const cashRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'caixa',
+  beforeLoad: requirePermission('cash:operate'),
+  component: lazyRouteComponent(() => import('../features/admin/pos/cash-page'), 'CashPage'),
+});
+
 const routeTree = rootRoute.addChildren([
   landingRoute,
   loginRoute,
@@ -269,6 +315,7 @@ const routeTree = rootRoute.addChildren([
     cartRoute,
     checkoutRoute,
     trackingRoute,
+    tableOrderRoute,
   ]),
   adminRoute.addChildren([
     dashboardRoute,
@@ -280,6 +327,11 @@ const routeTree = rootRoute.addChildren([
     growthRoute,
     settingsRoute,
     planRoute,
+    posRoute,
+    kitchenRoute,
+    tablesRoute,
+    tableQrRoute,
+    cashRoute,
   ]),
 ]);
 

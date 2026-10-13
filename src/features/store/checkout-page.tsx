@@ -178,7 +178,7 @@ export function CheckoutPage() {
     address:
       fulfillment === 'DELIVERY' ? { ...address, complement: address.complement || null } : null,
     payment: {
-      method,
+      method: method as CheckoutInput['payment']['method'],
       changeForCents: method === 'CASH' && needsChange ? parseMoneyToCents(changeFor) : null,
     },
     items: lines.map((l) => ({

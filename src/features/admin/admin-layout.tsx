@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  Armchair,
+  ChefHat,
   ClipboardList,
+  Monitor,
+  Wallet,
   CreditCard,
   ExternalLink,
   House,
@@ -14,7 +18,7 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import type { Permission } from '@hamb/shared';
+import type { FeatureKey, Permission } from '@hamb/shared';
 import { ROLE_LABEL } from '@hamb/shared';
 import { cn } from '../../lib/cn';
 import { api } from '../../lib/api';
@@ -22,18 +26,49 @@ import { Dialog, Badge } from '../../components/ui';
 import { Logo } from '../marketing/logo';
 import { useCan, useSession } from '../auth/session';
 import { adminQueries } from './api';
+import { useRealtime } from './realtime';
 
 interface NavItem {
   to: string;
   label: string;
   icon: LucideIcon;
   permission: Permission;
+  /** Hidden when the plan does not include it (the page itself explains locked features). */
+  feature?: FeatureKey;
   exact?: boolean;
 }
 
 const NAV: NavItem[] = [
   { to: '/admin', label: 'Início', icon: House, permission: 'analytics:read', exact: true },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ClipboardList, permission: 'orders:read' },
+  {
+    to: '/admin/cozinha',
+    label: 'Cozinha',
+    icon: ChefHat,
+    permission: 'orders:read',
+    feature: 'kitchen_display',
+  },
+  {
+    to: '/admin/pdv',
+    label: 'PDV',
+    icon: Monitor,
+    permission: 'pos:operate',
+    feature: 'basic_pos',
+  },
+  {
+    to: '/admin/mesas',
+    label: 'Mesas',
+    icon: Armchair,
+    permission: 'pos:operate',
+    feature: 'tables',
+  },
+  {
+    to: '/admin/caixa',
+    label: 'Caixa',
+    icon: Wallet,
+    permission: 'cash:operate',
+    feature: 'cash_register',
+  },
   { to: '/admin/cardapio', label: 'Cardápio', icon: UtensilsCrossed, permission: 'catalog:read' },
   { to: '/admin/clientes', label: 'Clientes', icon: Users, permission: 'customers:read' },
   {
@@ -54,10 +89,12 @@ const NAV: NavItem[] = [
 /** Desktop: sidebar. Mobile: bottom bar focused on operation (orders first) + "Mais" sheet. */
 export function AdminLayout() {
   const session = useSession();
-  const { can } = useCan();
+  const { can, hasFeature } = useCan();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [moreOpen, setMoreOpen] = useState(false);
-  const items = NAV.filter((item) => can(item.permission));
+  const items = NAV.filter(
+    (item) => can(item.permission) && (!item.feature || hasFeature(item.feature)),
+  );
   const mobilePrimary = items
     .filter((i) =>
       ['/admin', '/admin/pedidos', '/admin/cardapio', '/admin/clientes'].includes(i.to),
@@ -72,6 +109,7 @@ export function AdminLayout() {
     enabled: can('orders:read'),
   });
   const pendingCount = pending.data?.total ?? 0;
+  useRealtime(session.restaurant.id, can('orders:read'));
 
   return (
     <div className="min-h-dvh bg-bg lg:grid lg:grid-cols-[16rem_1fr]">
