@@ -5,6 +5,7 @@ import {
   ArrowDown,
   ArrowUp,
   FolderPlus,
+  ImageOff,
   Pencil,
   Plus,
   Trash2,
@@ -35,6 +36,8 @@ import {
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries, useAdminMutation, type AdminCategory, type AdminProduct } from '../api';
 import { UsageMeter } from '../components/feature-gate';
+import { ProductImage } from '../../../components/product-image';
+import { cn } from '../../../lib/cn';
 
 export function CatalogPage() {
   const [tab, setTab] = useState<'products' | 'categories'>('products');
@@ -97,6 +100,7 @@ function ProductsTab() {
   const { can } = useCan();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const [onlyMissing, setOnlyMissing] = useState(false);
   const products = useQuery(adminQueries.products(rid));
   const categories = useQuery(adminQueries.categories(rid));
 
@@ -122,7 +126,7 @@ function ProductsTab() {
     onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.admin.products(rid) }),
   });
 
-  if (products.isPending || categories.isPending) return <Skeleton className="h-64" />;
+  if (products.isPending || categories.isPending) return <Skeleton className="h-64 rounded-lg" />;
   if (products.isError)
     return <ErrorState message={products.error.message} onRetry={() => void products.refetch()} />;
   if (categories.isError)
@@ -134,7 +138,7 @@ function ProductsTab() {
     return (
       <>
         <PlanUsage />
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={UtensilsCrossed}
             title="Seu cardápio está vazio"
@@ -148,7 +152,7 @@ function ProductsTab() {
               (categories.data.length === 0 ? null : (
                 <Link
                   to="/admin/cardapio/novo"
-                  className="inline-flex h-11 items-center rounded-md bg-brand px-4 font-semibold text-brand-fg"
+                  className="inline-flex h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground"
                 >
                   Cadastrar produto
                 </Link>
@@ -166,20 +170,39 @@ function ProductsTab() {
   }
 
   const term = search.trim().toLowerCase();
-  const filtered = term
-    ? products.data.filter((p) => p.name.toLowerCase().includes(term))
-    : products.data;
+  const missingPhotos = products.data.filter((p) => !p.imageUrl).length;
+  const filtered = products.data.filter(
+    (p) => (!term || p.name.toLowerCase().includes(term)) && (!onlyMissing || !p.imageUrl),
+  );
 
   return (
     <>
       <PlanUsage />
-      <SearchField
-        value={search}
-        onChange={setSearch}
-        placeholder="Buscar produto"
-        label="Buscar produto"
-        className="mb-4 sm:max-w-sm"
-      />
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <SearchField
+          value={search}
+          onChange={setSearch}
+          placeholder="Buscar produto"
+          label="Buscar produto"
+          className="sm:w-80"
+        />
+        {missingPhotos > 0 && (
+          <button
+            type="button"
+            aria-pressed={onlyMissing}
+            onClick={() => setOnlyMissing((v) => !v)}
+            className={cn(
+              'inline-flex h-11 items-center gap-2 self-start rounded-md px-3.5 text-sm font-medium transition-colors duration-150 sm:self-auto',
+              onlyMissing
+                ? 'bg-warning-soft text-warning'
+                : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground',
+            )}
+          >
+            <ImageOff aria-hidden className="size-4" />
+            Sem foto ({missingPhotos})
+          </button>
+        )}
+      </div>
       <div className="space-y-6">
         {categories.data.map((category) => {
           const items = filtered.filter((p) => p.categoryId === category.id);
@@ -193,28 +216,19 @@ function ProductsTab() {
               <ul className="divide-y divide-border rounded-lg border border-border bg-surface">
                 {items.map((p) => (
                   <li key={p.id} className="flex items-center gap-3 p-3">
-                    {p.imageUrl ? (
-                      <img
-                        src={p.imageUrl}
-                        alt=""
-                        width={56}
-                        height={56}
-                        loading="lazy"
-                        className="size-14 shrink-0 rounded-md object-cover"
-                      />
-                    ) : (
-                      <span
-                        aria-hidden
-                        className="flex size-14 shrink-0 items-center justify-center rounded-md bg-surface-2 font-bold text-muted"
-                      >
-                        {p.name.slice(0, 1)}
-                      </span>
-                    )}
+                    <ProductImage
+                      src={p.imageUrl}
+                      name={p.name}
+                      size="sm"
+                      className={cn('size-14 shrink-0 rounded-md', !p.active && 'opacity-50')}
+                    />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">
-                        {p.name} {p.featured && <Badge tone="brand">Destaque</Badge>}
+                      <p className="flex min-w-0 items-center gap-2">
+                        <span className="truncate font-medium">{p.name}</span>
+                        {p.featured && <Badge tone="brand">Destaque</Badge>}
+                        {!p.imageUrl && <Badge tone="warning">Sem foto</Badge>}
                       </p>
-                      <p className="text-sm text-muted tabular">
+                      <p className="text-sm text-muted-foreground tabular">
                         {formatBRL(p.priceCents)}
                         {p.optionGroups.length > 0 &&
                           ` · ${p.optionGroups.length} grupo(s) de complementos`}
@@ -239,7 +253,7 @@ function ProductsTab() {
                           aria-checked={p.active}
                           aria-label={`${p.name} disponível`}
                           onClick={() => toggle.mutate({ id: p.id, active: !p.active })}
-                          className="sm:hidden"
+                          className="flex min-h-11 items-center sm:hidden"
                         >
                           <Badge tone={p.active ? 'success' : 'neutral'}>
                             {p.active ? 'Ativo' : 'Pausado'}
@@ -249,9 +263,9 @@ function ProductsTab() {
                           to="/admin/cardapio/$productId"
                           params={{ productId: p.id }}
                           aria-label={`Editar ${p.name}`}
-                          className="flex size-11 shrink-0 items-center justify-center rounded-md hover:bg-surface-2"
+                          className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-surface-muted hover:text-foreground"
                         >
-                          <Pencil aria-hidden className="size-5" />
+                          <Pencil aria-hidden className="size-[1.125rem]" />
                         </Link>
                       </>
                     )}
@@ -353,7 +367,7 @@ function CategoriesTab() {
         </Button>
       )}
       {list.length === 0 ? (
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={FolderPlus}
             title="Nenhuma categoria"

@@ -158,7 +158,7 @@ function Ingredients() {
         )}
       </div>
       {query.data.length === 0 ? (
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={Boxes}
             title="Nenhum insumo"
@@ -166,50 +166,97 @@ function Ingredients() {
           />
         </Card>
       ) : (
-        <Table label="Insumos">
-          <thead>
-            <tr>
-              <Th>Insumo</Th>
-              <Th className="text-right">Estoque</Th>
-              <Th className="text-right">Mínimo</Th>
-              <Th className="text-right">Custo</Th>
-              <Th className="text-right">Valor</Th>
-              <Th />
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          <ul
+            aria-label="Insumos"
+            className="divide-y divide-border rounded-lg border border-border bg-surface md:hidden"
+          >
             {query.data.map((i) => (
-              <tr key={i.id}>
-                <Td>
-                  <span className="font-semibold">{i.name}</span>{' '}
-                  {i.low && <Badge tone="warning">baixo</Badge>}
-                  {i.supplier && (
-                    <span className="block text-xs text-muted">{i.supplier.name}</span>
-                  )}
-                </Td>
-                <Td className="text-right tabular">{formatQuantity(i.stockQty, i.unit)}</Td>
-                <Td className="text-right tabular">{formatQuantity(i.minStockQty, i.unit)}</Td>
-                <Td className="text-right tabular">
+              <li key={i.id} className="p-3.5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{i.name}</span>
+                      {i.low && <Badge tone="warning">baixo</Badge>}
+                    </p>
+                    {i.supplier && (
+                      <p className="text-sm text-muted-foreground">{i.supplier.name}</p>
+                    )}
+                  </div>
+                  <p className="shrink-0 text-right">
+                    <span className="block font-semibold tabular">
+                      {formatQuantity(i.stockQty, i.unit)}
+                    </span>
+                    <span className="text-xs text-muted-foreground tabular">
+                      mín. {formatQuantity(i.minStockQty, i.unit)}
+                    </span>
+                  </p>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground tabular">
                   {formatBRL(i.costCentsPer1000 / (BIG[i.unit].factor === 1 ? 1000 : 1))}/
-                  {i.unit === 'UNIT' ? 'un' : BIG[i.unit].label === 'kg' ? 'kg' : 'l'}
-                </Td>
-                <Td className="text-right tabular">{formatBRL(i.valueCents)}</Td>
-                <Td className="whitespace-nowrap text-right">
-                  {can('inventory:write') && (
-                    <>
-                      <Button size="sm" variant="outline" onClick={() => setMoving(i)}>
-                        Movimentar
-                      </Button>
-                      <Button size="sm" variant="ghost" onClick={() => setEditing(i)}>
-                        Editar
-                      </Button>
-                    </>
-                  )}
-                </Td>
-              </tr>
+                  {i.unit === 'UNIT' ? 'un' : BIG[i.unit].label === 'kg' ? 'kg' : 'l'} · valor{' '}
+                  {formatBRL(i.valueCents)}
+                </p>
+                {can('inventory:write') && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <Button variant="secondary" onClick={() => setMoving(i)}>
+                      Movimentar
+                    </Button>
+                    <Button variant="ghost" onClick={() => setEditing(i)}>
+                      Editar
+                    </Button>
+                  </div>
+                )}
+              </li>
             ))}
-          </tbody>
-        </Table>
+          </ul>
+          <div className="hidden md:block">
+            <Table label="Insumos">
+              <thead>
+                <tr>
+                  <Th>Insumo</Th>
+                  <Th className="text-right">Estoque</Th>
+                  <Th className="text-right">Mínimo</Th>
+                  <Th className="text-right">Custo</Th>
+                  <Th className="text-right">Valor</Th>
+                  <Th />
+                </tr>
+              </thead>
+              <tbody>
+                {query.data.map((i) => (
+                  <tr key={i.id}>
+                    <Td>
+                      <span className="font-semibold">{i.name}</span>{' '}
+                      {i.low && <Badge tone="warning">baixo</Badge>}
+                      {i.supplier && (
+                        <span className="block text-xs text-muted">{i.supplier.name}</span>
+                      )}
+                    </Td>
+                    <Td className="text-right tabular">{formatQuantity(i.stockQty, i.unit)}</Td>
+                    <Td className="text-right tabular">{formatQuantity(i.minStockQty, i.unit)}</Td>
+                    <Td className="text-right tabular">
+                      {formatBRL(i.costCentsPer1000 / (BIG[i.unit].factor === 1 ? 1000 : 1))}/
+                      {i.unit === 'UNIT' ? 'un' : BIG[i.unit].label === 'kg' ? 'kg' : 'l'}
+                    </Td>
+                    <Td className="text-right tabular">{formatBRL(i.valueCents)}</Td>
+                    <Td className="whitespace-nowrap text-right">
+                      {can('inventory:write') && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => setMoving(i)}>
+                            Movimentar
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => setEditing(i)}>
+                            Editar
+                          </Button>
+                        </>
+                      )}
+                    </Td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </>
       )}
       {editing && (
         <IngredientDialog
@@ -477,28 +524,55 @@ function Movements() {
   if (query.isPending) return <Skeleton className="h-64" />;
   if (query.isError) return <ErrorState message={query.error.message} />;
   return (
-    <Table label="Movimentações">
-      <thead>
-        <tr>
-          <Th>Data</Th>
-          <Th>Insumo</Th>
-          <Th>Tipo</Th>
-          <Th className="text-right">Quantidade</Th>
-          <Th>Observação</Th>
-        </tr>
-      </thead>
-      <tbody>
+    <>
+      <ul
+        aria-label="Movimentações"
+        className="divide-y divide-border rounded-lg border border-border bg-surface md:hidden"
+      >
         {query.data.map((m) => (
-          <tr key={m.id}>
-            <Td>{formatDateTime(m.createdAt)}</Td>
-            <Td>{m.ingredient.name}</Td>
-            <Td>{STOCK_MOVEMENT_LABEL[m.type]}</Td>
-            <Td className="text-right tabular">{formatQuantity(m.quantity, m.ingredient.unit)}</Td>
-            <Td>{m.note ?? (m.orderId ? 'Pedido' : '')}</Td>
-          </tr>
+          <li key={m.id} className="flex items-start justify-between gap-3 p-3.5 text-sm">
+            <div className="min-w-0">
+              <p className="font-medium">{m.ingredient.name}</p>
+              <p className="text-muted-foreground">
+                {STOCK_MOVEMENT_LABEL[m.type]} · {formatDateTime(m.createdAt)}
+              </p>
+              {(m.note || m.orderId) && (
+                <p className="text-muted-foreground">{m.note ?? 'Pedido'}</p>
+              )}
+            </div>
+            <span className="shrink-0 font-semibold tabular">
+              {formatQuantity(m.quantity, m.ingredient.unit)}
+            </span>
+          </li>
         ))}
-      </tbody>
-    </Table>
+      </ul>
+      <div className="hidden md:block">
+        <Table label="Movimentações">
+          <thead>
+            <tr>
+              <Th>Data</Th>
+              <Th>Insumo</Th>
+              <Th>Tipo</Th>
+              <Th className="text-right">Quantidade</Th>
+              <Th>Observação</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {query.data.map((m) => (
+              <tr key={m.id}>
+                <Td>{formatDateTime(m.createdAt)}</Td>
+                <Td>{m.ingredient.name}</Td>
+                <Td>{STOCK_MOVEMENT_LABEL[m.type]}</Td>
+                <Td className="text-right tabular">
+                  {formatQuantity(m.quantity, m.ingredient.unit)}
+                </Td>
+                <Td>{m.note ?? (m.orderId ? 'Pedido' : '')}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    </>
   );
 }
 

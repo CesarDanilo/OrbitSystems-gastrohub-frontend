@@ -79,7 +79,7 @@ export function CustomersPage() {
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : query.data.items.length === 0 ? (
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={Users}
             title={search ? 'Nenhum cliente encontrado' : 'Seus clientes aparecem aqui'}

@@ -83,12 +83,14 @@ export function Section({
   );
 }
 
-export function StatCard({
+/** One indicator: label, value and change against the previous period. No box of its own. */
+export function Metric({
   label,
   value,
   change,
   icon: Icon,
   hint,
+  className,
 }: {
   label: string;
   value: string;
@@ -96,39 +98,84 @@ export function StatCard({
   change?: number | null;
   icon?: LucideIcon;
   hint?: string;
+  className?: string;
 }) {
   const pct = change == null ? null : Math.round(change * 100);
   const up = pct !== null && pct > 0;
   const down = pct !== null && pct < 0;
   return (
-    <Card className="p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-2 text-sm font-medium text-muted">
-        <span>{label}</span>
-        {Icon && <Icon aria-hidden className="size-4" />}
+    <div className={cn('min-w-0', className)}>
+      <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+        <span className="truncate">{label}</span>
+        {Icon && <Icon aria-hidden className="size-4 shrink-0" />}
       </div>
-      <p className="mt-2 text-2xl font-bold tracking-tight tabular sm:text-3xl">{value}</p>
-      <p className="mt-1 flex items-center gap-1 text-sm">
-        {pct !== null ? (
-          <>
-            <span
-              className={cn(
-                'inline-flex items-center font-semibold',
-                up && 'text-success',
-                down && 'text-danger',
-                !up && !down && 'text-muted',
-              )}
-            >
-              {up && <ArrowUpRight aria-hidden className="size-4" />}
-              {down && <ArrowDownRight aria-hidden className="size-4" />}
-              {pct > 0 ? '+' : ''}
-              {pct}%
-            </span>
-            <span className="text-muted">{hint ?? 'vs. período anterior'}</span>
-          </>
-        ) : (
-          <span className="text-muted">{hint ?? 'Sem dados do período anterior'}</span>
-        )}
-      </p>
+      <p className="mt-1.5 truncate text-2xl font-semibold tracking-tight tabular">{value}</p>
+      {(change !== undefined || hint) && (
+        <p className="mt-1 flex flex-wrap items-center gap-x-1 text-sm">
+          {pct !== null ? (
+            <>
+              <span
+                className={cn(
+                  'inline-flex items-center font-semibold tabular',
+                  up && 'text-success',
+                  down && 'text-destructive',
+                  !up && !down && 'text-muted-foreground',
+                )}
+              >
+                {up && <ArrowUpRight aria-hidden className="size-4" />}
+                {down && <ArrowDownRight aria-hidden className="size-4" />}
+                {pct > 0 ? '+' : ''}
+                {pct}%
+              </span>
+              <span className="text-muted-foreground">{hint ?? 'vs. período anterior'}</span>
+            </>
+          ) : (
+            <span className="text-muted-foreground">{hint ?? 'Sem dados do período anterior'}</span>
+          )}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Indicators side by side in one container, separated by hairlines (not a row of cards).
+ * Two per row on phones; `columns` per row from lg.
+ */
+export function MetricGroup({
+  label,
+  columns = 3,
+  children,
+  className,
+}: {
+  label: string;
+  columns?: 2 | 3 | 4;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      aria-label={label}
+      className={cn(
+        'grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border',
+        '[&>*]:bg-surface [&>*]:p-4 sm:[&>*]:p-5',
+        '[&>*:last-child:nth-child(odd)]:col-span-2',
+        columns === 2 && 'lg:grid-cols-2',
+        columns === 3 && 'lg:grid-cols-3 lg:[&>*:last-child:nth-child(odd)]:col-span-1',
+        columns === 4 && 'lg:grid-cols-4 lg:[&>*:last-child:nth-child(odd)]:col-span-1',
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
+
+/** A single indicator in its own card (kept for screens where it stands alone). */
+export function StatCard(props: Parameters<typeof Metric>[0]) {
+  return (
+    <Card className="p-4 sm:p-5">
+      <Metric {...props} />
     </Card>
   );
 }
@@ -202,7 +249,10 @@ export function Tabs<T extends string>({
 export function Table({ children, label }: { children: ReactNode; label: string }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-      <table className="w-full text-left text-sm" aria-label={label}>
+      <table
+        className="w-full text-left text-sm [&_tbody_tr:last-child_td]:border-b-0 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-surface-muted/40"
+        aria-label={label}
+      >
         {children}
       </table>
     </div>
@@ -213,7 +263,7 @@ export const Th = ({ children, className, ...props }: HTMLAttributes<HTMLTableCe
   <th
     scope="col"
     className={cn(
-      'border-b border-border bg-surface-2 px-4 py-3 text-xs font-semibold tracking-wide text-muted uppercase',
+      'border-b border-border px-4 py-3 text-sm font-medium whitespace-nowrap text-muted-foreground',
       className,
     )}
     {...props}

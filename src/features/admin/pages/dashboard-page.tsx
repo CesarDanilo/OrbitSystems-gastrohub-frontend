@@ -13,11 +13,13 @@ import {
   Card,
   EmptyState,
   ErrorState,
+  Metric,
+  MetricGroup,
   PageHeader,
   Skeleton,
-  StatCard,
   Tabs,
 } from '../../../components/ui';
+import { cn } from '../../../lib/cn';
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries } from '../api';
 import { UpgradeCard } from '../components/feature-gate';
@@ -39,17 +41,22 @@ export function DashboardPage() {
 
   return (
     <>
-      <PageHeader title={`Olá, ${firstName}`} description="Veja como está o seu restaurante." />
-      <Tabs
-        label="Período"
-        value={period}
-        onChange={setPeriod}
-        items={[
-          { value: 'today', label: 'Hoje' },
-          { value: '7d', label: '7 dias' },
-          { value: '30d', label: '30 dias' },
-        ]}
-        className="mb-4"
+      <PageHeader
+        title={`Olá, ${firstName}`}
+        description="Como está o restaurante agora."
+        actions={
+          <Tabs
+            label="Período"
+            value={period}
+            onChange={setPeriod}
+            items={[
+              { value: 'today', label: 'Hoje' },
+              { value: '7d', label: '7 dias' },
+              { value: '30d', label: '30 dias' },
+            ]}
+            className="pb-0"
+          />
+        }
       />
 
       {query.isPending ? (
@@ -78,6 +85,7 @@ function Dashboard({
 }) {
   const active = ACTIVE.filter((s) => data.activeOrders[s] > 0);
   const totalActive = ACTIVE.reduce((sum, s) => sum + data.activeOrders[s], 0);
+  const pending = data.activeOrders.PENDING;
   return (
     <div className="space-y-6">
       <section aria-labelledby="agora">
@@ -86,94 +94,82 @@ function Dashboard({
         </h2>
         <Link
           to="/admin/pedidos"
-          className="block rounded-lg bg-fg p-5 text-bg shadow-sm transition-transform duration-150 active:scale-[0.99]"
+          className={cn(
+            'flex flex-col gap-4 rounded-lg border p-5 transition-colors duration-150 sm:flex-row sm:items-center sm:justify-between',
+            pending > 0
+              ? 'border-primary/50 bg-primary-muted/30 hover:bg-primary-muted/45'
+              : 'border-border bg-surface hover:border-border-strong',
+          )}
         >
-          <p className="text-sm font-medium opacity-80">Pedidos em andamento</p>
-          <p className="mt-1 text-3xl font-bold tabular">{totalActive}</p>
+          <div className="min-w-0">
+            <p className="text-sm text-muted-foreground">Pedidos em andamento</p>
+            <p className="mt-1 flex items-baseline gap-3">
+              <span className="text-3xl font-semibold tracking-tight tabular">{totalActive}</span>
+              {pending > 0 && (
+                <span className="font-medium text-primary">
+                  {pending} {pending === 1 ? 'aguardando confirmação' : 'aguardando confirmação'}
+                </span>
+              )}
+            </p>
+          </div>
           {active.length > 0 ? (
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {active.map((s) => (
-                <li key={s} className="rounded-full bg-bg/15 px-3 py-1 text-sm font-semibold">
-                  {data.activeOrders[s]} {ORDER_STATUS_LABEL[s].toLowerCase()}
-                </li>
-              ))}
+            <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              {active
+                .filter((s) => s !== 'PENDING')
+                .map((s) => (
+                  <li key={s} className="text-muted-foreground">
+                    <span className="font-semibold text-foreground tabular">
+                      {data.activeOrders[s]}
+                    </span>{' '}
+                    {ORDER_STATUS_LABEL[s].toLowerCase()}
+                  </li>
+                ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm opacity-80">Nenhum pedido aberto agora.</p>
+            <p className="text-sm text-muted-foreground">Nenhum pedido aberto agora.</p>
           )}
         </Link>
       </section>
 
-      <section
-        aria-label={`Resultados: ${data.period.label}`}
-        className="grid gap-3 sm:grid-cols-3"
-      >
-        <StatCard
+      <MetricGroup label={`Resultados: ${data.period.label}`}>
+        <Metric
           label="Faturamento"
           value={formatBRL(data.revenueCents.current)}
           change={data.revenueCents.change}
           icon={Wallet}
         />
-        <StatCard
+        <Metric
           label="Pedidos"
           value={String(data.orders.current)}
           change={data.orders.change}
           icon={ShoppingBag}
         />
-        <StatCard
+        <Metric
           label="Ticket médio"
           value={formatBRL(data.averageTicketCents.current)}
           change={data.averageTicketCents.change}
           icon={Receipt}
         />
-      </section>
-
-      <section aria-labelledby="insights-title">
-        <h2 id="insights-title" className="mb-3 flex items-center gap-2 text-lg font-bold">
-          <Lightbulb aria-hidden className="size-5 text-brand" />O que você pode fazer
-        </h2>
-        {insights === undefined && !insightsLoading ? (
-          <UpgradeCard
-            title="Receba insights das suas vendas"
-            description="Ex.: quais produtos crescem, horários de pico e clientes para reconquistar."
-          />
-        ) : insightsLoading ? (
-          <Skeleton className="h-28" />
-        ) : insights && insights.length > 0 ? (
-          <ul className="grid gap-3 md:grid-cols-2">
-            {insights.slice(0, 4).map((insight) => (
-              <li key={insight.id}>
-                <InsightCard insight={insight} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <Card>
-            <EmptyState
-              icon={Lightbulb}
-              title="Ainda coletando dados"
-              description="Os insights aparecem quando houver pedidos suficientes para uma conclusão confiável."
-            />
-          </Card>
-        )}
-      </section>
+      </MetricGroup>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="p-5">
+        <Card className="min-w-0 p-5">
           <h2 className="font-semibold">Mais vendidos</h2>
-          <p className="text-sm text-muted">{data.period.label}</p>
+          <p className="text-sm text-muted-foreground">{data.period.label}</p>
           {data.topProducts.length === 0 ? (
-            <p className="mt-6 text-sm text-muted">Sem vendas no período.</p>
+            <p className="mt-6 text-sm text-muted-foreground">Sem vendas no período.</p>
           ) : (
             <ol className="mt-4 space-y-3">
               {data.topProducts.map((p, index) => (
                 <li key={p.productId ?? p.name} className="flex items-center gap-3">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-sm font-bold">
+                  <span className="w-5 shrink-0 text-sm font-semibold text-muted-foreground tabular">
                     {index + 1}
                   </span>
                   <span className="min-w-0 flex-1 truncate font-medium">{p.name}</span>
-                  <span className="text-sm text-muted tabular">{p.quantity} un.</span>
-                  <span className="w-24 text-right text-sm font-semibold tabular">
+                  <span className="shrink-0 text-sm text-muted-foreground tabular">
+                    {p.quantity} un.
+                  </span>
+                  <span className="w-24 shrink-0 text-right text-sm font-semibold tabular">
                     {formatBRL(p.revenueCents)}
                   </span>
                 </li>
@@ -182,9 +178,9 @@ function Dashboard({
           )}
         </Card>
 
-        <Card className="p-5">
+        <Card className="min-w-0 p-5">
           <h2 className="font-semibold">Pedidos por horário</h2>
-          <p className="text-sm text-muted">{data.period.label}</p>
+          <p className="text-sm text-muted-foreground">{data.period.label}</p>
           {data.advancedLocked ? (
             <div className="mt-4">
               <UpgradeCard
@@ -197,18 +193,48 @@ function Dashboard({
               <HourChart data={data.ordersByHour} />
               <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4 text-sm">
                 <div>
-                  <dt className="text-muted">Clientes novos</dt>
-                  <dd className="text-xl font-bold tabular">{data.newCustomers}</dd>
+                  <dt className="text-muted-foreground">Clientes novos</dt>
+                  <dd className="text-xl font-semibold tabular">{data.newCustomers}</dd>
                 </div>
                 <div>
-                  <dt className="text-muted">Clientes que voltaram</dt>
-                  <dd className="text-xl font-bold tabular">{data.returningCustomers}</dd>
+                  <dt className="text-muted-foreground">Clientes que voltaram</dt>
+                  <dd className="text-xl font-semibold tabular">{data.returningCustomers}</dd>
                 </div>
               </dl>
             </>
           )}
         </Card>
       </div>
+
+      <section aria-labelledby="insights-title">
+        <h2 id="insights-title" className="mb-3 flex items-center gap-2 text-base font-semibold">
+          <Lightbulb aria-hidden className="size-[1.125rem] text-primary" />O que você pode fazer
+        </h2>
+        {insights === undefined && !insightsLoading ? (
+          <UpgradeCard
+            title="Receba insights das suas vendas"
+            description="Ex.: quais produtos crescem, horários de pico e clientes para reconquistar."
+          />
+        ) : insightsLoading ? (
+          <Skeleton className="h-28 rounded-lg" />
+        ) : insights && insights.length > 0 ? (
+          <ul className="grid gap-3 md:grid-cols-2">
+            {insights.slice(0, 4).map((insight) => (
+              <li key={insight.id} className="min-w-0">
+                <InsightCard insight={insight} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="rounded-lg border border-dashed border-border">
+            <EmptyState
+              icon={Lightbulb}
+              title="Ainda coletando dados"
+              description="Os insights aparecem quando houver pedidos suficientes para uma conclusão confiável."
+            />
+          </div>
+        )}
+      </section>
     </div>
   );
 }
@@ -216,8 +242,8 @@ function Dashboard({
 export function InsightCard({ insight }: { insight: Insight }) {
   return (
     <Card className="h-full p-5">
-      <p className="text-xs font-semibold tracking-wide text-brand uppercase">{insight.title}</p>
-      <p className="mt-2 font-semibold">{insight.description}</p>
+      <p className="text-sm font-medium text-primary">{insight.title}</p>
+      <p className="mt-1.5 font-semibold">{insight.description}</p>
       <p className="mt-2 text-sm text-muted">{insight.recommendation}</p>
       <details className="mt-3 text-sm">
         <summary className="min-h-11 py-2 font-medium text-muted">Ver dados usados</summary>
@@ -254,8 +280,8 @@ function HourChart({ data }: { data: { hour: number; orders: number }[] }) {
             <div
               className={
                 d.hour === peak.hour
-                  ? 'w-full rounded-t-sm bg-brand'
-                  : 'w-full rounded-t-sm bg-brand/35'
+                  ? 'w-full rounded-t-sm bg-primary'
+                  : 'w-full rounded-t-sm bg-foreground/20'
               }
               style={{ height: `${Math.max(2, (d.orders / max) * 100)}%` }}
               title={`${d.hour}h: ${d.orders} pedidos`}
@@ -263,7 +289,7 @@ function HourChart({ data }: { data: { hour: number; orders: number }[] }) {
           </div>
         ))}
       </div>
-      <div aria-hidden className="mt-1 flex gap-1 text-[0.6875rem] text-muted">
+      <div aria-hidden className="mt-1 flex gap-1 overflow-hidden text-xs text-muted-foreground">
         {visible.map((d) => (
           <span key={d.hour} className="flex-1 text-center">
             {d.hour % 3 === 0 ? `${d.hour}h` : ''}
@@ -291,13 +317,12 @@ function HourChart({ data }: { data: { hour: number; orders: number }[] }) {
 function DashboardSkeleton() {
   return (
     <div className="space-y-6" aria-busy>
-      <Skeleton className="h-32" />
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
+      <Skeleton className="h-24 rounded-lg" />
+      <Skeleton className="h-32 rounded-lg" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-64 rounded-lg" />
+        <Skeleton className="h-64 rounded-lg" />
       </div>
-      <Skeleton className="h-40" />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { api, errorMessage } from '../../lib/api';
 import { formatBRL } from '../../lib/format';
 import { Alert, Button, ErrorState, Field, Input, PageSpinner } from '../../components/ui';
 import { ProductOptionsDialog, type TicketLine } from '../admin/pos/product-options-dialog';
+import { ProductImage } from '../../components/product-image';
 
 interface TableMenu {
   store: PublicStore;
@@ -180,16 +181,12 @@ export function TableOrderPage() {
                   onClick={() => add(p)}
                   className="flex w-full items-center gap-3 p-3 text-left disabled:opacity-50"
                 >
-                  {p.imageUrl && (
-                    <img
-                      src={p.imageUrl}
-                      alt=""
-                      width={64}
-                      height={64}
-                      loading="lazy"
-                      className="size-16 shrink-0 rounded-md object-cover"
-                    />
-                  )}
+                  <ProductImage
+                    src={p.imageUrl}
+                    name={p.name}
+                    size="sm"
+                    className="size-16 shrink-0 rounded-md"
+                  />
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">{p.name}</span>
                     {p.description && (

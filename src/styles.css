@@ -215,6 +215,7 @@
     font-size: 1rem;
     line-height: 1.5;
     caret-color: var(--brand);
+    overflow-wrap: break-word;
     scrollbar-color: var(--border-strong) transparent;
   }
   ::selection {

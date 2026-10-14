@@ -7,7 +7,8 @@ import {
   PageHeader,
   Section,
   Skeleton,
-  StatCard,
+  Metric,
+  MetricGroup,
 } from '../../components/ui';
 import { platformQueries } from './platform-api';
 
@@ -44,44 +45,44 @@ export function PlatformDashboardPage() {
         title="Visão geral da plataforma"
         description="Todos os restaurantes, assinaturas e receita contratada."
       />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
+      <MetricGroup label="Restaurantes e receita" columns={4}>
+        <Metric
           label="Restaurantes"
           value={String(d.restaurants.total)}
           hint={`${d.restaurants.suspended} suspensos`}
         />
-        <StatCard
+        <Metric
           label="Novos em 30 dias"
           value={String(d.restaurants.newLast30Days)}
           change={growth}
         />
-        <StatCard
+        <Metric
           label="MRR contratado"
           value={formatBRL(d.revenue.mrrContractedCents)}
           hint="estimativa, não é recebimento"
         />
-        <StatCard
+        <Metric
           label="ARR contratado"
           value={formatBRL(d.revenue.arrContractedCents)}
           hint="MRR × 12"
         />
-      </div>
-      <p className="mt-2 text-xs text-muted">{d.revenue.definition}</p>
+      </MetricGroup>
+      <p className="mt-2 text-xs text-muted-foreground">{d.revenue.definition}</p>
 
-      <Section title="Cobrança" className="mt-8">
+      <Section title="Cobrança" variant="plain" className="mt-8">
         {d.billing ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
+          <MetricGroup label="Cobrança" columns={4}>
+            <Metric
               label="Recebido (30 dias)"
               value={formatBRL(d.billing.receivedLast30DaysCents)}
             />
-            <StatCard label="A receber" value={formatBRL(d.billing.pendingCents)} />
-            <StatCard label="Em atraso" value={formatBRL(d.billing.overdueCents)} />
-            <StatCard
+            <Metric label="A receber" value={formatBRL(d.billing.pendingCents)} />
+            <Metric label="Em atraso" value={formatBRL(d.billing.overdueCents)} />
+            <Metric
               label="Estornado (30 dias)"
               value={formatBRL(d.billing.refundedLast30DaysCents)}
             />
-          </div>
+          </MetricGroup>
         ) : (
           <Alert tone="info" title="Sem faturas ainda">
             Recebimentos e inadimplência aparecem quando o provedor de cobrança estiver ativo.
@@ -91,7 +92,7 @@ export function PlatformDashboardPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <Card className="p-5">
-          <h2 className="font-bold">Assinaturas por situação</h2>
+          <h2 className="font-semibold">Assinaturas por situação</h2>
           <dl className="mt-3 space-y-2 text-sm">
             {(Object.keys(STATUS_LABEL) as (keyof typeof STATUS_LABEL)[]).map((k) => (
               <div key={k} className="flex justify-between">
@@ -106,7 +107,7 @@ export function PlatformDashboardPage() {
           </dl>
         </Card>
         <Card className="p-5">
-          <h2 className="font-bold">Assinaturas por plano</h2>
+          <h2 className="font-semibold">Assinaturas por plano</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {d.subscriptions.byPlan.map((p) => (
               <li key={p.code} className="flex justify-between">
@@ -117,7 +118,7 @@ export function PlatformDashboardPage() {
           </ul>
         </Card>
         <Card className="p-5">
-          <h2 className="font-bold">Uso nos últimos 30 dias</h2>
+          <h2 className="font-semibold">Uso nos últimos 30 dias</h2>
           <dl className="mt-3 space-y-2 text-sm">
             {Object.entries(d.usage.ordersByChannelLast30Days).map(([channel, count]) => (
               <div key={channel} className="flex justify-between">
@@ -140,7 +141,7 @@ export function PlatformDashboardPage() {
           </dl>
         </Card>
         <Card className="p-5">
-          <h2 className="font-bold">Cadastros por mês</h2>
+          <h2 className="font-semibold">Cadastros por mês</h2>
           {d.signupsByMonth.length === 0 ? (
             <p className="mt-3 text-sm text-muted">Sem cadastros nos últimos 6 meses.</p>
           ) : (

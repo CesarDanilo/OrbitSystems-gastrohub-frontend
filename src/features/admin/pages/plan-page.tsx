@@ -310,33 +310,56 @@ function Invoices() {
           Nenhum provedor real está conectado: simule a confirmação do pagamento.
         </Alert>
       )}
-      <Table label="Cobranças">
-        <thead>
-          <tr>
-            <Th>Descrição</Th>
-            <Th>Vencimento</Th>
-            <Th>Situação</Th>
-            <Th className="text-right">Valor</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.data.map((i) => (
-            <tr key={i.id}>
-              <Td>{i.description}</Td>
-              <Td>{formatDateTime(i.dueDate)}</Td>
-              <Td>
-                {INVOICE_STATUS[i.status]}
-                {i.paymentUrl && (
-                  <a href={i.paymentUrl} className="ml-2 font-semibold text-brand">
-                    Pagar
-                  </a>
-                )}
-              </Td>
-              <Td className="text-right tabular">{formatBRL(i.amountCents)}</Td>
+      <ul aria-label="Cobranças" className="-mx-1 divide-y divide-border md:hidden">
+        {invoices.data.map((i) => (
+          <li key={i.id} className="flex items-start justify-between gap-3 px-1 py-3 text-sm">
+            <div className="min-w-0">
+              <p className="font-medium">{i.description}</p>
+              <p className="text-muted-foreground">
+                {INVOICE_STATUS[i.status]} · vence {formatDateTime(i.dueDate)}
+              </p>
+              {i.paymentUrl && (
+                <a
+                  href={i.paymentUrl}
+                  className="inline-flex min-h-11 items-center font-semibold text-primary"
+                >
+                  Pagar
+                </a>
+              )}
+            </div>
+            <span className="shrink-0 font-semibold tabular">{formatBRL(i.amountCents)}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden md:block">
+        <Table label="Cobranças">
+          <thead>
+            <tr>
+              <Th>Descrição</Th>
+              <Th>Vencimento</Th>
+              <Th>Situação</Th>
+              <Th className="text-right">Valor</Th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {invoices.data.map((i) => (
+              <tr key={i.id}>
+                <Td>{i.description}</Td>
+                <Td>{formatDateTime(i.dueDate)}</Td>
+                <Td>
+                  {INVOICE_STATUS[i.status]}
+                  {i.paymentUrl && (
+                    <a href={i.paymentUrl} className="ml-2 font-semibold text-brand">
+                      Pagar
+                    </a>
+                  )}
+                </Td>
+                <Td className="text-right tabular">{formatBRL(i.amountCents)}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
     </Section>
   );
 }

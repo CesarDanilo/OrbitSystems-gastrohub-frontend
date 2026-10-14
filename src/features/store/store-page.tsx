@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { PublicProduct, PublicStore } from '@hamb/shared';
 import { cn } from '../../lib/cn';
+import { ProductImage as SharedProductImage } from '../../components/product-image';
 import { formatBRL } from '../../lib/format';
 import { normalizeSearch } from './search';
 import { storeQuery, recentOrders } from './queries';
@@ -294,31 +295,9 @@ function CategoryNav({ categories }: { categories: { id: string; name: string }[
   );
 }
 
+/** Store photo with the shared fallback (no photo or broken link). */
 function ProductImage({ product, className }: { product: PublicProduct; className?: string }) {
-  if (!product.imageUrl) {
-    return (
-      <div
-        aria-hidden
-        className={cn(
-          'flex items-center justify-center bg-brand-soft text-3xl font-bold text-brand',
-          className,
-        )}
-      >
-        {product.name.slice(0, 1)}
-      </div>
-    );
-  }
-  return (
-    <img
-      src={product.imageUrl}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      width={400}
-      height={400}
-      className={cn('object-cover', className)}
-    />
-  );
+  return <SharedProductImage src={product.imageUrl} name={product.name} className={className} />;
 }
 
 export function ProductCard({ slug, product }: { slug: string; product: PublicProduct }) {

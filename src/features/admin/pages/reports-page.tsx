@@ -20,7 +20,8 @@ import {
   PageHeader,
   Section,
   Skeleton,
-  StatCard,
+  Metric,
+  MetricGroup,
   Table,
   Td,
   Th,
@@ -85,28 +86,28 @@ export function ReportsPage() {
       </div>
 
       {query.isPending ? (
-        <Skeleton className="h-96" />
+        <Skeleton className="h-96 rounded-lg" />
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : (
         <div className="space-y-8">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
+          <MetricGroup label="Resultado do período" columns={4}>
+            <Metric
               label="Faturamento"
               value={formatBRL(query.data.revenueCents)}
               hint={`${query.data.orders} pedidos`}
             />
-            <StatCard
+            <Metric
               label="Recebido"
               value={formatBRL(query.data.receivedCents)}
               hint="pagamentos confirmados − estornos"
             />
-            <StatCard
+            <Metric
               label="A receber"
               value={formatBRL(query.data.pending.valueCents)}
               hint={`${query.data.pending.orders} pedidos sem pagamento total`}
             />
-            <StatCard
+            <Metric
               label="Lucro estimado"
               value={
                 query.data.estimatedProfitCents === null
@@ -119,17 +120,17 @@ export function ReportsPage() {
                   : 'faturamento − custo dos insumos'
               }
             />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard label="Ticket médio" value={formatBRL(query.data.averageTicketCents)} />
-            <StatCard label="Descontos" value={formatBRL(query.data.discountsCents)} />
-            <StatCard label="Taxas de entrega" value={formatBRL(query.data.deliveryFeesCents)} />
-            <StatCard
+          </MetricGroup>
+          <MetricGroup label="Operação do período" columns={4}>
+            <Metric label="Ticket médio" value={formatBRL(query.data.averageTicketCents)} />
+            <Metric label="Descontos" value={formatBRL(query.data.discountsCents)} />
+            <Metric label="Taxas de entrega" value={formatBRL(query.data.deliveryFeesCents)} />
+            <Metric
               label="Cancelados"
               value={formatBRL(query.data.cancelled.valueCents)}
               hint={`${query.data.cancelled.orders} pedidos`}
             />
-          </div>
+          </MetricGroup>
 
           <div className="grid gap-6 lg:grid-cols-3">
             <Breakdown
@@ -149,7 +150,7 @@ export function ReportsPage() {
               ])}
             />
             <Card className="p-5">
-              <h2 className="font-bold">Recebido por forma</h2>
+              <h2 className="font-semibold">Recebido por forma</h2>
               <dl className="mt-3 space-y-2 text-sm">
                 {Object.entries(query.data.receivedByMethod).map(([m, v]) => (
                   <div key={m} className="flex justify-between">
@@ -169,7 +170,7 @@ export function ReportsPage() {
             </Card>
           </div>
 
-          <Section title="Produtos mais vendidos">
+          <Section title="Produtos mais vendidos" variant="plain">
             <Table label="Produtos mais vendidos">
               <thead>
                 <tr>
@@ -206,7 +207,7 @@ export function ReportsPage() {
                     key={kind}
                     href={exportUrl(kind!)}
                     download
-                    className="inline-flex h-11 items-center gap-2 rounded-md border border-border-strong bg-surface px-4 font-semibold hover:bg-surface-2"
+                    className="inline-flex h-11 items-center gap-2 rounded-md bg-surface-muted px-4 text-[0.9375rem] font-medium transition-colors duration-150 hover:bg-border-strong"
                   >
                     <Download aria-hidden className="size-4" />
                     {label}
@@ -231,7 +232,7 @@ export function ReportsPage() {
 function Breakdown({ title, rows }: { title: string; rows: [string, number, number][] }) {
   return (
     <Card className="p-5">
-      <h2 className="font-bold">{title}</h2>
+      <h2 className="font-semibold">{title}</h2>
       {rows.length === 0 ? (
         <p className="mt-3 text-sm text-muted">Sem pedidos no período.</p>
       ) : (

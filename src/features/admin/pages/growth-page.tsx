@@ -74,7 +74,7 @@ function Insights() {
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : query.data.length === 0 ? (
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={Lightbulb}
             title="Ainda sem dados suficientes"
@@ -285,7 +285,7 @@ function Messages() {
         <ul className="divide-y divide-border">
           {query.data.slice(0, 20).map((m) => (
             <li key={m.id} className="py-3 text-sm">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                 <span className="font-semibold">
                   {m.direction === 'INBOUND' ? 'De' : 'Para'} {formatPhone(m.customerPhone)}
                 </span>
@@ -294,7 +294,9 @@ function Messages() {
                   {formatDateTime(m.createdAt)}
                 </span>
               </div>
-              <p className="mt-1 whitespace-pre-line text-muted">{m.body}</p>
+              <p className="mt-1 whitespace-pre-line text-muted [overflow-wrap:anywhere]">
+                {m.body}
+              </p>
             </li>
           ))}
         </ul>

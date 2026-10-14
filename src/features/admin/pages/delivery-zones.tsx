@@ -125,7 +125,7 @@ function Zones() {
           ))}
         </ul>
       ) : (
-        <Card>
+        <Card className="border-dashed">
           <EmptyState
             icon={MapPin}
             title="Nenhuma zona cadastrada"

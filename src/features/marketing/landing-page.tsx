@@ -60,15 +60,12 @@ export function LandingPage() {
 
       <main>
         <section className="mx-auto max-w-6xl px-4 pt-12 pb-16 text-center sm:pt-20">
-          <p className="mx-auto inline-flex rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand">
-            Para hamburguerias, pizzarias e lanchonetes
-          </p>
-          <h1 className="mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
+          <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
             Seu próprio canal de vendas. Sem comissão por pedido.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted">
-            Receba pedidos pela sua loja online, fale com seus clientes no WhatsApp e entenda o que
-            vende mais. Tudo em um só lugar.
+            Para hamburguerias, pizzarias e lanchonetes: receba pedidos pela sua loja online, fale
+            com seus clientes no WhatsApp e entenda o que vende mais. Tudo em um só lugar.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

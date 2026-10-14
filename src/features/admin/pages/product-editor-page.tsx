@@ -218,7 +218,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
         </Alert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] [&>*]:min-w-0">
         <div className="space-y-6">
           <Card className="space-y-4 p-5">
             <Field label="Nome" error={err('name')} required>
