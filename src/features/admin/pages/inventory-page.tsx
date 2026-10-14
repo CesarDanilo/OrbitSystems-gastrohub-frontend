@@ -8,7 +8,7 @@ import {
   STOCK_UNITS,
   type StockMovementType,
   type StockUnit,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api } from '../../../lib/api';
 import { formatBRL, formatDateTime, parseMoneyToCents } from '../../../lib/format';
 import {

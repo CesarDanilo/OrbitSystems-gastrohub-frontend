@@ -7,7 +7,7 @@ import {
   type AdminOrder,
   type OrderStatus,
   type Paginated,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api, errorMessage } from '../../../lib/api';
 import { cn } from '../../../lib/cn';
 import { formatTime, formatWait } from '../../../lib/format';

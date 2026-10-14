@@ -10,7 +10,7 @@ import {
   ShoppingBag,
   Store as StoreIcon,
 } from 'lucide-react';
-import type { PublicProduct, PublicStore } from '@hamb/shared';
+import type { PublicProduct, PublicStore } from '@gastrohub/shared';
 import { cn } from '../../lib/cn';
 import { ProductImage as SharedProductImage } from '../../components/product-image';
 import { formatBRL } from '../../lib/format';
@@ -126,7 +126,7 @@ export function StorePage() {
           <p className="mt-12 text-center text-xs text-muted-foreground">
             Loja criada com{' '}
             <Link to="/" className="font-semibold underline underline-offset-2">
-              Hamburguerias
+              GastroHub
             </Link>
           </p>
         )}

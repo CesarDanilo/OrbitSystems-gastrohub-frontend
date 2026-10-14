@@ -5,7 +5,7 @@ import {
   type CheckoutInput,
   type PublicOrder,
   type PublicStore,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 import { getSessionId } from '../../lib/session-id';
@@ -56,7 +56,7 @@ export interface SavedCustomer {
   fulfillment: CheckoutInput['fulfillment'];
 }
 
-const CUSTOMER_KEY = 'hamb:customer';
+const CUSTOMER_KEY = 'gastrohub:customer';
 
 export function loadSavedCustomer(): SavedCustomer | null {
   try {
@@ -82,7 +82,7 @@ export interface RecentOrder {
   createdAt: string;
 }
 
-const ORDERS_KEY = 'hamb:recent-orders';
+const ORDERS_KEY = 'gastrohub:recent-orders';
 
 export function rememberOrder(order: RecentOrder) {
   try {

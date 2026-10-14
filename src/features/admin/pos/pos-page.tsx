@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ShoppingBag, UtensilsCrossed } from 'lucide-react';
-import { type AdminOrder, type PublicProduct } from '@hamb/shared';
+import { type AdminOrder, type PublicProduct } from '@gastrohub/shared';
 import { formatBRL, parseMoneyToCents } from '../../../lib/format';
 import {
   Button,

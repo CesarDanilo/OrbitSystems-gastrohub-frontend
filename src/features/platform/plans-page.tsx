@@ -11,7 +11,7 @@ import {
   type LimitKey,
   type PlanLimits,
   type PlanTerms,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api } from '../../lib/api';
 import { cn } from '../../lib/cn';
 import { formatBRL, formatDateTime, parseMoneyToCents } from '../../lib/format';

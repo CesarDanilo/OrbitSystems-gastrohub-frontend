@@ -4,7 +4,7 @@
 (function () {
   var theme = 'dark';
   try {
-    if (localStorage.getItem('hamb-theme') === 'light') theme = 'light';
+    if (localStorage.getItem('gastrohub-theme') === 'light') theme = 'light';
   } catch {
     // Storage blocked: keep the default.
   }

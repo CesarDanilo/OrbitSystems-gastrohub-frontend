@@ -1,4 +1,4 @@
-import type { PublicProduct, PublicStore } from '@hamb/shared';
+import type { PublicProduct, PublicStore } from '@gastrohub/shared';
 
 export const burger: PublicProduct = {
   id: 'p1',

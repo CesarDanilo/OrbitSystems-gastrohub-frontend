@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Check, Minus } from 'lucide-react';
-import { LIMIT_DESCRIPTION, LIMIT_KEYS, type PublicPlanView } from '@hamb/shared';
+import { LIMIT_DESCRIPTION, LIMIT_KEYS, type PublicPlanView } from '@gastrohub/shared';
 import { api } from '../../lib/api';
 import { cn } from '../../lib/cn';
 import { formatBRL } from '../../lib/format';

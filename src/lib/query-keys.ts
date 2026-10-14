@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@hamb/shared';
+import type { OrderStatus } from '@gastrohub/shared';
 
 /**
  * Single source of query keys. Admin keys start with the restaurant id, so data of one tenant

@@ -2,7 +2,7 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
-import { loginSchema, signupSchema, type SessionInfo } from '@hamb/shared';
+import { loginSchema, signupSchema, type SessionInfo } from '@gastrohub/shared';
 import { api, ApiError, errorMessage } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 import { Alert, Button, Field, Input } from '../../components/ui';

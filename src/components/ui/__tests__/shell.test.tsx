@@ -14,12 +14,12 @@ describe('ThemeToggle', () => {
     const button = screen.getByRole('button', { name: 'Usar tema claro' });
     await userEvent.click(button);
     expect(document.documentElement).toHaveAttribute('data-theme', 'light');
-    expect(localStorage.getItem('hamb-theme')).toBe('light');
+    expect(localStorage.getItem('gastrohub-theme')).toBe('light');
     expect(screen.getByRole('button', { name: 'Usar tema escuro' })).toBeInTheDocument();
   });
 
   it('reads the saved preference', () => {
-    localStorage.setItem('hamb-theme', 'light');
+    localStorage.setItem('gastrohub-theme', 'light');
     render(<ThemeToggle />);
     expect(screen.getByRole('button', { name: 'Usar tema escuro' })).toBeInTheDocument();
   });
@@ -27,7 +27,7 @@ describe('ThemeToggle', () => {
 
 describe('usePreference', () => {
   function Sidebar() {
-    const [state, setState] = usePreference('hamb-sidebar', 'expanded', [
+    const [state, setState] = usePreference('gastrohub-sidebar', 'expanded', [
       'expanded',
       'collapsed',
     ] as const);
@@ -53,11 +53,11 @@ describe('usePreference', () => {
       'collapsed',
       'collapsed',
     ]);
-    expect(localStorage.getItem('hamb-sidebar')).toBe('collapsed');
+    expect(localStorage.getItem('gastrohub-sidebar')).toBe('collapsed');
   });
 
   it('ignores invalid stored values', () => {
-    localStorage.setItem('hamb-sidebar', 'giant');
+    localStorage.setItem('gastrohub-sidebar', 'giant');
     render(<Sidebar />);
     expect(screen.getByRole('button')).toHaveTextContent('expanded');
   });

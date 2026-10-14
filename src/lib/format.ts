@@ -1,4 +1,4 @@
-export { formatBRL } from '@hamb/shared';
+export { formatBRL } from '@gastrohub/shared';
 
 const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });

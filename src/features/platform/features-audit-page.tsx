@@ -6,7 +6,7 @@ import {
   FEATURE_STATUSES,
   type FeatureDefinitionView,
   type FeatureStatus,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api } from '../../lib/api';
 import { formatDateTime } from '../../lib/format';
 import {

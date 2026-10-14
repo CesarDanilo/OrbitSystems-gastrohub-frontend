@@ -50,7 +50,7 @@ test('a restaurant cannot read another restaurant data', async ({ page }) => {
   expect(stolen.status()).toBe(404);
   const update = await page.request.patch(`/api/admin/products/${brasaProductId}/active`, {
     data: { active: false },
-    headers: { 'x-requested-with': 'hamb' },
+    headers: { 'x-requested-with': 'gastrohub' },
   });
   expect(update.status()).toBe(404);
 

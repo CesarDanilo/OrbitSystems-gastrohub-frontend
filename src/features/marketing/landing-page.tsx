@@ -69,7 +69,7 @@ export function LandingPage() {
             Seu próprio canal de vendas. Sem comissão por pedido.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            Para hamburguerias, pizzarias e lanchonetes: receba pedidos pela sua loja online, fale
+            Para restaurantes, hamburguerias, pizzarias e lanchonetes: receba pedidos pela sua loja online, fale
             com seus clientes no WhatsApp e entenda o que vende mais. Tudo em um só lugar.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -121,7 +121,7 @@ export function LandingPage() {
         </section>
       </main>
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Hamburguerias
+        © {new Date().getFullYear()} GastroHub
       </footer>
     </div>
   );

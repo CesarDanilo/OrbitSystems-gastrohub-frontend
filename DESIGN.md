@@ -1,5 +1,5 @@
 ---
-name: Hamburguerias
+name: GastroHub
 description: Painel operacional de restaurantes — a passagem da cozinha à noite.
 colors:
   background: '#12100e'
@@ -106,7 +106,7 @@ components:
     height: '36px'
 ---
 
-# Design System: Hamburguerias
+# Design System: GastroHub
 
 ## Overview
 
@@ -183,7 +183,7 @@ repetida de cada item é secundária; só a urgente (confirmar pedido novo, inic
 
 ## Layout
 
-App shell com sidebar fixa (16rem expandida, 4.5rem recolhida, preferência salva em `hamb-sidebar`) e conteúdo em
+App shell com sidebar fixa (16rem expandida, 4.5rem recolhida, preferência salva em `gastrohub-sidebar`) e conteúdo em
 `max-w-7xl` com 16/24/32px de margem lateral. Abaixo de 1024px a sidebar vira drawer (`Drawer`, `<dialog>`).
 Grades fluidas com `minmax(0,1fr)` e filhos `min-w-0`; nenhuma página rola para o lado entre 320 e 1440px.
 Tabelas largas viram lista abaixo de 768px. Ritmo de espaço em múltiplos de 4px.

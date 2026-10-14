@@ -7,7 +7,7 @@ import {
   type DeliveryRuleInput,
   type DeliveryRuleType,
   type DeliveryRuleView,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL, parseMoneyToCents } from '../../../lib/format';
 import {

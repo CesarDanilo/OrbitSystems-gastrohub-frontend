@@ -22,7 +22,7 @@ describe('cart store', () => {
     const { add } = useCartStore.getState();
     add('loja-a', { productId: 'p1', quantity: 1, optionIds: [], notes: '' });
     expect(useCartStore.getState().carts['loja-b']).toBeUndefined();
-    expect(localStorage.getItem('hamb:cart')).toContain('loja-a');
+    expect(localStorage.getItem('gastrohub:cart')).toContain('loja-a');
   });
 
   it('removes a line when its quantity reaches zero', () => {

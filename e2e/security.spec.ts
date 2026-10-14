@@ -35,7 +35,7 @@ test('a user changes the password and the old one stops working', async ({ page,
 
   const old = await page.request.post('/api/auth/login', {
     data: { email, password: 'senha-antiga-123' },
-    headers: { 'x-requested-with': 'hamb' },
+    headers: { 'x-requested-with': 'gastrohub' },
   });
   expect(old.status()).toBe(401);
 });

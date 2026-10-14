@@ -13,7 +13,7 @@ import {
   WEEKDAY_LABELS,
   type PaymentMethod,
   type Role,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import type { z } from 'zod';
 import { api } from '../../../lib/api';
 import { centsToInput, formatPhone, parseMoneyToCents } from '../../../lib/format';
@@ -299,7 +299,7 @@ function AppearanceForm({ settings }: { settings: RestaurantSettings }) {
         ) : (
           <FeatureGate
             feature="white_label"
-            description="Banner próprio e loja sem a marca Hamburguerias."
+            description="Banner próprio e loja sem a marca GastroHub."
           >
             {null}
           </FeatureGate>

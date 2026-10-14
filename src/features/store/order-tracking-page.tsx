@@ -18,7 +18,7 @@ import {
   isTerminal,
   type OrderStatus,
   type PublicOrder,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { cn } from '../../lib/cn';
 import { api, ApiError } from '../../lib/api';
 import { formatBRL, formatTime } from '../../lib/format';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { CircleCheck, Minus, Plus, UtensilsCrossed } from 'lucide-react';
-import type { PublicOrder, PublicProduct, PublicStore } from '@hamb/shared';
+import type { PublicOrder, PublicProduct, PublicStore } from '@gastrohub/shared';
 import { api, errorMessage } from '../../lib/api';
 import { formatBRL } from '../../lib/format';
 import { Alert, Button, ErrorState, Field, Input, PageSpinner } from '../../components/ui';
@@ -15,7 +15,7 @@ interface TableMenu {
   requiresApproval: boolean;
 }
 
-const ORDERS_KEY = (token: string) => `hamb:table-orders:${token}`;
+const ORDERS_KEY = (token: string) => `gastrohub:table-orders:${token}`;
 
 function rememberOrder(token: string, order: PublicOrder) {
   try {

@@ -46,7 +46,7 @@ export default defineConfig({
         PORT: String(API_PORT),
         WEB_ORIGIN: `http://localhost:${WEB_PORT}`,
         LOG_LEVEL: 'warn',
-        UPLOAD_DIR: '../../node_modules/.cache/hamb-e2e-uploads',
+        UPLOAD_DIR: '../../node_modules/.cache/gastrohub-e2e-uploads',
       } as Record<string, string>,
     },
     {

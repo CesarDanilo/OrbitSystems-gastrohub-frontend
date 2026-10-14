@@ -1,4 +1,4 @@
-import type { PublicOptionGroup, PublicProduct } from '@hamb/shared';
+import type { PublicOptionGroup, PublicProduct } from '@gastrohub/shared';
 
 /** Selected option ids per group. */
 export type Selection = Record<string, string[]>;

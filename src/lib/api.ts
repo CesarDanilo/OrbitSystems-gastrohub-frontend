@@ -1,4 +1,4 @@
-import type { ApiErrorBody, ErrorCategory } from '@hamb/shared';
+import type { ApiErrorBody, ErrorCategory } from '@gastrohub/shared';
 
 /** Error thrown for any non-2xx API response, carrying the server's stable code. */
 export class ApiError extends Error {
@@ -38,7 +38,7 @@ async function request<T>(
       credentials: 'same-origin',
       headers: {
         // Required by the API on authenticated mutations (CSRF defense).
-        'x-requested-with': 'hamb',
+        'x-requested-with': 'gastrohub',
         ...(body !== undefined && !isForm ? { 'content-type': 'application/json' } : {}),
         ...init.headers,
       },

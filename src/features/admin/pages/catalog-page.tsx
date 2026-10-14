@@ -11,7 +11,7 @@ import {
   Trash2,
   UtensilsCrossed,
 } from 'lucide-react';
-import { categorySchema } from '@hamb/shared';
+import { categorySchema } from '@gastrohub/shared';
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

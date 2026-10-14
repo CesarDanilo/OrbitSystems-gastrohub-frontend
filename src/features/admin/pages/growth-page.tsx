@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Lightbulb, MessageCircle, Plus, TicketPercent } from 'lucide-react';
-import { couponSchema, type CouponInput } from '@hamb/shared';
+import { couponSchema, type CouponInput } from '@gastrohub/shared';
 import { api } from '../../../lib/api';
 import { formatBRL, formatDateTime, formatPhone, parseMoneyToCents } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

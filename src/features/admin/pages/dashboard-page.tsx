@@ -7,7 +7,7 @@ import {
   type DashboardSummary,
   type Insight,
   type OrderStatus,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { formatBRL } from '../../../lib/format';
 import {
   Card,

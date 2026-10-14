@@ -26,7 +26,7 @@ test('free plan hits a limit on the server, upgrade releases it', async ({ page 
   for (let i = existing.length + 1; i <= 5; i++) {
     const res = await page.request.post('/api/admin/categories', {
       data: { name: `Categoria ${i}` },
-      headers: { 'x-requested-with': 'hamb' },
+      headers: { 'x-requested-with': 'gastrohub' },
     });
     expect(res.status()).toBe(201);
   }

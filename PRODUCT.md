@@ -17,7 +17,7 @@ web
 
 ## Product Purpose
 
-SaaS white-label para hamburguerias, pizzarias e lanchonetes: canal próprio de vendas sem comissão por pedido
+SaaS white-label para restaurantes, hamburguerias, pizzarias e lanchonetes: canal próprio de vendas sem comissão por pedido
 (loja online, QR na mesa), operação do salão e do balcão (PDV, mesas, comandas, caixa, cozinha em tempo real) e gestão
 (cardápio com combos, estoque com ficha técnica, frete por CEP/distância, relatórios, crescimento). Sucesso: o
 restaurante vende mais pelo próprio canal e opera o serviço sem travar.
@@ -49,7 +49,7 @@ mesmas regras de preço calculadas no servidor; planos com preço contratado que
 
 ## Brand Commitments
 
-- Nome **Hamburguerias**, logo atual (`src/features/marketing/logo.tsx`).
+- Nome **GastroHub**, logo atual (`src/features/marketing/logo.tsx`).
 - Identidade escura atual com acento laranja gastronômico; **dark é o tema padrão** do painel e o light deve ser
   completo (decisão do usuário, 13/10/2026).
 - A loja do cliente continua clara, com a cor de cada restaurante (decisão do usuário, 13/10/2026).

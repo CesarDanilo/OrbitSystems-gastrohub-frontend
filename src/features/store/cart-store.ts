@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { DomainError, priceLine, type PublicProduct, type PublicStore } from '@hamb/shared';
+import { DomainError, priceLine, type PublicProduct, type PublicStore } from '@gastrohub/shared';
 
 /**
  * Local cart state (zustand + localStorage). Remote data stays in TanStack Query; the cart is
@@ -78,7 +78,7 @@ export const useCartStore = create<CartState>()(
       clear: (slug) => set((s) => ({ carts: { ...s.carts, [slug]: [] } })),
     }),
     {
-      name: 'hamb:cart',
+      name: 'gastrohub:cart',
       version: 1,
       storage: createJSONStorage(() => localStorage),
     },

@@ -11,7 +11,7 @@ import {
   type PaymentMethod,
   type PostalAddressView,
   type QuoteView,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { cn } from '../../lib/cn';
 import { api, ApiError, errorMessage } from '../../lib/api';
 import { centsToInput, formatBRL, parseMoneyToCents } from '../../lib/format';

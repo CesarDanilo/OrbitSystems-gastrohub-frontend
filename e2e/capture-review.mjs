@@ -11,7 +11,7 @@ mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
 async function session(viewport, theme) {
   const context = await browser.newContext({ viewport, locale: 'pt-BR' });
-  await context.addInitScript((t) => localStorage.setItem('hamb-theme', t), theme);
+  await context.addInitScript((t) => localStorage.setItem('gastrohub-theme', t), theme);
   const page = await context.newPage();
   await page.goto(`${BASE}/entrar`);
   await page.getByLabel('E-mail').fill('dono@brasa.dev');

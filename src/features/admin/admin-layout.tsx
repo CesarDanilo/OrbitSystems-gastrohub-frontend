@@ -23,8 +23,8 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import type { FeatureKey, Permission } from '@hamb/shared';
-import { ROLE_LABEL } from '@hamb/shared';
+import type { FeatureKey, Permission } from '@gastrohub/shared';
+import { ROLE_LABEL } from '@gastrohub/shared';
 import { cn } from '../../lib/cn';
 import { api } from '../../lib/api';
 import { usePreference } from '../../lib/preferences';
@@ -102,7 +102,7 @@ const NAV: NavItem[] = [
   { to: '/admin/plano', label: 'Plano', icon: CreditCard, permission: 'billing:manage' },
 ];
 
-export const SIDEBAR_KEY = 'hamb-sidebar';
+export const SIDEBAR_KEY = 'gastrohub-sidebar';
 const SIDEBAR_STATES = ['expanded', 'collapsed'] as const;
 
 /**

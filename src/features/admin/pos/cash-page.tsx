@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowDownLeft, ArrowUpRight, ChevronDown, Wallet } from 'lucide-react';
 import { cn } from '../../../lib/cn';
-import { CASH_MOVEMENT_LABEL, PAYMENT_METHOD_LABEL, type PaymentMethod } from '@hamb/shared';
+import { CASH_MOVEMENT_LABEL, PAYMENT_METHOD_LABEL, type PaymentMethod } from '@gastrohub/shared';
 import { formatBRL, formatDateTime, formatTime, parseMoneyToCents } from '../../../lib/format';
 import {
   Alert,

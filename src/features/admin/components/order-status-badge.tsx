@@ -1,4 +1,4 @@
-import { ORDER_STATUS_LABEL, type OrderStatus } from '@hamb/shared';
+import { ORDER_STATUS_LABEL, type OrderStatus } from '@gastrohub/shared';
 import { Badge, type Tone } from '../../../components/ui';
 
 const TONE: Record<OrderStatus, Tone> = {

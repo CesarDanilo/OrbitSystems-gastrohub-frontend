@@ -60,7 +60,7 @@ export function usePreference<T extends string>(
 
 export const THEMES = ['dark', 'light'] as const;
 export type Theme = (typeof THEMES)[number];
-export const THEME_KEY = 'hamb-theme';
+export const THEME_KEY = 'gastrohub-theme';
 const THEME_COLOR: Record<Theme, string> = { dark: '#12100e', light: '#f7f5f2' };
 
 /** Dark by default. public/theme-init.js applies the saved value before the first paint. */

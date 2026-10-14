@@ -7,7 +7,7 @@ import type {
   PaymentRecordView,
   PosOrderInput,
   TransferItemsInput,
-} from '@hamb/shared';
+} from '@gastrohub/shared';
 import { api, errorMessage } from '../../../lib/api';
 import { toast } from '../../../components/ui';
 

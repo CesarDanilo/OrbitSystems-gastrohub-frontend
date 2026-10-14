@@ -1,6 +1,6 @@
 /** Anonymous id for storefront analytics. No personal data. */
 export function getSessionId(): string {
-  const key = 'hamb:session-id';
+  const key = 'gastrohub:session-id';
   try {
     let id = localStorage.getItem(key);
     if (!id) {
