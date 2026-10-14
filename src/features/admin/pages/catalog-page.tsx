@@ -240,6 +240,7 @@ function ProductsTab() {
                           <Switch
                             checked={p.active}
                             onChange={(active) => toggle.mutate({ id: p.id, active })}
+                            ariaLabel={`${p.name} disponível`}
                             label={
                               <span className="text-sm text-muted">
                                 {p.active ? 'Disponível' : 'Pausado'}

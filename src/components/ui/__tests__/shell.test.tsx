@@ -142,3 +142,31 @@ describe('confirm', () => {
     await expect(result!).resolves.toBe(false);
   });
 });
+
+describe('Switch', () => {
+  it('is named by its visible label, or by an explicit name in lists', async () => {
+    const { Switch } = await import('../choice');
+    const { rerender } = render(
+      <Switch
+        checked
+        onChange={() => undefined}
+        label="Ativar WhatsApp"
+        description="Envia o status."
+      />,
+    );
+    const toggle = screen.getByRole('switch', { name: 'Ativar WhatsApp' });
+    expect(toggle).toHaveAccessibleDescription('Envia o status.');
+    rerender(
+      <Switch
+        checked={false}
+        onChange={() => undefined}
+        label="Pausado"
+        ariaLabel="X-Bacon disponível"
+      />,
+    );
+    expect(screen.getByRole('switch', { name: 'X-Bacon disponível' })).toHaveAttribute(
+      'aria-checked',
+      'false',
+    );
+  });
+});

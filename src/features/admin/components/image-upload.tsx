@@ -42,7 +42,7 @@ export function ImageUpload({
       <p id={`${id}-label`} className="mb-1.5 text-sm font-medium">
         {label}
       </p>
-      <div className="flex items-start gap-3">
+      <div className="flex flex-wrap items-start gap-3">
         <button
           type="button"
           aria-labelledby={`${id}-label`}

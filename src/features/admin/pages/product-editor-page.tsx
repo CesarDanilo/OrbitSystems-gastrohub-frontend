@@ -411,7 +411,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
             </div>
             <Button
               variant="outline"
-              className="mt-4"
+              className="mt-4 h-auto min-h-11 max-w-full py-2 whitespace-normal"
               leftIcon={<Plus aria-hidden className="size-5" />}
               onClick={() =>
                 set('groups', [

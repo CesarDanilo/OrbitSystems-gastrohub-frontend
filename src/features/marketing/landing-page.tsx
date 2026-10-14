@@ -41,7 +41,12 @@ export function LandingPage() {
   return (
     <div className="min-h-dvh bg-bg">
       <header className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Logo />
+        <span className="sm:hidden">
+          <Logo compact />
+        </span>
+        <span className="hidden sm:inline-flex">
+          <Logo />
+        </span>
         <nav aria-label="Principal" className="flex items-center gap-2">
           <Link
             to="/entrar"

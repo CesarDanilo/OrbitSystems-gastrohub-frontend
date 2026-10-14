@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import { useId, type InputHTMLAttributes, type ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '../../lib/cn';
 
@@ -61,13 +61,18 @@ export function Switch({
   label,
   description,
   disabled,
+  ariaLabel,
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: ReactNode;
   description?: ReactNode;
   disabled?: boolean;
+  /** Accessible name when the visible label alone is ambiguous (e.g. in a list of products). */
+  ariaLabel?: string;
 }) {
+  const labelId = useId();
+  const descriptionId = useId();
   return (
     <label
       className={cn(
@@ -76,21 +81,29 @@ export function Switch({
       )}
     >
       <span className="min-w-0">
-        <span className="block text-[0.9375rem] font-medium">{label}</span>
-        {description && <span className="block text-sm text-muted">{description}</span>}
+        <span id={labelId} className="block text-[0.9375rem] font-medium">
+          {label}
+        </span>
+        {description && (
+          <span id={descriptionId} className="block text-sm text-muted-foreground">
+            {description}
+          </span>
+        )}
       </span>
       <button
         type="button"
         role="switch"
         aria-checked={checked}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabel ? undefined : labelId}
+        aria-describedby={description ? descriptionId : undefined}
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={cn(
           'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors duration-200',
-          checked ? 'bg-brand' : 'bg-border-strong',
+          checked ? 'bg-success' : 'bg-border-strong',
         )}
       >
-        <span className="sr-only">{typeof label === 'string' ? label : 'Alternar'}</span>
         <span
           aria-hidden
           className={cn(

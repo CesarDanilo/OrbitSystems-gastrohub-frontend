@@ -13,7 +13,7 @@ import { ChevronDown, CircleAlert, Search, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 
 const controlBase =
-  'w-full rounded-md border bg-surface text-foreground placeholder:text-muted-foreground/80 transition-colors duration-150 ' +
+  'w-full rounded-md border bg-surface text-foreground placeholder:text-muted-foreground transition-colors duration-150 ' +
   'hover:border-border-strong focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus-ring ' +
   'disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted-foreground aria-invalid:border-destructive';
 
