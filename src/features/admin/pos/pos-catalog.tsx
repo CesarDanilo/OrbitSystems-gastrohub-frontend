@@ -85,7 +85,7 @@ export function PosCatalog({
         <div
           role="tablist"
           aria-label="Categorias"
-          className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+          className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,black_calc(100%-2.5rem),transparent)] sm:mx-0 sm:[mask-image:none] sm:flex-wrap sm:overflow-visible sm:px-0"
         >
           {tabs.map((c) => {
             const selected = categoryId === c.id;

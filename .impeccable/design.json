@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T23:00:00-03:00",
+  "title": "Design System: Hamburguerias",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Laranja de Fogo",
+        "canonical": "#f2711c",
+        "tonalRamp": [
+          "#3a1f0f",
+          "#5e2d0f",
+          "#8a3f12",
+          "#b85314",
+          "#f2711c",
+          "#f5904d",
+          "#f8b385",
+          "#fcd9c2"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Grafite Noturno",
+        "canonical": "#12100e",
+        "tonalRamp": [
+          "#0c0b0a",
+          "#12100e",
+          "#1a1715",
+          "#221e1b",
+          "#2a2522",
+          "#433c37",
+          "#a39d96",
+          "#ede9e4"
+        ]
+      },
+      "success": { "role": "state", "displayName": "Verde Sóbrio", "canonical": "#6fcf8e" },
+      "warning": { "role": "state", "displayName": "Âmbar", "canonical": "#e8b04a" },
+      "destructive": {
+        "role": "state",
+        "displayName": "Vermelho Controlado",
+        "canonical": "#f2857b"
+      },
+      "info": { "role": "state", "displayName": "Azul de Foco", "canonical": "#8ab4f0" }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Título da página", "purpose": "PageHeader de cada tela." },
+      "metric": {
+        "displayName": "Indicador",
+        "purpose": "Valores monetários e contagens, tabulares."
+      },
+      "label": { "displayName": "Rótulo", "purpose": "Campos, abas, chips e texto secundário." }
+    },
+    "shadows": [
+      {
+        "name": "xs",
+        "value": "0 1px 2px rgb(0 0 0 / 0.08)",
+        "purpose": "Item ativo do seletor segmentado."
+      },
+      {
+        "name": "md",
+        "value": "0 8px 24px -8px rgb(0 0 0 / 0.22)",
+        "purpose": "Elementos sobre fotos e tooltips."
+      },
+      {
+        "name": "lg",
+        "value": "0 24px 48px -16px rgb(0 0 0 / 0.38)",
+        "purpose": "Diálogos, sheets, drawer, toasts."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Entrada de sheets, drawer e diálogos."
+      },
+      { "name": "state", "value": "150ms", "purpose": "Cores e fundos de hover/seleção." },
+      {
+        "name": "sidebar",
+        "value": "width 150ms ease-out",
+        "purpose": "Recolher e expandir a sidebar."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal da tela; uma por contexto.",
+      "html": "<button class=\"ds-btn-primary\">Lançar e cobrar</button>",
+      "css": ".ds-btn-primary { background: #f2711c; color: #1a0f08; height: 44px; padding: 0 16px; border: 0; border-radius: 10px; font: 600 15px 'Plus Jakarta Sans', system-ui, sans-serif; transition: filter .15s, transform .15s; } .ds-btn-primary:hover { filter: brightness(.95); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 2px solid #8ab4f0; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ações repetidas e de apoio.",
+      "html": "<button class=\"ds-btn-secondary\">Marcar como pronto</button>",
+      "css": ".ds-btn-secondary { background: #2a2522; color: #ede9e4; height: 44px; padding: 0 16px; border: 0; border-radius: 10px; font: 600 15px 'Plus Jakarta Sans', system-ui, sans-serif; transition: background .15s; } .ds-btn-secondary:hover { background: #433c37; } .ds-btn-secondary:focus-visible { outline: 2px solid #8ab4f0; outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo de busca",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "44px, 16px de texto, limpar com X ou Esc.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Buscar produto\" />",
+      "css": ".ds-input { width: 260px; height: 44px; padding: 0 14px; background: #1a1715; color: #ede9e4; border: 1px solid #433c37; border-radius: 10px; font: 400 16px 'Plus Jakarta Sans', system-ui, sans-serif; } .ds-input::placeholder { color: #a39d96; } .ds-input:focus-visible { outline: 2px solid #8ab4f0; outline-offset: 0; }"
+    },
+    {
+      "name": "Item de navegação ativo",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Sidebar: fundo um degrau acima, ícone laranja.",
+      "html": "<a class=\"ds-nav ds-nav-active\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#f2711c\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><path d=\"M8 21h8M12 17v4\"/></svg>PDV</a><a class=\"ds-nav\" href=\"#\">Mesas</a>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px; border-radius: 10px; color: #c9c3bc; text-decoration: none; font: 500 15px 'Plus Jakarta Sans', system-ui, sans-serif; background: #0c0b0a; } .ds-nav:hover { color: #ede9e4; background: #241e1a99; } .ds-nav-active { background: #241e1a; color: #ede9e4; }"
+    },
+    {
+      "name": "Chip de categoria",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Filtro do catálogo; selecionado em laranja suave.",
+      "html": "<button class=\"ds-chip ds-chip-on\">Tudo</button><button class=\"ds-chip\">Burgers</button>",
+      "css": ".ds-chip { height: 36px; padding: 0 14px; border: 0; border-radius: 9999px; background: transparent; color: #a39d96; font: 500 14px 'Plus Jakarta Sans', system-ui, sans-serif; } .ds-chip:hover { background: #2a2522; color: #ede9e4; } .ds-chip-on { background: #3a1f0f; color: #f2711c; }"
+    },
+    {
+      "name": "Produto do PDV",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Foto 4:3, quantidade no pedido sobre a foto, nome e preço abaixo.",
+      "html": "<button class=\"ds-tile\"><span class=\"ds-tile-img\"><span class=\"ds-tile-count\">2</span><span class=\"ds-tile-add\">+</span></span><span class=\"ds-tile-name\">Batata Rústica</span><span class=\"ds-tile-price\">R$ 14,90</span></button>",
+      "css": ".ds-tile { display: flex; flex-direction: column; width: 180px; background: none; border: 0; padding: 0; text-align: left; color: #ede9e4; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; } .ds-tile-img { position: relative; aspect-ratio: 4/3; border-radius: 14px; background: #2a2522; } .ds-tile-count { position: absolute; top: 8px; left: 8px; min-width: 28px; height: 28px; border-radius: 9999px; background: #f2711c; color: #1a0f08; font-weight: 600; display: grid; place-items: center; } .ds-tile-add { position: absolute; right: 8px; bottom: 8px; width: 36px; height: 36px; border-radius: 9999px; background: #221e1bf2; display: grid; place-items: center; } .ds-tile:hover .ds-tile-add { background: #f2711c; color: #1a0f08; } .ds-tile-name { margin-top: 10px; font-weight: 500; font-size: 15px; } .ds-tile-price { margin-top: 4px; font-weight: 600; font-variant-numeric: tabular-nums; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Passagem da Cozinha",
+    "overview": "O painel é o balcão de passagem de uma cozinha à noite: grafite quente e silencioso, onde só a comida e a próxima ação têm cor. O visual existe para sumir na tarefa; a identidade mora nos neutros quentes, no laranja usado com parcimônia e nas fotos dos produtos.",
+    "keyCharacteristics": [
+      "Neutros quentes em quatro degraus",
+      "Um único acento laranja para ação, seleção e pedidos novos",
+      "Estados com texto além da cor",
+      "Elevação por borda; sombra só em camadas flutuantes",
+      "Fotos de produto em proporção fixa com placeholder honesto"
+    ],
+    "rules": [
+      {
+        "name": "A Regra da Única Voz",
+        "body": "O laranja aparece só onde há algo a fazer ou algo escolhido; ações repetidas são secundárias.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Cor que Fala",
+        "body": "Nenhum estado é comunicado só por cor.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra Sem Sobretítulo",
+        "body": "Nada de rótulo pequeno em caixa alta acima de títulos.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Elevação Única",
+        "body": "Borda ou sombra, nunca as duas na mesma camada.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar os tokens semânticos, nunca hex no componente",
+      "Do escrever o estado em texto além da cor",
+      "Do manter alvos operacionais com 44px",
+      "Do usar ProductImage onde houver produto",
+      "Do usar confirm() do kit em vez de window.confirm"
+    ],
+    "donts": [
+      "Don't pintar ações repetidas de laranja",
+      "Don't usar sobretítulos, texto em gradiente, vidro decorativo ou faixa lateral colorida",
+      "Don't aninhar caixas; use Section variant plain",
+      "Don't mostrar placeholder como foto nem inventar URLs de imagem"
+    ]
+  }
+}

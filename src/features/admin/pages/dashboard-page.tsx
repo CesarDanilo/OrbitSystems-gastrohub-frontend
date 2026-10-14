@@ -242,7 +242,7 @@ function Dashboard({
 export function InsightCard({ insight }: { insight: Insight }) {
   return (
     <Card className="h-full p-5">
-      <p className="text-sm font-medium text-primary">{insight.title}</p>
+      <p className="text-sm font-medium text-muted-foreground">{insight.title}</p>
       <p className="mt-1.5 font-semibold">{insight.description}</p>
       <p className="mt-2 text-sm text-muted-foreground">{insight.recommendation}</p>
       <details className="mt-3 text-sm">
@@ -278,7 +278,7 @@ function HourChart({ data }: { data: { hour: number; orders: number }[] }) {
     <figure className="mt-4">
       <div aria-hidden className="flex h-32 items-end gap-1">
         {visible.map((d) => (
-          <div key={d.hour} className="flex flex-1 flex-col items-center gap-1">
+          <div key={d.hour} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
             <div
               className={
                 d.hour === peak.hour
