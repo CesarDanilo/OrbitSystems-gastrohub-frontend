@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart3, Lightbulb, Receipt, ShoppingBag, Wallet } from 'lucide-react';
+import { BarChart3, ChevronRight, Lightbulb, Receipt, ShoppingBag, Wallet } from 'lucide-react';
 import {
   ORDER_STATUS_LABEL,
   type DashboardSummary,
@@ -23,6 +23,8 @@ import { cn } from '../../../lib/cn';
 import { useCan, useSession } from '../../auth/session';
 import { adminQueries } from '../api';
 import { UpgradeCard } from '../components/feature-gate';
+import { ProductImage } from '../../../components/product-image';
+import { useProductImages } from '../use-product-images';
 
 type Period = 'today' | '7d' | '30d';
 const ACTIVE: OrderStatus[] = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'OUT_FOR_DELIVERY'];
@@ -83,6 +85,9 @@ function Dashboard({
   insights?: Insight[];
   insightsLoading: boolean;
 }) {
+  const images = useProductImages();
+  const { can } = useCan();
+  const canEditMenu = can('catalog:read');
   const active = ACTIVE.filter((s) => data.activeOrders[s] > 0);
   const totalActive = ACTIVE.reduce((sum, s) => sum + data.activeOrders[s], 0);
   const pending = data.activeOrders.PENDING;
@@ -159,21 +164,51 @@ function Dashboard({
           {data.topProducts.length === 0 ? (
             <p className="mt-6 text-sm text-muted-foreground">Sem vendas no período.</p>
           ) : (
-            <ol className="mt-4 space-y-3">
-              {data.topProducts.map((p, index) => (
-                <li key={p.productId ?? p.name} className="flex items-center gap-3">
-                  <span className="w-5 shrink-0 text-sm font-semibold text-muted-foreground tabular">
-                    {index + 1}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate font-medium">{p.name}</span>
-                  <span className="shrink-0 text-sm text-muted-foreground tabular">
-                    {p.quantity} un.
-                  </span>
-                  <span className="w-24 shrink-0 text-right text-sm font-semibold tabular">
-                    {formatBRL(p.revenueCents)}
-                  </span>
-                </li>
-              ))}
+            <ol className="-mx-2 mt-3">
+              {data.topProducts.map((p, index) => {
+                const row = (
+                  <>
+                    <span className="w-4 shrink-0 text-sm font-semibold text-muted-foreground tabular">
+                      {index + 1}
+                    </span>
+                    <ProductImage
+                      src={p.productId ? images.get(p.productId) : null}
+                      name={p.name}
+                      size="sm"
+                      className="size-11 shrink-0 rounded-md"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium">{p.name}</span>
+                      <span className="text-sm text-muted-foreground tabular">
+                        {p.quantity} un.
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-right text-sm font-semibold tabular">
+                      {formatBRL(p.revenueCents)}
+                    </span>
+                  </>
+                );
+                return (
+                  <li key={p.productId ?? p.name}>
+                    {p.productId && canEditMenu ? (
+                      <Link
+                        to="/admin/cardapio/$productId"
+                        params={{ productId: p.productId }}
+                        aria-label={`${index + 1}º ${p.name}: ${p.quantity} unidades, ${formatBRL(p.revenueCents)}. Abrir cadastro`}
+                        className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 transition-colors duration-150 hover:bg-surface-muted"
+                      >
+                        {row}
+                        <ChevronRight
+                          aria-hidden
+                          className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground"
+                        />
+                      </Link>
+                    ) : (
+                      <div className="flex items-center gap-3 px-2 py-2">{row}</div>
+                    )}
+                  </li>
+                );
+              })}
             </ol>
           )}
         </Card>

@@ -30,6 +30,8 @@ import { useCan, useSession } from '../../auth/session';
 import { FeatureGate } from '../components/feature-gate';
 import { OrderStatusBadge } from '../components/order-status-badge';
 import { PaymentDialog, type PaymentTarget } from './payment-dialog';
+import { ProductImage } from '../../../components/product-image';
+import { useProductImages } from '../use-product-images';
 import {
   posApi,
   posQueries,
@@ -302,6 +304,7 @@ function OrderItems({
   const session = useSession();
   const rid = session.restaurant.id;
   const { can } = useCan();
+  const images = useProductImages();
   const cancel = usePosMutation(
     rid,
     ({ orderId, itemId, reason }: { orderId: string; itemId: string; reason: string }) =>
@@ -336,12 +339,23 @@ function OrderItems({
               <li
                 key={item.id}
                 className={cn(
-                  'flex items-center justify-between gap-2 py-1.5 text-sm',
+                  'flex items-center justify-between gap-3 py-2 text-sm',
                   item.status === 'CANCELLED' && 'text-muted-foreground line-through',
                 )}
               >
-                <span>
-                  {item.quantity}× {item.productName}
+                <ProductImage
+                  src={item.productId ? images.get(item.productId) : null}
+                  name={item.productName}
+                  size="sm"
+                  className={cn(
+                    'size-11 shrink-0 rounded-md',
+                    item.status === 'CANCELLED' && 'opacity-50 grayscale',
+                  )}
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="font-medium">
+                    <span className="tabular">{item.quantity}×</span> {item.productName}
+                  </span>
                   {item.options.length > 0 && (
                     <span className="text-muted-foreground">
                       {' '}

@@ -44,8 +44,9 @@ import { FeatureGate } from '../components/feature-gate';
 import { ImageUpload } from '../components/image-upload';
 import { DeliveryZones } from './delivery-zones';
 import { PaymentAccount } from './payment-account';
+import { ProductImportSection } from '../import/product-import-section';
 
-type Tab = 'store' | 'delivery' | 'hours' | 'payments' | 'integrations' | 'team';
+type Tab = 'store' | 'delivery' | 'hours' | 'payments' | 'import' | 'integrations' | 'team';
 
 export function SettingsPage() {
   const { can } = useCan();
@@ -57,6 +58,7 @@ export function SettingsPage() {
     { value: 'delivery', label: 'Entrega' },
     { value: 'hours', label: 'Horários' },
     { value: 'payments', label: 'Pagamentos' },
+    ...(can('catalog:write') ? [{ value: 'import' as Tab, label: 'Importar produtos' }] : []),
     ...(can('integrations:write')
       ? [{ value: 'integrations' as Tab, label: 'WhatsApp e IA' }]
       : []),
@@ -103,6 +105,7 @@ export function SettingsPage() {
               <PaymentAccount />
             </>
           )}
+          {tab === 'import' && <ProductImportSection />}
           {tab === 'integrations' && <IntegrationsForm />}
           {tab === 'team' && <TeamSection />}
         </div>
