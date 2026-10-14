@@ -121,12 +121,12 @@ export function TableOrderPage() {
   return (
     <div className="mx-auto max-w-xl px-4 pt-6 pb-40">
       <header className="flex items-center gap-3">
-        <span className="flex size-12 items-center justify-center rounded-full bg-brand text-brand-fg">
+        <span className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <UtensilsCrossed aria-hidden className="size-6" />
         </span>
         <div>
           <h1 className="text-xl font-bold">{store.name}</h1>
-          <p className="text-muted">{table.label} · peça pelo celular</p>
+          <p className="text-muted-foreground">{table.label} · peça pelo celular</p>
         </div>
       </header>
 
@@ -152,7 +152,7 @@ export function TableOrderPage() {
       )}
 
       {mine.length > 0 && !placed && (
-        <p className="mt-4 text-sm text-muted">
+        <p className="mt-4 text-sm text-muted-foreground">
           Seus pedidos nesta mesa:{' '}
           {mine.map((o, i) => (
             <span key={o.token}>
@@ -160,7 +160,7 @@ export function TableOrderPage() {
               <Link
                 to="/s/$slug/pedido/$token"
                 params={{ slug, token: o.token }}
-                className="font-semibold text-brand"
+                className="font-semibold text-primary"
               >
                 #{o.number}
               </Link>
@@ -190,13 +190,15 @@ export function TableOrderPage() {
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">{p.name}</span>
                     {p.description && (
-                      <span className="line-clamp-2 text-sm text-muted">{p.description}</span>
+                      <span className="line-clamp-2 text-sm text-muted-foreground">
+                        {p.description}
+                      </span>
                     )}
                     <span className="mt-1 block font-semibold tabular">
                       {formatBRL(p.priceCents)}
                     </span>
                   </span>
-                  <Plus aria-hidden className="size-5 text-brand" />
+                  <Plus aria-hidden className="size-5 text-primary" />
                 </button>
               </li>
             ))}
@@ -213,13 +215,13 @@ export function TableOrderPage() {
                   <span className="min-w-0 flex-1 truncate">
                     {l.name}
                     {l.optionNames.length > 0 && (
-                      <span className="text-muted"> · {l.optionNames.join(', ')}</span>
+                      <span className="text-muted-foreground"> · {l.optionNames.join(', ')}</span>
                     )}
                   </span>
                   <button
                     type="button"
                     aria-label={`Menos ${l.name}`}
-                    className="flex size-8 items-center justify-center rounded-full bg-surface-2"
+                    className="flex size-8 items-center justify-center rounded-full bg-surface-muted"
                     onClick={() => change(l.key, -1)}
                   >
                     <Minus className="size-4" />
@@ -228,7 +230,7 @@ export function TableOrderPage() {
                   <button
                     type="button"
                     aria-label={`Mais ${l.name}`}
-                    className="flex size-8 items-center justify-center rounded-full bg-surface-2"
+                    className="flex size-8 items-center justify-center rounded-full bg-surface-muted"
                     onClick={() => change(l.key, 1)}
                   >
                     <Plus className="size-4" />

@@ -139,8 +139,8 @@ function Ingredients() {
         </Alert>
       )}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-muted">
-          Valor em estoque: <strong className="tabular text-fg">{formatBRL(total)}</strong>
+        <p className="text-sm text-muted-foreground">
+          Valor em estoque: <strong className="tabular text-foreground">{formatBRL(total)}</strong>
         </p>
         {can('inventory:write') && (
           <div className="flex gap-2">
@@ -229,7 +229,9 @@ function Ingredients() {
                       <span className="font-semibold">{i.name}</span>{' '}
                       {i.low && <Badge tone="warning">baixo</Badge>}
                       {i.supplier && (
-                        <span className="block text-xs text-muted">{i.supplier.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {i.supplier.name}
+                        </span>
                       )}
                     </Td>
                     <Td className="text-right tabular">{formatQuantity(i.stockQty, i.unit)}</Td>
@@ -498,7 +500,9 @@ function CountDialog({
           <div key={i.id} className="flex items-center justify-between gap-3 text-sm">
             <span>
               {i.name}{' '}
-              <span className="text-muted">· sistema: {formatQuantity(i.stockQty, i.unit)}</span>
+              <span className="text-muted-foreground">
+                · sistema: {formatQuantity(i.stockQty, i.unit)}
+              </span>
             </span>
             <Input
               aria-label={`Contagem de ${i.name}`}
@@ -615,7 +619,7 @@ function Suppliers() {
         {(query.data ?? []).map((s) => (
           <li key={s.id} className="p-3 text-sm">
             <span className="font-semibold">{s.name}</span>{' '}
-            {s.phone && <span className="text-muted">· {s.phone}</span>}
+            {s.phone && <span className="text-muted-foreground">· {s.phone}</span>}
           </li>
         ))}
       </ul>

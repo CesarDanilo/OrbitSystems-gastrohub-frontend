@@ -251,7 +251,8 @@ function PaymentList({ payments }: { payments: PaymentRecordView[] }) {
     ({ id, reason }: { id: string; reason: string }) => posApi.refund(id, reason),
     'Pagamento estornado',
   );
-  if (payments.length === 0) return <p className="text-sm text-muted">Nenhum pagamento ainda.</p>;
+  if (payments.length === 0)
+    return <p className="text-sm text-muted-foreground">Nenhum pagamento ainda.</p>;
   return (
     <ul className="divide-y divide-border text-sm">
       {payments.map((p) => (
@@ -317,7 +318,8 @@ function OrderItems({
       }),
     'Item transferido',
   );
-  if (orders.length === 0) return <p className="text-sm text-muted">Nenhum pedido lançado.</p>;
+  if (orders.length === 0)
+    return <p className="text-sm text-muted-foreground">Nenhum pedido lançado.</p>;
   return (
     <ul className="space-y-3">
       {orders.map((order) => (
@@ -335,13 +337,13 @@ function OrderItems({
                 key={item.id}
                 className={cn(
                   'flex items-center justify-between gap-2 py-1.5 text-sm',
-                  item.status === 'CANCELLED' && 'text-muted line-through',
+                  item.status === 'CANCELLED' && 'text-muted-foreground line-through',
                 )}
               >
                 <span>
                   {item.quantity}× {item.productName}
                   {item.options.length > 0 && (
-                    <span className="text-muted">
+                    <span className="text-muted-foreground">
                       {' '}
                       · {item.options.map((o) => o.optionName).join(', ')}
                     </span>
@@ -360,7 +362,7 @@ function OrderItems({
                             type="button"
                             {...props}
                             aria-label={`Ações de ${item.productName}`}
-                            className="flex size-9 items-center justify-center rounded-md hover:bg-surface-2"
+                            className="flex size-9 items-center justify-center rounded-md hover:bg-surface-muted"
                           >
                             <MoreVertical className="size-4" />
                           </button>
@@ -406,17 +408,17 @@ function BillTotals({
   bill: { totalCents: number; paidCents: number; balanceCents: number };
 }) {
   return (
-    <dl className="grid grid-cols-3 gap-2 rounded-md bg-surface-2 p-3 text-center text-sm">
+    <dl className="grid grid-cols-3 gap-2 rounded-md bg-surface-muted p-3 text-center text-sm">
       <div>
-        <dt className="text-muted">Consumo</dt>
+        <dt className="text-muted-foreground">Consumo</dt>
         <dd className="font-semibold tabular">{formatBRL(bill.totalCents)}</dd>
       </div>
       <div>
-        <dt className="text-muted">Pago</dt>
+        <dt className="text-muted-foreground">Pago</dt>
         <dd className="font-semibold tabular">{formatBRL(bill.paidCents)}</dd>
       </div>
       <div>
-        <dt className="text-muted">Falta</dt>
+        <dt className="text-muted-foreground">Falta</dt>
         <dd className="text-base font-bold tabular">{formatBRL(Math.max(bill.balanceCents, 0))}</dd>
       </div>
     </dl>
@@ -514,7 +516,7 @@ function SessionDialog({ sessionId, onClose }: { sessionId: string; onClose: () 
           {hasFeature('tabs') && (
             <section>
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-muted">Comandas desta mesa</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground">Comandas desta mesa</h3>
                 {query.data.status === 'OPEN' && (
                   <Button size="sm" variant="ghost" onClick={() => setNewTab(true)}>
                     Abrir comanda
@@ -522,7 +524,7 @@ function SessionDialog({ sessionId, onClose }: { sessionId: string; onClose: () 
                 )}
               </div>
               {query.data.tabs.length === 0 ? (
-                <p className="text-sm text-muted">Conta única da mesa.</p>
+                <p className="text-sm text-muted-foreground">Conta única da mesa.</p>
               ) : (
                 <ul className="space-y-2">
                   {query.data.tabs.map((tab) => (
@@ -532,7 +534,7 @@ function SessionDialog({ sessionId, onClose }: { sessionId: string; onClose: () 
                     >
                       <span>
                         <strong>{tab.code}</strong> {tab.name}
-                        <span className="text-muted">
+                        <span className="text-muted-foreground">
                           {' '}
                           · falta {formatBRL(Math.max(tab.balanceCents, 0))}
                         </span>
@@ -559,14 +561,14 @@ function SessionDialog({ sessionId, onClose }: { sessionId: string; onClose: () 
             </section>
           )}
           <section>
-            <h3 className="mb-2 text-sm font-semibold text-muted">Pedidos</h3>
+            <h3 className="mb-2 text-sm font-semibold text-muted-foreground">Pedidos</h3>
             <OrderItems
               orders={query.data.orders}
               destinations={query.data.status === 'OPEN' ? destinations : []}
             />
           </section>
           <section>
-            <h3 className="mb-2 text-sm font-semibold text-muted">Pagamentos</h3>
+            <h3 className="mb-2 text-sm font-semibold text-muted-foreground">Pagamentos</h3>
             <PaymentList payments={query.data.payments} />
           </section>
         </div>
@@ -624,7 +626,7 @@ function TransferTableDialog({
       }
     >
       {free.length === 0 ? (
-        <p className="text-muted">Nenhuma mesa livre no momento.</p>
+        <p className="text-muted-foreground">Nenhuma mesa livre no momento.</p>
       ) : (
         <Field label="Mesa de destino">
           <Select value={to} onChange={(e) => setTo(e.target.value)}>
@@ -729,7 +731,7 @@ function Tabs() {
               >
                 <span>
                   <span className="block font-bold">{tab.code}</span>
-                  <span className="text-sm text-muted">
+                  <span className="text-sm text-muted-foreground">
                     {tab.name ?? 'Sem nome'}
                     {tab.table && ` · ${tab.table.label}`}
                   </span>
@@ -882,7 +884,7 @@ function TableFormDialog({ table, onClose }: { table?: TableView; onClose: () =>
         {table && qr.data && (
           <div className="rounded-md border border-border p-3 text-sm">
             <p className="font-semibold">Link do QR Code</p>
-            <p className="mt-1 break-all text-muted select-all">{qr.data.url}</p>
+            <p className="mt-1 break-all text-muted-foreground select-all">{qr.data.url}</p>
             <div className="mt-2 flex gap-2">
               <Button
                 size="sm"
@@ -907,7 +909,7 @@ function TableFormDialog({ table, onClose }: { table?: TableView; onClose: () =>
               <Link
                 to="/admin/mesas/qr"
                 search={{ mesa: table.id }}
-                className="inline-flex h-9 items-center px-3 text-sm font-semibold text-brand"
+                className="inline-flex h-9 items-center px-3 text-sm font-semibold text-primary"
               >
                 Imprimir
               </Link>

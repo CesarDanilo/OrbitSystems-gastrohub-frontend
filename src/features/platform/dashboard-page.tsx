@@ -96,12 +96,12 @@ export function PlatformDashboardPage() {
           <dl className="mt-3 space-y-2 text-sm">
             {(Object.keys(STATUS_LABEL) as (keyof typeof STATUS_LABEL)[]).map((k) => (
               <div key={k} className="flex justify-between">
-                <dt className="text-muted">{STATUS_LABEL[k]}</dt>
+                <dt className="text-muted-foreground">{STATUS_LABEL[k]}</dt>
                 <dd className="font-semibold tabular">{d.subscriptions.byStatus[k]}</dd>
               </div>
             ))}
             <div className="flex justify-between border-t border-border pt-2">
-              <dt className="text-muted">Cancelamentos em 30 dias</dt>
+              <dt className="text-muted-foreground">Cancelamentos em 30 dias</dt>
               <dd className="font-semibold tabular">{d.subscriptions.cancellationsLast30Days}</dd>
             </div>
           </dl>
@@ -122,20 +122,22 @@ export function PlatformDashboardPage() {
           <dl className="mt-3 space-y-2 text-sm">
             {Object.entries(d.usage.ordersByChannelLast30Days).map(([channel, count]) => (
               <div key={channel} className="flex justify-between">
-                <dt className="text-muted">Pedidos · {CHANNEL_LABEL[channel] ?? channel}</dt>
+                <dt className="text-muted-foreground">
+                  Pedidos · {CHANNEL_LABEL[channel] ?? channel}
+                </dt>
                 <dd className="font-semibold tabular">{count}</dd>
               </div>
             ))}
             <div className="flex justify-between">
-              <dt className="text-muted">Restaurantes com mesas</dt>
+              <dt className="text-muted-foreground">Restaurantes com mesas</dt>
               <dd className="font-semibold tabular">{d.usage.restaurantsWithTables}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted">Restaurantes usando caixa</dt>
+              <dt className="text-muted-foreground">Restaurantes usando caixa</dt>
               <dd className="font-semibold tabular">{d.usage.restaurantsUsingCashLast30Days}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-muted">Restaurantes com zonas de entrega</dt>
+              <dt className="text-muted-foreground">Restaurantes com zonas de entrega</dt>
               <dd className="font-semibold tabular">{d.usage.restaurantsWithDeliveryZones}</dd>
             </div>
           </dl>
@@ -143,7 +145,7 @@ export function PlatformDashboardPage() {
         <Card className="p-5">
           <h2 className="font-semibold">Cadastros por mês</h2>
           {d.signupsByMonth.length === 0 ? (
-            <p className="mt-3 text-sm text-muted">Sem cadastros nos últimos 6 meses.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Sem cadastros nos últimos 6 meses.</p>
           ) : (
             <table className="mt-3 w-full text-sm">
               <caption className="sr-only">Cadastros por mês</caption>
@@ -152,12 +154,15 @@ export function PlatformDashboardPage() {
                   const max = Math.max(...d.signupsByMonth.map((x) => x.count));
                   return (
                     <tr key={m.month}>
-                      <th scope="row" className="w-20 py-1 text-left font-normal text-muted">
+                      <th
+                        scope="row"
+                        className="w-20 py-1 text-left font-normal text-muted-foreground"
+                      >
                         {m.month}
                       </th>
                       <td className="py-1">
                         <div
-                          className="h-3 rounded bg-brand"
+                          className="h-3 rounded bg-primary"
                           style={{ width: `${Math.max(4, (m.count / max) * 100)}%` }}
                         />
                       </td>

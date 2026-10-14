@@ -154,12 +154,14 @@ export function ReportsPage() {
               <dl className="mt-3 space-y-2 text-sm">
                 {Object.entries(query.data.receivedByMethod).map(([m, v]) => (
                   <div key={m} className="flex justify-between">
-                    <dt className="text-muted">{PAYMENT_METHOD_LABEL[m as PaymentMethod] ?? m}</dt>
+                    <dt className="text-muted-foreground">
+                      {PAYMENT_METHOD_LABEL[m as PaymentMethod] ?? m}
+                    </dt>
                     <dd className="font-semibold tabular">{formatBRL(v)}</dd>
                   </div>
                 ))}
                 {query.data.refunds.count > 0 && (
-                  <div className="flex justify-between text-danger">
+                  <div className="flex justify-between text-destructive">
                     <dt>Estornos ({query.data.refunds.count})</dt>
                     <dd className="font-semibold tabular">
                       −{formatBRL(query.data.refunds.valueCents)}
@@ -234,12 +236,12 @@ function Breakdown({ title, rows }: { title: string; rows: [string, number, numb
     <Card className="p-5">
       <h2 className="font-semibold">{title}</h2>
       {rows.length === 0 ? (
-        <p className="mt-3 text-sm text-muted">Sem pedidos no período.</p>
+        <p className="mt-3 text-sm text-muted-foreground">Sem pedidos no período.</p>
       ) : (
         <dl className="mt-3 space-y-2 text-sm">
           {rows.map(([label, orders, revenue]) => (
             <div key={label} className="flex justify-between gap-2">
-              <dt className="text-muted">
+              <dt className="text-muted-foreground">
                 {label} · {orders}
               </dt>
               <dd className="font-semibold tabular">{formatBRL(revenue)}</dd>

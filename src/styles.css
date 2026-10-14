@@ -135,18 +135,6 @@
   --color-focus-ring: var(--focus-ring);
   --color-overlay: var(--overlay);
 
-  /* Short aliases used across the existing screens (same values; migrated screen by screen). */
-  --color-bg: var(--background);
-  --color-fg: var(--foreground);
-  --color-surface-2: var(--surface-muted);
-  --color-muted: var(--muted-foreground);
-  --color-brand: var(--brand);
-  --color-brand-fg: var(--brand-fg);
-  --color-brand-soft: var(--brand-soft);
-  --color-danger: var(--destructive);
-  --color-danger-soft: var(--destructive-soft);
-  --color-ring: var(--focus-ring);
-
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 0.875rem;

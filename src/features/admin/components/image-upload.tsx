@@ -49,7 +49,7 @@ export function ImageUpload({
           aria-describedby={error ? `${id}-error` : undefined}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            'relative flex shrink-0 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-border-strong bg-surface-2 text-muted hover:border-brand',
+            'relative flex shrink-0 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-border-strong bg-surface-muted text-muted-foreground hover:border-primary',
             aspect === 'square' ? 'size-28' : 'h-28 w-56',
           )}
         >
@@ -64,13 +64,13 @@ export function ImageUpload({
             </span>
           )}
         </button>
-        <div className="flex flex-col gap-2 text-sm text-muted">
+        <div className="flex flex-col gap-2 text-sm text-muted-foreground">
           <span>JPG, PNG ou WebP até 5 MB. Otimizamos para carregar rápido.</span>
           {value && (
             <Button
               variant="ghost"
               size="sm"
-              className="self-start text-danger"
+              className="self-start text-destructive"
               leftIcon={<Trash2 aria-hidden className="size-4" />}
               onClick={() => onChange(null)}
             >
@@ -80,7 +80,7 @@ export function ImageUpload({
         </div>
       </div>
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm font-medium text-danger">
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm font-medium text-destructive">
           {error}
         </p>
       )}

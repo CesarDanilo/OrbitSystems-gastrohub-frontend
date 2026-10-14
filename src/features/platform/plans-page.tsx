@@ -100,11 +100,12 @@ function PlanCard({ plan, features }: { plan: PlanAdminView; features: FeatureDe
     .filter((v) => v.version !== plan.currentVersion)
     .reduce((s, v) => s + v.subscribers, 0);
   return (
-    <Card className={cn('p-5', plan.highlighted && 'ring-2 ring-brand')}>
+    <Card className={cn('p-5', plan.highlighted && 'ring-2 ring-primary')}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-lg font-bold">
-            {plan.name} <span className="text-sm font-normal text-muted">{plan.code}</span>
+            {plan.name}{' '}
+            <span className="text-sm font-normal text-muted-foreground">{plan.code}</span>
           </p>
           <div className="mt-1 flex flex-wrap gap-1">
             {plan.archivedAt ? (
@@ -123,7 +124,7 @@ function PlanCard({ plan, features }: { plan: PlanAdminView; features: FeatureDe
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold tabular">{formatBRL(plan.terms.priceCents)}</p>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted-foreground">
             por mês
             {plan.terms.yearlyPriceCents !== null &&
               ` · ${formatBRL(plan.terms.yearlyPriceCents)}/ano`}
@@ -132,24 +133,24 @@ function PlanCard({ plan, features }: { plan: PlanAdminView; features: FeatureDe
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
         <div>
-          <dt className="text-muted">Versão publicada</dt>
+          <dt className="text-muted-foreground">Versão publicada</dt>
           <dd className="font-semibold">
             {plan.currentVersion === 0 ? 'nenhuma' : `v${plan.currentVersion}`}
           </dd>
         </div>
         <div>
-          <dt className="text-muted">Assinantes</dt>
+          <dt className="text-muted-foreground">Assinantes</dt>
           <dd className="font-semibold">
             {plan.subscribers}
             {outdated > 0 && <span className="text-warning"> · {outdated} em versão anterior</span>}
           </dd>
         </div>
         <div>
-          <dt className="text-muted">Funcionalidades</dt>
+          <dt className="text-muted-foreground">Funcionalidades</dt>
           <dd className="font-semibold">{plan.terms.features.length}</dd>
         </div>
         <div>
-          <dt className="text-muted">Teste grátis</dt>
+          <dt className="text-muted-foreground">Teste grátis</dt>
           <dd className="font-semibold">
             {plan.terms.trialDays ? `${plan.terms.trialDays} dias` : 'não'}
           </dd>
@@ -481,13 +482,17 @@ function TermsDialog({
               </div>
             ))}
           </div>
-          <p className="mt-2 text-xs text-muted">0 bloqueia o recurso; ilimitado não tem teto.</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            0 bloqueia o recurso; ilimitado não tem teto.
+          </p>
         </section>
         <section>
           <h3 className="mb-2 font-semibold">Funcionalidades</h3>
           {byCategory.map(([category, list]) => (
             <fieldset key={category} className="mb-3">
-              <legend className="mb-1 text-sm font-semibold text-muted">{category}</legend>
+              <legend className="mb-1 text-sm font-semibold text-muted-foreground">
+                {category}
+              </legend>
               {list.map((f) => (
                 <Checkbox
                   key={f.key}
@@ -588,7 +593,7 @@ function HistoryDialog({ plan, onClose }: { plan: PlanAdminView; onClose: () => 
               v{v.version} · {formatBRL(v.priceCents)}/mês
               {v.yearlyPriceCents !== null && ` · ${formatBRL(v.yearlyPriceCents)}/ano`}
             </p>
-            <p className="text-muted">
+            <p className="text-muted-foreground">
               {formatDateTime(v.publishedAt)} · {v.publishedBy ?? 'sistema'} · {v.subscribers}{' '}
               assinantes
               {v.reason && ` · ${v.reason}`}
@@ -670,7 +675,7 @@ function Matrix({
                         onClick={() => toggle(p, f.key)}
                         className={cn(
                           'inline-flex size-9 items-center justify-center rounded-md border',
-                          draftHas ? 'bg-brand-soft text-brand' : 'text-muted',
+                          draftHas ? 'bg-primary-muted text-primary' : 'text-muted-foreground',
                           draftHas !== publishedHas
                             ? 'border-dashed border-warning'
                             : 'border-border',

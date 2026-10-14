@@ -92,7 +92,7 @@ function Zones() {
                   {rule.name} {rule.blocked && <Badge tone="danger">sem entrega</Badge>}
                   {!rule.active && <Badge tone="neutral">pausada</Badge>}
                 </p>
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground">
                   {DELIVERY_RULE_TYPE_LABEL[rule.type]} · {describe(rule)} · prioridade{' '}
                   {rule.priority}
                 </p>
@@ -221,7 +221,7 @@ function Location() {
   return (
     <Card className="p-4">
       <p className="font-semibold">Localização do restaurante</p>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-muted-foreground">
         Usada nas zonas por distância. A distância é em linha reta até a região do CEP, uma
         aproximação. Copie as coordenadas do seu endereço no mapa.
       </p>

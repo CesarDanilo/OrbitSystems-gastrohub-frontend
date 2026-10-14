@@ -21,11 +21,11 @@ export function StoreLayout() {
     '--brand': store.primaryColor,
     '--brand-fg': readableTextOn(store.primaryColor),
     '--brand-soft': softTint(store.primaryColor, 0.9),
-    '--ring': store.primaryColor,
+    '--focus-ring': store.primaryColor,
   } as CSSProperties;
 
   return (
-    <div data-surface="store" style={style} className="min-h-dvh bg-bg text-fg">
+    <div data-surface="store" style={style} className="min-h-dvh bg-background text-foreground">
       <Outlet />
     </div>
   );
@@ -44,11 +44,11 @@ export function CartBar({ slug }: { slug: string }) {
       <Link
         to="/s/$slug/carrinho"
         params={{ slug }}
-        className="pointer-events-auto mx-auto flex h-14 max-w-xl animate-sheet-up items-center gap-3 rounded-full bg-brand pr-5 pl-2 text-brand-fg shadow-lg transition-transform duration-150 active:scale-[0.98]"
+        className="pointer-events-auto mx-auto flex h-14 max-w-xl animate-sheet-up items-center gap-3 rounded-full bg-primary pr-5 pl-2 text-primary-foreground shadow-lg transition-transform duration-150 active:scale-[0.98]"
       >
         <span className="relative flex size-10 items-center justify-center rounded-full bg-black/15">
           <ShoppingBag aria-hidden className="size-5" />
-          <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-[#1c1917] tabular">
+          <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-foreground tabular">
             {count}
           </span>
         </span>

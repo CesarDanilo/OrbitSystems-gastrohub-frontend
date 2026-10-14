@@ -88,8 +88,8 @@ export function Menu({
                 item.onSelect();
               }}
               className={cn(
-                'flex h-11 w-full items-center gap-2 rounded-sm px-3 text-left text-sm font-medium hover:bg-surface-2 focus:bg-surface-2 focus:outline-none disabled:opacity-50',
-                item.danger && 'text-danger',
+                'flex h-11 w-full items-center gap-2 rounded-sm px-3 text-left text-sm font-medium hover:bg-surface-muted focus:bg-surface-muted focus:outline-none disabled:opacity-50',
+                item.danger && 'text-destructive',
               )}
             >
               {item.icon}

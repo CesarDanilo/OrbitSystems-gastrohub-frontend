@@ -54,10 +54,13 @@ export function Field({
 
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <label htmlFor={id} className={cn('text-sm font-medium text-fg', hideLabel && 'sr-only')}>
+      <label
+        htmlFor={id}
+        className={cn('text-sm font-medium text-foreground', hideLabel && 'sr-only')}
+      >
         {label}
         {required && (
-          <span aria-hidden className="ml-0.5 text-danger">
+          <span aria-hidden className="ml-0.5 text-destructive">
             *
           </span>
         )}
@@ -70,12 +73,12 @@ export function Field({
           required: required ?? children.props.required,
         })}
       {hint && !error && (
-        <p id={hintId} className="text-sm text-muted">
+        <p id={hintId} className="text-sm text-muted-foreground">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="flex items-start gap-1.5 text-sm font-medium text-danger">
+        <p id={errorId} className="flex items-start gap-1.5 text-sm font-medium text-destructive">
           <CircleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
           {error}
         </p>
@@ -93,7 +96,7 @@ export const Input = forwardRef<
     <div className="relative">
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-muted"
+        className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-muted-foreground"
       >
         {prefix}
       </span>
@@ -125,7 +128,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
         </select>
         <ChevronDown
           aria-hidden
-          className="pointer-events-none absolute top-1/2 right-3 size-5 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute top-1/2 right-3 size-5 -translate-y-1/2 text-muted-foreground"
         />
       </div>
     );

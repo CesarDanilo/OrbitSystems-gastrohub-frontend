@@ -101,13 +101,15 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
 
   return (
     <main className="mx-auto max-w-xl px-4 pt-6 pb-16">
-      <Link to="/s/$slug" params={{ slug }} className="text-sm font-semibold text-brand">
+      <Link to="/s/$slug" params={{ slug }} className="text-sm font-semibold text-primary">
         ← {order.restaurant.name}
       </Link>
       <div className="mt-4 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Pedido #{order.number}</h1>
-          <p className="mt-1 text-sm text-muted">Feito às {formatTime(order.createdAt)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Feito às {formatTime(order.createdAt)}
+          </p>
         </div>
         <Badge tone={failed ? 'danger' : order.status === 'DELIVERED' ? 'success' : 'brand'} dot>
           {ORDER_STATUS_LABEL[order.status]}
@@ -115,7 +117,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
       </div>
 
       {!isTerminal(order.status) && !failed && (
-        <p className="mt-4 rounded-md bg-brand-soft px-4 py-3 text-[0.9375rem] font-semibold">
+        <p className="mt-4 rounded-md bg-primary-muted px-4 py-3 text-[0.9375rem] font-semibold">
           {order.fulfillment === 'DELIVERY' ? 'Previsão de entrega' : 'Previsão para retirada'}:{' '}
           {order.estimatedMinutesMin}–{order.estimatedMinutesMax} min
         </p>
@@ -149,7 +151,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
                     aria-hidden
                     className={cn(
                       'absolute top-10 left-5 h-[calc(100%-2.5rem)] w-0.5',
-                      done && !current ? 'bg-brand' : 'bg-border',
+                      done && !current ? 'bg-primary' : 'bg-border',
                     )}
                   />
                 )}
@@ -157,22 +159,22 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
                   className={cn(
                     'flex size-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-300',
                     current
-                      ? 'border-brand bg-brand text-brand-fg'
+                      ? 'border-primary bg-primary text-primary-foreground'
                       : done
-                        ? 'border-brand bg-brand-soft text-brand'
-                        : 'border-border bg-surface text-muted',
+                        ? 'border-primary bg-primary-muted text-primary'
+                        : 'border-border bg-surface text-muted-foreground',
                   )}
                 >
                   <step.icon aria-hidden className="size-5" />
                 </span>
                 <div className="pt-2">
-                  <p className={cn('font-semibold', !done && !current && 'text-muted')}>
+                  <p className={cn('font-semibold', !done && !current && 'text-muted-foreground')}>
                     {step.label}
                     <span className="sr-only">
                       {current ? ' (etapa atual)' : done ? ' (concluído)' : ' (pendente)'}
                     </span>
                   </p>
-                  {at && <p className="text-sm text-muted">{formatTime(at)}</p>}
+                  {at && <p className="text-sm text-muted-foreground">{formatTime(at)}</p>}
                 </div>
               </li>
             );
@@ -195,11 +197,13 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
                   {item.quantity}× {item.productName}
                 </p>
                 {item.options.length > 0 && (
-                  <p className="text-sm text-muted">
+                  <p className="text-sm text-muted-foreground">
                     {item.options.map((o) => o.optionName).join(', ')}
                   </p>
                 )}
-                {item.notes && <p className="text-sm text-muted italic">“{item.notes}”</p>}
+                {item.notes && (
+                  <p className="text-sm text-muted-foreground italic">“{item.notes}”</p>
+                )}
               </div>
               <span className="tabular">{formatBRL(item.totalCents)}</span>
             </li>
@@ -207,12 +211,12 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
         </ul>
         <dl className="mt-4 space-y-1.5 border-t border-border pt-3 text-sm">
           <div className="flex justify-between">
-            <dt className="text-muted">Subtotal</dt>
+            <dt className="text-muted-foreground">Subtotal</dt>
             <dd className="tabular">{formatBRL(order.totals.subtotalCents)}</dd>
           </div>
           {order.fulfillment === 'DELIVERY' && (
             <div className="flex justify-between">
-              <dt className="text-muted">Entrega</dt>
+              <dt className="text-muted-foreground">Entrega</dt>
               <dd className="tabular">
                 {order.totals.deliveryFeeCents
                   ? formatBRL(order.totals.deliveryFeeCents)
@@ -222,7 +226,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
           )}
           {order.totals.discountCents > 0 && (
             <div className="flex justify-between">
-              <dt className="text-muted">Desconto</dt>
+              <dt className="text-muted-foreground">Desconto</dt>
               <dd className="tabular">−{formatBRL(order.totals.discountCents)}</dd>
             </div>
           )}
@@ -231,7 +235,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
             <dd className="tabular">{formatBRL(order.totals.totalCents)}</dd>
           </div>
           <div className="flex justify-between pt-1">
-            <dt className="text-muted">Pagamento</dt>
+            <dt className="text-muted-foreground">Pagamento</dt>
             <dd>
               {order.payment ? (
                 <>
@@ -247,7 +251,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
           </div>
         </dl>
         {order.address && (
-          <p className="mt-3 border-t border-border pt-3 text-sm text-muted">
+          <p className="mt-3 border-t border-border pt-3 text-sm text-muted-foreground">
             {order.address.street}, {order.address.number}
             {order.address.complement && ` – ${order.address.complement}`} ·{' '}
             {order.address.neighborhood}, {order.address.city}/{order.address.state}
@@ -261,7 +265,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
             href={whatsapp}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border-strong bg-surface font-semibold hover:bg-surface-2"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-border-strong bg-surface font-semibold hover:bg-surface-muted"
           >
             <MessageCircle aria-hidden className="size-5" />
             Falar com o restaurante
@@ -274,7 +278,7 @@ function OrderTracking({ slug, order }: { slug: string; order: PublicOrder }) {
         )}
       </div>
       {!isTerminal(order.status) && !failed && (
-        <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-muted">
+        <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
           <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-success" />
           Esta página atualiza sozinha.
         </p>
@@ -309,13 +313,15 @@ function PixBox({ order }: { order: PublicOrder }) {
   return (
     <section
       aria-labelledby="pix"
-      className="mt-6 rounded-lg border-2 border-dashed border-brand p-4"
+      className="mt-6 rounded-lg border-2 border-dashed border-primary p-4"
     >
       <h2 id="pix" className="font-bold">
         Pague com Pix para confirmar
       </h2>
-      <p className="mt-1 text-sm text-muted">Copie o código e cole no app do seu banco.</p>
-      <p className="mt-3 rounded-md bg-surface-2 p-3 font-mono text-xs break-all select-all">
+      <p className="mt-1 text-sm text-muted-foreground">
+        Copie o código e cole no app do seu banco.
+      </p>
+      <p className="mt-3 rounded-md bg-surface-muted p-3 font-mono text-xs break-all select-all">
         {order.payment?.pixCopyPaste}
       </p>
       <Button

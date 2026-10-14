@@ -102,7 +102,7 @@ export function CustomersPage() {
                   className="w-full rounded-lg border border-border bg-surface p-4 text-left"
                 >
                   <p className="font-semibold">{c.name}</p>
-                  <p className="text-sm text-muted">{formatPhone(c.phone)}</p>
+                  <p className="text-sm text-muted-foreground">{formatPhone(c.phone)}</p>
                   <p className="mt-2 text-sm">
                     {c.ordersCount} pedidos · {formatBRL(c.totalSpentCents)} · última{' '}
                     {c.lastOrderAt ? formatRelative(c.lastOrderAt) : '—'}
@@ -124,7 +124,7 @@ export function CustomersPage() {
               </thead>
               <tbody>
                 {query.data.items.map((c) => (
-                  <tr key={c.id} className="hover:bg-surface-2">
+                  <tr key={c.id} className="hover:bg-surface-muted">
                     <Td>
                       <button
                         type="button"
@@ -132,7 +132,7 @@ export function CustomersPage() {
                         className="min-h-11 text-left font-semibold hover:underline"
                       >
                         {c.name}
-                        <span className="block text-sm font-normal text-muted">
+                        <span className="block text-sm font-normal text-muted-foreground">
                           {formatPhone(c.phone)}
                         </span>
                       </button>
@@ -140,7 +140,7 @@ export function CustomersPage() {
                     <Td className="text-right tabular">{c.ordersCount}</Td>
                     <Td className="text-right tabular">{formatBRL(c.totalSpentCents)}</Td>
                     <Td className="text-right tabular">{formatBRL(c.averageTicketCents)}</Td>
-                    <Td className="text-muted">
+                    <Td className="text-muted-foreground">
                       {c.lastOrderAt ? formatRelative(c.lastOrderAt) : '—'}
                     </Td>
                   </tr>
@@ -153,7 +153,7 @@ export function CustomersPage() {
               <Button variant="outline" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
                 Anterior
               </Button>
-              <span className="text-sm text-muted">
+              <span className="text-sm text-muted-foreground">
                 {page} de {Math.ceil(query.data.total / query.data.pageSize)}
               </span>
               <Button
@@ -203,8 +203,8 @@ function CustomerDetailDialog({ id, onClose }: { id: string; onClose: () => void
                 c.firstOrderAt ? formatDateTime(c.firstOrderAt).split(' ')[0]! : '—',
               ],
             ].map(([label, value]) => (
-              <div key={label} className="rounded-md bg-surface-2 p-3">
-                <dt className="text-sm text-muted">{label}</dt>
+              <div key={label} className="rounded-md bg-surface-muted p-3">
+                <dt className="text-sm text-muted-foreground">{label}</dt>
                 <dd className="text-lg font-bold tabular">{value}</dd>
               </div>
             ))}
@@ -213,13 +213,13 @@ function CustomerDetailDialog({ id, onClose }: { id: string; onClose: () => void
             href={`https://wa.me/55${c.phone.replace(/^55/, '')}`}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-md border border-border-strong font-semibold hover:bg-surface-2"
+            className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-md border border-border-strong font-semibold hover:bg-surface-muted"
           >
             Conversar no WhatsApp
           </a>
           {c.addresses.length > 0 && (
             <section className="mt-5">
-              <h3 className="text-sm font-semibold text-muted">Endereços</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground">Endereços</h3>
               <ul className="mt-2 space-y-1 text-sm">
                 {c.addresses.map((a) => (
                   <li key={a.id}>
@@ -230,7 +230,7 @@ function CustomerDetailDialog({ id, onClose }: { id: string; onClose: () => void
             </section>
           )}
           <section className="mt-5">
-            <h3 className="text-sm font-semibold text-muted">Últimos pedidos</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground">Últimos pedidos</h3>
             <ul className="mt-2 divide-y divide-border">
               {c.orders.map((o) => (
                 <li key={o.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">

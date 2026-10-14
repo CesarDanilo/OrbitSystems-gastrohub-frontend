@@ -21,14 +21,14 @@ export function QuantityStepper({
 }) {
   const atMin = value <= min;
   const button = cn(
-    'flex items-center justify-center rounded-full text-fg transition-colors duration-150 hover:bg-border disabled:opacity-40',
+    'flex items-center justify-center rounded-full text-foreground transition-colors duration-150 hover:bg-border disabled:opacity-40',
     size === 'md' ? 'size-11' : 'size-9',
   );
   return (
     <div
       role="group"
       aria-label={label}
-      className="inline-flex items-center rounded-full bg-surface-2 p-0.5"
+      className="inline-flex items-center rounded-full bg-surface-muted p-0.5"
     >
       <button
         type="button"

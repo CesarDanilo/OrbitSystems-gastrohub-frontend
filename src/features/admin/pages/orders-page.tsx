@@ -384,7 +384,7 @@ function OrderDetail({
     >
       <OrderStatusBadge status={order.status} />
       <section className="mt-5">
-        <h3 className="text-sm font-semibold text-muted">
+        <h3 className="text-sm font-semibold text-muted-foreground">
           {order.customer ? 'Cliente' : 'Atendimento'}
         </h3>
         <p className="mt-1 font-semibold">{orderWho(order)}</p>
@@ -393,7 +393,7 @@ function OrderDetail({
             href={whatsapp}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-brand"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary"
           >
             {formatPhone(order.customer.phone)} · WhatsApp
           </a>
@@ -409,19 +409,19 @@ function OrderDetail({
         )}
       </section>
       <section className="mt-5">
-        <h3 className="text-sm font-semibold text-muted">Itens</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground">Itens</h3>
         <ul className="mt-2 divide-y divide-border">
           {order.items.map((item) => (
             <li
               key={item.id}
-              className={`flex justify-between gap-3 py-2 ${item.status === 'CANCELLED' ? 'text-muted line-through' : ''}`}
+              className={`flex justify-between gap-3 py-2 ${item.status === 'CANCELLED' ? 'text-muted-foreground line-through' : ''}`}
             >
               <div>
                 <p className="font-semibold">
                   {item.quantity}× {item.productName}
                 </p>
                 {item.options.length > 0 && (
-                  <p className="text-sm text-muted">
+                  <p className="text-sm text-muted-foreground">
                     {item.options.map((o) => o.optionName).join(', ')}
                   </p>
                 )}
@@ -429,7 +429,9 @@ function OrderDetail({
                   <p className="text-sm font-medium text-warning">Obs.: {item.notes}</p>
                 )}
                 {item.cancelReason && (
-                  <p className="text-sm text-danger no-underline">Cancelado: {item.cancelReason}</p>
+                  <p className="text-sm text-destructive no-underline">
+                    Cancelado: {item.cancelReason}
+                  </p>
                 )}
               </div>
               <span className="text-sm tabular">{formatBRL(item.totalCents)}</span>
@@ -444,18 +446,18 @@ function OrderDetail({
       )}
       <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm">
         <div className="flex justify-between">
-          <dt className="text-muted">Subtotal</dt>
+          <dt className="text-muted-foreground">Subtotal</dt>
           <dd className="tabular">{formatBRL(order.totals.subtotalCents)}</dd>
         </div>
         {order.totals.deliveryFeeCents > 0 && (
           <div className="flex justify-between">
-            <dt className="text-muted">Entrega</dt>
+            <dt className="text-muted-foreground">Entrega</dt>
             <dd className="tabular">{formatBRL(order.totals.deliveryFeeCents)}</dd>
           </div>
         )}
         {order.totals.discountCents > 0 && (
           <div className="flex justify-between">
-            <dt className="text-muted">
+            <dt className="text-muted-foreground">
               Desconto {order.couponCode && `(${order.couponCode})`}
               {order.discountReason && ` · ${order.discountReason}`}
             </dt>
@@ -467,7 +469,7 @@ function OrderDetail({
           <dd className="tabular">{formatBRL(order.totals.totalCents)}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-muted">Pagamento</dt>
+          <dt className="text-muted-foreground">Pagamento</dt>
           <dd>{paymentLine(order)}</dd>
         </div>
         {order.payment?.changeForCents && (

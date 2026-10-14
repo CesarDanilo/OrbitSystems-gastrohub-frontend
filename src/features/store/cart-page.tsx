@@ -22,7 +22,7 @@ export function StoreTopBar({
           to={back === 'cart' ? '/s/$slug/carrinho' : '/s/$slug'}
           params={{ slug }}
           aria-label="Voltar"
-          className="flex size-11 items-center justify-center rounded-md hover:bg-surface-2"
+          className="flex size-11 items-center justify-center rounded-md hover:bg-surface-muted"
         >
           <ArrowLeft aria-hidden className="size-5" />
         </Link>
@@ -65,13 +65,13 @@ export function CartPage() {
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{line.product?.name ?? 'Item indisponível'}</p>
                     {line.optionsLabel && (
-                      <p className="mt-0.5 text-sm text-muted">{line.optionsLabel}</p>
+                      <p className="mt-0.5 text-sm text-muted-foreground">{line.optionsLabel}</p>
                     )}
                     {line.notes && (
-                      <p className="mt-0.5 text-sm text-muted italic">“{line.notes}”</p>
+                      <p className="mt-0.5 text-sm text-muted-foreground italic">“{line.notes}”</p>
                     )}
                     {line.problem ? (
-                      <p role="alert" className="mt-1 text-sm font-medium text-danger">
+                      <p role="alert" className="mt-1 text-sm font-medium text-destructive">
                         {line.problem}
                       </p>
                     ) : (
@@ -82,7 +82,7 @@ export function CartPage() {
                         to="/s/$slug/p/$productSlug"
                         params={{ slug, productSlug: line.product.slug }}
                         search={{ edit: line.key }}
-                        className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand"
+                        className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primary"
                       >
                         <Pencil aria-hidden className="size-4" />
                         Alterar
@@ -111,7 +111,7 @@ export function CartPage() {
             <Link
               to="/s/$slug"
               params={{ slug }}
-              className="mt-4 flex min-h-11 items-center justify-center text-sm font-semibold text-brand"
+              className="mt-4 flex min-h-11 items-center justify-center text-sm font-semibold text-primary"
             >
               + Adicionar mais itens
             </Link>
@@ -130,7 +130,7 @@ export function CartPage() {
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="mx-auto max-w-xl">
             <div className="mb-3 flex items-center justify-between text-[0.9375rem]">
-              <span className="text-muted">Subtotal</span>
+              <span className="text-muted-foreground">Subtotal</span>
               <span className="font-bold tabular">{formatBRL(cart.subtotalCents)}</span>
             </div>
             <Button

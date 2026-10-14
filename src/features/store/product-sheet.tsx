@@ -132,7 +132,9 @@ export function ProductSheet() {
           className="-mx-5 -mt-4 mb-4 aspect-[4/3] w-[calc(100%+2.5rem)] max-w-none object-cover"
         />
       )}
-      {product.description && <p className="text-[0.9375rem] text-muted">{product.description}</p>}
+      {product.description && (
+        <p className="text-[0.9375rem] text-muted-foreground">{product.description}</p>
+      )}
       <p className="mt-2 text-lg font-bold tabular">{formatBRL(product.priceCents)}</p>
 
       {product.optionGroups.map((group) => {
@@ -148,10 +150,10 @@ export function ProductSheet() {
             aria-describedby={error ? `err-${group.id}` : undefined}
             className="mt-6"
           >
-            <legend className="flex w-full items-center justify-between gap-2 rounded-md bg-surface-2 px-3 py-2">
+            <legend className="flex w-full items-center justify-between gap-2 rounded-md bg-surface-muted px-3 py-2">
               <span>
                 <span className="block font-semibold">{group.name}</span>
-                <span className="block text-sm text-muted">
+                <span className="block text-sm text-muted-foreground">
                   {groupRule(group)}
                   {group.maxSelect > 1 && ` · ${selected.length}/${group.maxSelect}`}
                 </span>
@@ -166,7 +168,7 @@ export function ProductSheet() {
               <p
                 id={`err-${group.id}`}
                 role="alert"
-                className="mt-2 text-sm font-medium text-danger"
+                className="mt-2 text-sm font-medium text-destructive"
               >
                 {error}
               </p>

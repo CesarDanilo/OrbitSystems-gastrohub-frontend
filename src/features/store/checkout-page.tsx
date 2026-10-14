@@ -334,13 +334,13 @@ export function CheckoutPage() {
                   className={cn(
                     'flex min-h-16 flex-col items-center justify-center gap-1 rounded-md border-2 p-3 text-sm font-semibold transition-colors',
                     fulfillment === option.value
-                      ? 'border-brand bg-brand-soft'
-                      : 'border-border bg-surface hover:bg-surface-2',
+                      ? 'border-primary bg-primary-muted'
+                      : 'border-border bg-surface hover:bg-surface-muted',
                   )}
                 >
                   <option.icon aria-hidden className="size-5" />
                   {option.label}
-                  <span className="text-xs font-medium text-muted">{option.detail}</span>
+                  <span className="text-xs font-medium text-muted-foreground">{option.detail}</span>
                 </button>
               ))}
             </div>
@@ -451,7 +451,7 @@ export function CheckoutPage() {
             ))}
           </div>
           {method === 'CASH' && (
-            <div className="mt-2 rounded-md bg-surface-2 p-3">
+            <div className="mt-2 rounded-md bg-surface-muted p-3">
               <Switch checked={needsChange} onChange={setNeedsChange} label="Precisa de troco?" />
               {needsChange && (
                 <Field
@@ -545,7 +545,7 @@ export function CheckoutPage() {
               <dd className="tabular">{formatBRL(total)}</dd>
             </div>
           </dl>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-muted-foreground">
             Tempo estimado: {store.delivery.estimatedMinutesMin}–
             {store.delivery.estimatedMinutesMax} min
           </p>
@@ -581,7 +581,7 @@ function FormSection({ title, children }: { title: string; children: React.React
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between">
-      <dt className="text-muted">{label}</dt>
+      <dt className="text-muted-foreground">{label}</dt>
       <dd className="tabular">{value}</dd>
     </div>
   );

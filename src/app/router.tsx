@@ -34,8 +34,8 @@ function NotFound() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-4 text-center">
       <p className="text-5xl font-bold">404</p>
-      <p className="text-muted">Esta página não existe.</p>
-      <Link to="/" className="font-semibold text-brand">
+      <p className="text-muted-foreground">Esta página não existe.</p>
+      <Link to="/" className="font-semibold text-primary">
         Ir para o início
       </Link>
     </div>
@@ -166,7 +166,7 @@ function StoreNotFound({ error }: ErrorComponentProps) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4 text-center">
         <p className="text-xl font-bold">Loja não encontrada</p>
-        <p className="text-muted">Confira o endereço que você recebeu.</p>
+        <p className="text-muted-foreground">Confira o endereço que você recebeu.</p>
       </div>
     );
   }

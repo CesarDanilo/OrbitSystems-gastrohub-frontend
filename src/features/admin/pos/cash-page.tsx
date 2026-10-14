@@ -172,7 +172,7 @@ function CashCard({ cash, canOperate }: { cash: CashSessionView; canOperate: boo
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-lg font-bold">{cash.name}</p>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted-foreground">
             {cash.openedBy} · desde {formatTime(cash.openedAt)}
           </p>
         </div>

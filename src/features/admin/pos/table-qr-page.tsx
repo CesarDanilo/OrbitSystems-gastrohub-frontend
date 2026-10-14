@@ -28,7 +28,7 @@ export function TableQrPage() {
           >
             <QrImage tableId={t.id} />
             <p className="mt-2 text-xl font-bold">{t.label}</p>
-            <p className="text-sm text-muted">Aponte a câmera para pedir</p>
+            <p className="text-sm text-muted-foreground">Aponte a câmera para pedir</p>
           </li>
         ))}
       </ul>

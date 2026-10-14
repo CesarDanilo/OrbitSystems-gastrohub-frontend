@@ -20,9 +20,9 @@ function ChoiceRow({
   return (
     <label
       className={cn(
-        'flex min-h-12 items-center gap-3 rounded-md px-3 py-2 transition-colors duration-150 hover:bg-surface-2',
-        'has-[:checked]:bg-brand-soft has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
-        'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring',
+        'flex min-h-12 items-center gap-3 rounded-md px-3 py-2 transition-colors duration-150 hover:bg-surface-muted',
+        'has-[:checked]:bg-primary-muted has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
+        'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus-ring',
         className,
       )}
     >
@@ -31,7 +31,7 @@ function ChoiceRow({
         aria-hidden
         className={cn(
           'flex size-5 shrink-0 items-center justify-center border-2 border-border-strong bg-surface text-transparent transition-colors',
-          'peer-checked:border-brand peer-checked:bg-brand peer-checked:text-brand-fg',
+          'peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground',
           type === 'radio' ? 'rounded-full' : 'rounded-[6px]',
         )}
       >
@@ -43,10 +43,12 @@ function ChoiceRow({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[0.9375rem] font-medium">{label}</span>
-        {description && <span className="block text-sm text-muted">{description}</span>}
+        {description && <span className="block text-sm text-muted-foreground">{description}</span>}
       </span>
       {trailing && (
-        <span className="shrink-0 text-sm font-medium text-muted tabular">{trailing}</span>
+        <span className="shrink-0 text-sm font-medium text-muted-foreground tabular">
+          {trailing}
+        </span>
       )}
     </label>
   );

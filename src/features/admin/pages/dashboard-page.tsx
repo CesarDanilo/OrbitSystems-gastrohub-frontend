@@ -244,18 +244,20 @@ export function InsightCard({ insight }: { insight: Insight }) {
     <Card className="h-full p-5">
       <p className="text-sm font-medium text-primary">{insight.title}</p>
       <p className="mt-1.5 font-semibold">{insight.description}</p>
-      <p className="mt-2 text-sm text-muted">{insight.recommendation}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{insight.recommendation}</p>
       <details className="mt-3 text-sm">
-        <summary className="min-h-11 py-2 font-medium text-muted">Ver dados usados</summary>
+        <summary className="min-h-11 py-2 font-medium text-muted-foreground">
+          Ver dados usados
+        </summary>
         <dl className="space-y-1">
           {insight.evidence.map((e) => (
             <div key={e.label} className="flex justify-between gap-2">
-              <dt className="text-muted">{e.label}</dt>
+              <dt className="text-muted-foreground">{e.label}</dt>
               <dd className="font-medium tabular">{e.value}</dd>
             </div>
           ))}
           <div className="flex justify-between gap-2">
-            <dt className="text-muted">Período</dt>
+            <dt className="text-muted-foreground">Período</dt>
             <dd className="font-medium">{insight.period}</dd>
           </div>
         </dl>
@@ -296,7 +298,7 @@ function HourChart({ data }: { data: { hour: number; orders: number }[] }) {
           </span>
         ))}
       </div>
-      <figcaption className="mt-2 text-sm text-muted">
+      <figcaption className="mt-2 text-sm text-muted-foreground">
         Pico às {peak.hour}h com {peak.orders} pedidos.
       </figcaption>
       <table className="sr-only">

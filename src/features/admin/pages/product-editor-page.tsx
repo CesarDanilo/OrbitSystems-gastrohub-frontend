@@ -174,7 +174,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
     <form onSubmit={submit} noValidate>
       <Link
         to="/admin/cardapio"
-        className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-muted hover:text-fg"
+        className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft aria-hidden className="size-4" /> Cardápio
       </Link>
@@ -184,7 +184,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
           {product && (
             <Button
               variant="ghost"
-              className="text-danger"
+              className="text-destructive"
               loading={remove.isPending}
               onClick={() => {
                 void confirm({
@@ -265,7 +265,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="font-semibold">Complementos</h2>
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground">
                   Ex.: “Escolha o pão” (obrigatório, 1) ou “Adicionais” (opcional, até 3).
                 </p>
               </div>
@@ -288,7 +288,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
                     </Field>
                     <IconButton
                       label={`Remover grupo ${group.name || gi + 1}`}
-                      className="mt-7 text-danger"
+                      className="mt-7 text-destructive"
                       onClick={() =>
                         set(
                           'groups',
@@ -373,7 +373,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
                         </Field>
                         <IconButton
                           label={`Remover opção ${option.name || oi + 1}`}
-                          className={cn('text-danger', oi === 0 && 'mt-7')}
+                          className={cn('text-destructive', oi === 0 && 'mt-7')}
                           onClick={() =>
                             updateGroup(group.key, {
                               options: group.options.filter((o) => o.key !== option.key),
@@ -386,7 +386,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
                     ))}
                   </ul>
                   {err(`optionGroups.${gi}.options`) && (
-                    <p className="mt-2 text-sm font-medium text-danger">
+                    <p className="mt-2 text-sm font-medium text-destructive">
                       {err(`optionGroups.${gi}.options`)}
                     </p>
                   )}
@@ -480,7 +480,7 @@ function ProductEditor({ product }: { product?: AdminProduct }) {
                           }
                           className={cn(
                             'h-10 min-w-11 rounded-full px-3 text-sm font-semibold',
-                            on ? 'bg-brand text-brand-fg' : 'bg-surface-2',
+                            on ? 'bg-primary text-primary-foreground' : 'bg-surface-muted',
                           )}
                         >
                           {label.slice(0, 3)}
@@ -659,7 +659,7 @@ function RecipeCard({ productId }: { productId: string }) {
     <Card className="space-y-3 p-5">
       <div>
         <p className="font-semibold">Ficha técnica</p>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted-foreground">
           Quanto de cada insumo uma unidade usa. Custo atual:{' '}
           <strong className="tabular">
             {((recipe.data?.costCents ?? 0) / 100).toLocaleString('pt-BR', {

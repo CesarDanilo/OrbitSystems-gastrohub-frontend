@@ -12,7 +12,10 @@ export function Spinner({ className, label }: { className?: string; label?: stri
 
 export function PageSpinner({ label = 'Carregando' }: { label?: string }) {
   return (
-    <div role="status" className="flex min-h-[40vh] items-center justify-center text-muted">
+    <div
+      role="status"
+      className="flex min-h-[40vh] items-center justify-center text-muted-foreground"
+    >
       <Spinner className="size-6" label={label} />
     </div>
   );

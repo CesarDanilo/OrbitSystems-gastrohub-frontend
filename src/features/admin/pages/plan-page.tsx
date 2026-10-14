@@ -117,11 +117,11 @@ export function PlanPage() {
         <Section title={`Plano ${current.name}`}>
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-muted">Situação</dt>
+              <dt className="text-muted-foreground">Situação</dt>
               <dd className="font-semibold">{STATUS_LABEL[subscription.status]}</dd>
             </div>
             <div>
-              <dt className="text-muted">Valor contratado</dt>
+              <dt className="text-muted-foreground">Valor contratado</dt>
               <dd className="font-semibold tabular">
                 {paid
                   ? `${formatBRL(subscription.contractedPriceCents)} ${subscription.interval === 'YEARLY' ? 'por ano' : 'por mês'}`
@@ -130,7 +130,7 @@ export function PlanPage() {
             </div>
             {subscription.currentPeriodEnd && (
               <div>
-                <dt className="text-muted">
+                <dt className="text-muted-foreground">
                   {subscription.status === 'TRIALING' ? 'Teste até' : 'Período atual até'}
                 </dt>
                 <dd className="font-semibold">{formatDateTime(subscription.currentPeriodEnd)}</dd>
@@ -159,7 +159,7 @@ export function PlanPage() {
           {(paid || subscription.status === 'TRIALING') && !subscription.cancelAtPeriodEnd && (
             <Button
               variant="ghost"
-              className="mt-4 text-danger"
+              className="mt-4 text-destructive"
               loading={cancel.isPending}
               onClick={() =>
                 void confirm({
@@ -349,7 +349,7 @@ function Invoices() {
                 <Td>
                   {INVOICE_STATUS[i.status]}
                   {i.paymentUrl && (
-                    <a href={i.paymentUrl} className="ml-2 font-semibold text-brand">
+                    <a href={i.paymentUrl} className="ml-2 font-semibold text-primary">
                       Pagar
                     </a>
                   )}

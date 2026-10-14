@@ -112,11 +112,11 @@ export function PlatformRestaurantsPage() {
                     <Link
                       to="/platform-admin/restaurantes/$id"
                       params={{ id: r.id }}
-                      className="font-semibold text-brand"
+                      className="font-semibold text-primary"
                     >
                       {r.name}
                     </Link>
-                    <span className="block text-xs text-muted">/{r.slug}</span>
+                    <span className="block text-xs text-muted-foreground">/{r.slug}</span>
                     {r.status === 'SUSPENDED' && <Badge tone="danger">Suspenso</Badge>}
                   </Td>
                   <Td>{r.plan?.name ?? '—'}</Td>
@@ -131,7 +131,7 @@ export function PlatformRestaurantsPage() {
             </tbody>
           </Table>
           <nav aria-label="Paginação" className="mt-4 flex items-center justify-between text-sm">
-            <span className="text-muted">{query.data.total} restaurantes</span>
+            <span className="text-muted-foreground">{query.data.total} restaurantes</span>
             <span className="flex gap-2">
               <Button
                 size="sm"
@@ -259,7 +259,7 @@ export function PlatformRestaurantPage() {
         <Card className="p-5">
           <h2 className="font-bold">Exceções comerciais</h2>
           {r.overrides.length === 0 ? (
-            <p className="mt-3 text-sm text-muted">Nenhuma exceção.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Nenhuma exceção.</p>
           ) : (
             <ul className="mt-3 divide-y divide-border text-sm">
               {r.overrides.map((o) => (
@@ -270,7 +270,7 @@ export function PlatformRestaurantPage() {
                         ? `${o.featureGranted ? 'Libera' : 'Remove'} ${FEATURE_LABEL[o.featureKey as FeatureKey] ?? o.featureKey}`
                         : `${LIMIT_DESCRIPTION[o.limitKey as LimitKey] ?? o.limitKey}: ${o.limitValue ?? 'ilimitado'}`}
                     </strong>
-                    <span className="block text-muted">
+                    <span className="block text-muted-foreground">
                       {o.reason} · {o.createdBy}
                       {o.expiresAt && ` · até ${formatDateTime(o.expiresAt)}`}
                     </span>
@@ -298,7 +298,7 @@ export function PlatformRestaurantPage() {
 
       <Section title="Cobranças" className="mt-8">
         {r.invoices.length === 0 ? (
-          <p className="text-sm text-muted">Nenhuma cobrança registrada.</p>
+          <p className="text-sm text-muted-foreground">Nenhuma cobrança registrada.</p>
         ) : (
           <Table label="Cobranças">
             <thead>
@@ -344,7 +344,7 @@ export function PlatformRestaurantPage() {
           {r.notes.map((n) => (
             <li key={n.id} className="rounded-md border border-border p-3">
               <p className="whitespace-pre-wrap">{n.body}</p>
-              <p className="mt-1 text-xs text-muted">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {n.adminEmail} · {formatDateTime(n.createdAt)}
               </p>
             </li>
@@ -357,7 +357,7 @@ export function PlatformRestaurantPage() {
           {r.audit.map((a) => (
             <li key={a.id}>
               <strong>{a.action}</strong> · {a.adminEmail} · {formatDateTime(a.createdAt)}
-              {a.reason && <span className="text-muted"> · {a.reason}</span>}
+              {a.reason && <span className="text-muted-foreground"> · {a.reason}</span>}
             </li>
           ))}
         </ul>
@@ -388,7 +388,7 @@ export function PlatformRestaurantPage() {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-3">
-      <dt className="text-muted">{label}</dt>
+      <dt className="text-muted-foreground">{label}</dt>
       <dd className="text-right font-medium break-all">{value}</dd>
     </div>
   );

@@ -20,15 +20,15 @@ function AuthShell({
   footer: ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-bg px-4 py-8">
+    <div className="flex min-h-dvh flex-col bg-background px-4 py-8">
       <Link to="/" className="mx-auto mb-8" aria-label="Página inicial">
         <Logo />
       </Link>
       <main className="mx-auto w-full max-w-sm">
         <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="mt-1 text-[0.9375rem] text-muted">{subtitle}</p>
+        <p className="mt-1 text-[0.9375rem] text-muted-foreground">{subtitle}</p>
         <div className="mt-6">{children}</div>
-        <p className="mt-6 text-center text-sm text-muted">{footer}</p>
+        <p className="mt-6 text-center text-sm text-muted-foreground">{footer}</p>
       </main>
     </div>
   );
@@ -61,7 +61,7 @@ function PasswordInput({
         onClick={() => setVisible((v) => !v)}
         aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
         aria-pressed={visible}
-        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted hover:text-fg"
+        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground"
       >
         {visible ? (
           <EyeOff aria-hidden className="size-5" />
@@ -116,7 +116,7 @@ export function LoginPage() {
       footer={
         <>
           Ainda não tem conta?{' '}
-          <Link to="/cadastro" className="font-semibold text-brand">
+          <Link to="/cadastro" className="font-semibold text-primary">
             Crie grátis
           </Link>
         </>
@@ -174,7 +174,7 @@ export function SignupPage() {
       footer={
         <>
           Já tem conta?{' '}
-          <Link to="/entrar" className="font-semibold text-brand">
+          <Link to="/entrar" className="font-semibold text-primary">
             Entrar
           </Link>
         </>

@@ -39,22 +39,22 @@ export function UpgradeCard({
 }) {
   return (
     <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border-strong bg-surface p-5 sm:flex-row sm:items-center">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-muted text-primary">
         <Lock aria-hidden className="size-5" />
       </span>
       <div className="flex-1">
         <p className="font-semibold">{title}</p>
-        {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
+        {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
       </div>
       {showLink ? (
         <Link
           to="/admin/plano"
-          className="inline-flex h-11 items-center rounded-md bg-brand px-4 text-sm font-semibold text-brand-fg"
+          className="inline-flex h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground"
         >
           Conhecer o Pro
         </Link>
       ) : (
-        <p className="text-sm text-muted">Fale com o dono do restaurante.</p>
+        <p className="text-sm text-muted-foreground">Fale com o dono do restaurante.</p>
       )}
     </div>
   );
@@ -73,7 +73,7 @@ export function UsageMeter({
     return (
       <div className="text-sm">
         <span className="font-medium">{label}:</span>{' '}
-        <span className="text-muted">{used} · ilimitado</span>
+        <span className="text-muted-foreground">{used} · ilimitado</span>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export function UsageMeter({
     <div className="text-sm">
       <div className="flex justify-between">
         <span className="font-medium">{label}</span>
-        <span className="text-muted tabular">
+        <span className="text-muted-foreground tabular">
           {used} de {limit}
         </span>
       </div>
@@ -92,11 +92,15 @@ export function UsageMeter({
         aria-valuemin={0}
         aria-valuemax={limit}
         aria-valuenow={used}
-        className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-2"
+        className="mt-1.5 h-2 overflow-hidden rounded-full bg-surface-muted"
       >
         <div
           className={
-            pct >= 100 ? 'h-full bg-danger' : pct >= 80 ? 'h-full bg-warning' : 'h-full bg-brand'
+            pct >= 100
+              ? 'h-full bg-destructive'
+              : pct >= 80
+                ? 'h-full bg-warning'
+                : 'h-full bg-primary'
           }
           style={{ width: `${pct}%` }}
         />

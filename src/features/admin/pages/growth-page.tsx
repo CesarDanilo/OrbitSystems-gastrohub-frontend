@@ -67,7 +67,7 @@ function Insights() {
   return (
     <section aria-labelledby="ins">
       <h2 id="ins" className="mb-3 flex items-center gap-2 text-lg font-bold">
-        <Lightbulb aria-hidden className="size-5 text-brand" /> Insights
+        <Lightbulb aria-hidden className="size-5 text-primary" /> Insights
       </h2>
       {query.isPending ? (
         <Skeleton className="h-40" />
@@ -135,7 +135,7 @@ function Coupons() {
             <li key={c.id} className="flex items-center justify-between gap-3 py-3">
               <div>
                 <p className="font-mono font-semibold">{c.code}</p>
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground">
                   {c.type === 'PERCENT' ? `${c.value}% off` : `${formatBRL(c.value)} off`}
                   {c.minOrderCents > 0 && ` · mínimo ${formatBRL(c.minOrderCents)}`} · {c.usedCount}
                   {c.maxUses ? `/${c.maxUses}` : ''} usos
@@ -289,12 +289,12 @@ function Messages() {
                 <span className="font-semibold">
                   {m.direction === 'INBOUND' ? 'De' : 'Para'} {formatPhone(m.customerPhone)}
                 </span>
-                <span className="flex items-center gap-2 text-muted">
+                <span className="flex items-center gap-2 text-muted-foreground">
                   {m.status === 'FAILED' && <Badge tone="danger">Falhou</Badge>}
                   {formatDateTime(m.createdAt)}
                 </span>
               </div>
-              <p className="mt-1 whitespace-pre-line text-muted [overflow-wrap:anywhere]">
+              <p className="mt-1 whitespace-pre-line text-muted-foreground [overflow-wrap:anywhere]">
                 {m.body}
               </p>
             </li>

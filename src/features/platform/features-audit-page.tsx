@@ -58,7 +58,7 @@ export function PlatformFeaturesPage() {
               <tr key={f.key}>
                 <Td>
                   <span className="font-semibold">{f.name}</span>
-                  <span className="block text-xs text-muted">
+                  <span className="block text-xs text-muted-foreground">
                     {f.key} · {f.description}
                   </span>
                 </Td>
@@ -179,7 +179,7 @@ export function PlatformAuditPage() {
                   <strong>{a.action}</strong> · {a.resource}{' '}
                   {a.resourceId && <code className="text-xs">{a.resourceId}</code>}
                 </p>
-                <p className="text-muted">
+                <p className="text-muted-foreground">
                   {a.adminEmail} · {formatDateTime(a.createdAt)} {a.reason && `· ${a.reason}`}
                 </p>
                 {(a.before != null || a.after != null) && (
@@ -187,7 +187,7 @@ export function PlatformAuditPage() {
                     <summary className="cursor-pointer text-xs font-semibold">
                       Antes e depois
                     </summary>
-                    <pre className="mt-1 max-h-60 overflow-auto rounded bg-surface-2 p-2 text-xs">
+                    <pre className="mt-1 max-h-60 overflow-auto rounded bg-surface-muted p-2 text-xs">
                       {JSON.stringify({ antes: a.before, depois: a.after }, null, 2)}
                     </pre>
                   </details>

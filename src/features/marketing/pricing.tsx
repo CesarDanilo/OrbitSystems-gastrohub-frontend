@@ -50,7 +50,7 @@ export function PricingCards({
           <div
             role="radiogroup"
             aria-label="Período de cobrança"
-            className="inline-flex rounded-full bg-surface-2 p-1"
+            className="inline-flex rounded-full bg-surface-muted p-1"
           >
             {(['MONTHLY', 'YEARLY'] as const).map((value) => (
               <button
@@ -61,7 +61,7 @@ export function PricingCards({
                 onClick={() => setInterval(value)}
                 className={cn(
                   'h-10 rounded-full px-5 text-sm font-semibold transition-colors',
-                  interval === value ? 'bg-surface shadow-xs' : 'text-muted',
+                  interval === value ? 'bg-surface shadow-xs' : 'text-muted-foreground',
                 )}
               >
                 {value === 'MONTHLY' ? 'Mensal' : 'Anual'}
@@ -80,12 +80,12 @@ export function PricingCards({
               className={cn(
                 'relative flex flex-col rounded-xl border bg-surface p-6',
                 plan.highlighted
-                  ? 'border-2 border-brand shadow-lg lg:-my-2 lg:py-8'
+                  ? 'border-2 border-primary shadow-lg lg:-my-2 lg:py-8'
                   : 'border-border',
               )}
             >
               {plan.highlighted && plan.badge && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-bold text-brand-fg">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
                   {plan.badge}
                 </span>
               )}
@@ -93,12 +93,12 @@ export function PricingCards({
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 {currentCode === plan.code && <Badge tone="brand">Seu plano</Badge>}
               </div>
-              {plan.tagline && <p className="mt-1 text-sm text-muted">{plan.tagline}</p>}
+              {plan.tagline && <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>}
               <p className="mt-4">
                 <span className="text-4xl font-bold tabular">{formatBRL(price.main)}</span>
-                <span className="text-muted">/mês</span>
+                <span className="text-muted-foreground">/mês</span>
               </p>
-              <p className="text-sm text-muted">
+              <p className="text-sm text-muted-foreground">
                 {interval === 'YEARLY' && plan.yearlyPriceCents !== null
                   ? `cobrado ${price.note}`
                   : 'cobrado mensalmente'}
@@ -109,7 +109,7 @@ export function PricingCards({
                 )}
               </p>
               {plan.trialDays > 0 && (
-                <p className="mt-1 text-sm font-semibold text-brand">
+                <p className="mt-1 text-sm font-semibold text-primary">
                   {plan.trialDays} dias grátis para testar
                 </p>
               )}
@@ -132,7 +132,7 @@ export function PricingCards({
         })}
       </ul>
       <ComparisonTable plans={plans} />
-      <p className="mt-6 text-center text-sm text-muted">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Sem taxa por pedido. Cancele quando quiser: o plano fica ativo até o fim do período pago e
         seus dados continuam disponíveis.
       </p>
@@ -167,7 +167,7 @@ function ComparisonTable({ plans }: { plans: PublicPlanView[] }) {
                 <th
                   key={p.code}
                   scope="col"
-                  className={cn('p-3 text-center', p.highlighted && 'text-brand')}
+                  className={cn('p-3 text-center', p.highlighted && 'text-primary')}
                 >
                   {p.name}
                 </th>
@@ -186,11 +186,11 @@ function ComparisonTable({ plans }: { plans: PublicPlanView[] }) {
                 }))}
               />
             ))}
-            <tr className="bg-surface-2">
+            <tr className="bg-surface-muted">
               <th
                 scope="rowgroup"
                 colSpan={plans.length + 1}
-                className="p-2 text-left text-xs font-bold uppercase text-muted"
+                className="p-2 text-left text-xs font-bold uppercase text-muted-foreground"
               >
                 Limites
               </th>
@@ -229,11 +229,11 @@ function CategoryRows({
 }) {
   return (
     <>
-      <tr className="bg-surface-2">
+      <tr className="bg-surface-muted">
         <th
           scope="rowgroup"
           colSpan={plans.length + 1}
-          className="p-2 text-left text-xs font-bold uppercase text-muted"
+          className="p-2 text-left text-xs font-bold uppercase text-muted-foreground"
         >
           {title}
         </th>
@@ -248,7 +248,7 @@ function CategoryRows({
               {included ? (
                 <Check aria-label="Incluído" className="mx-auto size-5 text-success" />
               ) : (
-                <Minus aria-label="Não incluído" className="mx-auto size-5 text-muted" />
+                <Minus aria-label="Não incluído" className="mx-auto size-5 text-muted-foreground" />
               )}
             </td>
           ))}
@@ -262,12 +262,12 @@ function CategoryRows({
 export function PricingPage() {
   const plans = useQuery(publicPlansQuery);
   return (
-    <div className="min-h-dvh bg-bg">
+    <div className="min-h-dvh bg-background">
       <header className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/" aria-label="Início">
           <Logo />
         </Link>
-        <Link to="/entrar" className="text-sm font-semibold text-brand">
+        <Link to="/entrar" className="text-sm font-semibold text-primary">
           Entrar
         </Link>
       </header>
@@ -275,7 +275,7 @@ export function PricingPage() {
         <h1 className="text-center text-3xl font-bold sm:text-4xl">
           Planos para cada fase do seu restaurante
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-muted">
+        <p className="mx-auto mt-3 max-w-2xl text-center text-muted-foreground">
           Venda pelo seu próprio canal, sem comissão por pedido. Escolha o plano que cabe na sua
           operação e mude quando quiser.
         </p>
@@ -300,8 +300,8 @@ export function PricingPage() {
                   className={cn(
                     'flex h-13 w-full items-center justify-center rounded-md px-6 font-semibold',
                     plan.highlighted
-                      ? 'bg-brand text-brand-fg'
-                      : 'border border-border-strong bg-surface text-fg hover:bg-surface-2',
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border border-border-strong bg-surface text-foreground hover:bg-surface-muted',
                   )}
                 >
                   {plan.trialDays > 0

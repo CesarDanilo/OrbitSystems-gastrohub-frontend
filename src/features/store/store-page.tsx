@@ -56,14 +56,14 @@ export function StorePage() {
           <Link
             to="/s/$slug/pedido/$token"
             params={{ slug, token: lastOrder.token }}
-            className="mt-4 flex min-h-12 items-center justify-between rounded-md bg-brand-soft px-4 py-3 text-sm font-semibold text-fg"
+            className="mt-4 flex min-h-12 items-center justify-between rounded-md bg-primary-muted px-4 py-3 text-sm font-semibold text-foreground"
           >
             <span>Acompanhar pedido #{lastOrder.number}</span>
             <span aria-hidden>→</span>
           </Link>
         )}
 
-        <div className="sticky top-0 z-20 -mx-4 bg-bg/95 px-4 pt-4 pb-2 backdrop-blur supports-[backdrop-filter]:bg-bg/80">
+        <div className="sticky top-0 z-20 -mx-4 bg-background/95 px-4 pt-4 pb-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <SearchField
             value={search}
             onChange={setSearch}
@@ -123,7 +123,7 @@ export function StorePage() {
         )}
 
         {store.showPoweredBy && (
-          <p className="mt-12 text-center text-xs text-muted">
+          <p className="mt-12 text-center text-xs text-muted-foreground">
             Loja criada com{' '}
             <Link to="/" className="font-semibold underline underline-offset-2">
               Hamburguerias
@@ -145,7 +145,7 @@ function StoreHeader({ store }: { store: PublicStore }) {
   return (
     <header>
       <div
-        className="relative h-36 bg-brand sm:h-48"
+        className="relative h-36 bg-primary sm:h-48"
         style={
           store.bannerUrl
             ? {
@@ -165,7 +165,7 @@ function StoreHeader({ store }: { store: PublicStore }) {
       </div>
       <div className="mx-auto max-w-5xl px-4">
         <div className="relative -mt-10 flex items-end gap-4">
-          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border-4 border-bg bg-surface shadow-md">
+          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border-4 border-background bg-surface shadow-md">
             {store.logoUrl ? (
               <img
                 src={store.logoUrl}
@@ -175,7 +175,7 @@ function StoreHeader({ store }: { store: PublicStore }) {
                 className="size-full object-cover"
               />
             ) : (
-              <span aria-hidden className="text-2xl font-bold text-brand">
+              <span aria-hidden className="text-2xl font-bold text-primary">
                 {store.name.slice(0, 1)}
               </span>
             )}
@@ -188,9 +188,11 @@ function StoreHeader({ store }: { store: PublicStore }) {
         </div>
         <h1 className="mt-3 text-2xl font-bold sm:text-3xl">{store.name}</h1>
         {store.description && (
-          <p className="mt-1 max-w-2xl text-[0.9375rem] text-muted">{store.description}</p>
+          <p className="mt-1 max-w-2xl text-[0.9375rem] text-muted-foreground">
+            {store.description}
+          </p>
         )}
-        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted">
+        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-1.5">
             <Clock aria-hidden className="size-4" />
             {d.estimatedMinutesMin}–{d.estimatedMinutesMax} min
@@ -224,7 +226,7 @@ function StoreHeader({ store }: { store: PublicStore }) {
                 href={whatsappLink}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 font-semibold text-fg underline-offset-2 hover:underline"
+                className="flex items-center gap-1.5 font-semibold text-foreground underline-offset-2 hover:underline"
               >
                 <MessageCircle aria-hidden className="size-4" />
                 WhatsApp
@@ -233,7 +235,9 @@ function StoreHeader({ store }: { store: PublicStore }) {
           )}
         </ul>
         {d.minOrderCents > 0 && (
-          <p className="mt-2 text-sm text-muted">Pedido mínimo {formatBRL(d.minOrderCents)}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Pedido mínimo {formatBRL(d.minOrderCents)}
+          </p>
         )}
       </div>
     </header>
@@ -284,8 +288,8 @@ function CategoryNav({ categories }: { categories: { id: string; name: string }[
           className={cn(
             'flex h-10 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition-colors duration-150',
             active === c.id
-              ? 'bg-fg text-bg'
-              : 'bg-surface text-fg ring-1 ring-border hover:bg-surface-2',
+              ? 'bg-foreground text-background'
+              : 'bg-surface text-foreground ring-1 ring-border hover:bg-surface-muted',
           )}
         >
           {c.name}
@@ -314,7 +318,7 @@ export function ProductCard({ slug, product }: { slug: string; product: PublicPr
       <div className="flex min-w-0 flex-1 flex-col">
         <h3 className="font-semibold">{product.name}</h3>
         {product.description && (
-          <p className="mt-1 line-clamp-2 text-sm text-muted">{product.description}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{product.description}</p>
         )}
         <div className="mt-auto flex items-center gap-2 pt-2">
           <span className="font-bold tabular">{formatBRL(product.priceCents)}</span>

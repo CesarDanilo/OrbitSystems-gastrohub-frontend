@@ -70,7 +70,7 @@ export function Dialog({
         if (e.target === ref.current) ref.current?.close(); // click on backdrop
       }}
       className={cn(
-        'm-0 max-h-none max-w-none bg-transparent p-0 text-fg backdrop:animate-fade-in open:flex',
+        'm-0 max-h-none max-w-none bg-transparent p-0 text-foreground backdrop:animate-fade-in open:flex',
         'h-dvh w-full items-end justify-center sm:items-center',
         variant === 'sheet' && 'sm:items-stretch sm:justify-end',
       )}
@@ -94,7 +94,7 @@ export function Dialog({
               <h2 id={titleId} className="text-lg font-semibold">
                 {title}
               </h2>
-              {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
+              {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
             </div>
             <IconButton label="Fechar" onClick={() => ref.current?.close()}>
               <X className="size-5" aria-hidden />

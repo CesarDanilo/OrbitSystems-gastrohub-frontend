@@ -111,7 +111,7 @@ export function ProductOptionsDialog({
             <fieldset key={group.id}>
               <legend className="mb-1 font-semibold">
                 {group.name}{' '}
-                <span className="text-sm font-normal text-muted">
+                <span className="text-sm font-normal text-muted-foreground">
                   {group.minSelect > 0 ? 'obrigatório' : 'opcional'}
                   {group.maxSelect > 1 ? ` · até ${group.maxSelect}` : ''}
                 </span>

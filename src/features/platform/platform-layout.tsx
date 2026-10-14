@@ -241,8 +241,8 @@ function MfaStep({ me }: { me: PlatformMe }) {
           {qr && (
             <img src={qr} alt="QR Code para o aplicativo autenticador" width={200} height={200} />
           )}
-          <p className="text-sm text-muted">Ou digite a chave:</p>
-          <code className="rounded bg-surface-2 px-2 py-1 text-sm break-all select-all">
+          <p className="text-sm text-muted-foreground">Ou digite a chave:</p>
+          <code className="rounded bg-surface-muted px-2 py-1 text-sm break-all select-all">
             {setup.secret}
           </code>
         </div>
@@ -287,10 +287,10 @@ function AuthCard({
     <div className="flex min-h-dvh items-center justify-center bg-sidebar px-4">
       <Card className="w-full max-w-sm p-6">
         <div className="mb-5 flex items-center gap-2">
-          <ShieldCheck aria-hidden className="size-6 text-brand" />
+          <ShieldCheck aria-hidden className="size-6 text-primary" />
           <h1 className="text-lg font-bold">{title}</h1>
         </div>
-        <p className="mb-5 text-sm text-muted">{description}</p>
+        <p className="mb-5 text-sm text-muted-foreground">{description}</p>
         {children}
       </Card>
     </div>

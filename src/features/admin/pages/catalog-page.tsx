@@ -242,7 +242,7 @@ function ProductsTab() {
                             onChange={(active) => toggle.mutate({ id: p.id, active })}
                             ariaLabel={`${p.name} disponível`}
                             label={
-                              <span className="text-sm text-muted">
+                              <span className="text-sm text-muted-foreground">
                                 {p.active ? 'Disponível' : 'Pausado'}
                               </span>
                             }
@@ -383,7 +383,7 @@ function CategoriesTab() {
                 <p className="font-semibold">
                   {c.name} {!c.active && <Badge>Oculta</Badge>}
                 </p>
-                <p className="text-sm text-muted">{c.productsCount} produto(s)</p>
+                <p className="text-sm text-muted-foreground">{c.productsCount} produto(s)</p>
               </div>
               {can('catalog:write') && (
                 <>
@@ -406,7 +406,7 @@ function CategoriesTab() {
                   </IconButton>
                   <IconButton
                     label={`Excluir ${c.name}`}
-                    className="text-danger"
+                    className="text-destructive"
                     onClick={() => {
                       void confirm({
                         title: `Excluir a categoria "${c.name}"?`,

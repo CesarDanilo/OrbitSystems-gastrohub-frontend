@@ -350,7 +350,7 @@ function DeliveryForm({ settings }: { settings: RestaurantSettings }) {
           label="Permitir retirada no local"
         />
         {errors.deliveryEnabled && (
-          <p className="text-sm font-medium text-danger">{errors.deliveryEnabled}</p>
+          <p className="text-sm font-medium text-destructive">{errors.deliveryEnabled}</p>
         )}
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Taxa de entrega" error={errors.deliveryFeeCents}>
@@ -440,7 +440,7 @@ function HoursForm({ settings }: { settings: RestaurantSettings }) {
                         }
                         className="w-32"
                       />
-                      <span className="text-muted">até</span>
+                      <span className="text-muted-foreground">até</span>
                       <Input
                         type="time"
                         aria-label={`${label}: fecha`}
@@ -523,7 +523,9 @@ function PaymentsForm({ settings }: { settings: RestaurantSettings }) {
           })}
         </div>
         {methods.length === 0 && (
-          <p className="text-sm font-medium text-danger">Aceite ao menos uma forma de pagamento.</p>
+          <p className="text-sm font-medium text-destructive">
+            Aceite ao menos uma forma de pagamento.
+          </p>
         )}
         <SaveBar loading={save.isPending} />
       </Form>
@@ -661,7 +663,7 @@ function AssistantPreview() {
     invalidate: [],
   });
   return (
-    <div className="mt-6 rounded-md bg-surface-2 p-4">
+    <div className="mt-6 rounded-md bg-surface-muted p-4">
       <p className="flex items-center gap-2 font-semibold">
         <Bot aria-hidden className="size-5" /> Teste o assistente
       </p>
@@ -687,7 +689,7 @@ function AssistantPreview() {
           aria-live="polite"
         >
           {preview.data.text}
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 text-xs text-muted-foreground">
             Entendido como: {preview.data.intent} ·{' '}
             {preview.data.source === 'llm' ? 'interpretado com IA' : 'regra determinística'}
           </p>
@@ -740,7 +742,7 @@ function TeamSection() {
             <li key={m.id} className="flex flex-wrap items-center gap-3 py-3">
               <div className="min-w-0 flex-1">
                 <p className="font-semibold">{m.user.name}</p>
-                <p className="text-sm text-muted">{m.user.email}</p>
+                <p className="text-sm text-muted-foreground">{m.user.email}</p>
               </div>
               {m.role === 'OWNER' ? (
                 <Badge tone="brand">{ROLE_LABEL.OWNER}</Badge>
@@ -761,7 +763,7 @@ function TeamSection() {
                   {m.user.id !== session.user.id && (
                     <IconButton
                       label={`Remover ${m.user.name}`}
-                      className="text-danger"
+                      className="text-destructive"
                       onClick={() => {
                         void confirm({
                           title: `Remover ${m.user.name} da equipe?`,
