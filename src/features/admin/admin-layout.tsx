@@ -12,6 +12,7 @@ import {
   CreditCard,
   ExternalLink,
   House,
+  KeyRound,
   LogOut,
   Menu as MenuIcon,
   PanelLeftClose,
@@ -30,6 +31,7 @@ import { usePreference } from '../../lib/preferences';
 import { Drawer, IconButton, Tooltip } from '../../components/ui';
 import { ThemeToggle } from '../../components/theme-toggle';
 import { Logo } from '../marketing/logo';
+import { ChangePasswordDialog } from '../auth/change-password-dialog';
 import { useCan, useSession } from '../auth/session';
 import { adminQueries } from './api';
 import { useRealtime } from './realtime';
@@ -320,6 +322,7 @@ function SidebarFooter({
   const session = useSession();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const logout = async () => {
     await api.post('/auth/logout').catch(() => undefined);
     queryClient.clear();
@@ -345,6 +348,18 @@ function SidebarFooter({
         </a>
       </Tooltip>
       <ThemeToggle compact={collapsed} />
+      <Tooltip label="Alterar senha" disabled={!collapsed}>
+        <button
+          type="button"
+          onClick={() => setPasswordOpen(true)}
+          aria-label={collapsed ? 'Alterar senha' : undefined}
+          className={rowClass}
+        >
+          <KeyRound aria-hidden className="size-[1.125rem] shrink-0" />
+          {!collapsed && 'Alterar senha'}
+        </button>
+      </Tooltip>
+      <ChangePasswordDialog open={passwordOpen} onClose={() => setPasswordOpen(false)} />
       {children}
       <div className={cn('flex items-center gap-3 pt-2', collapsed ? 'flex-col' : 'px-1')}>
         <Tooltip label={`${session.user.name} · ${roleLine}`} disabled={!collapsed}>
