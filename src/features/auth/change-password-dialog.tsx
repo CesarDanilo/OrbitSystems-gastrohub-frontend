@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { changePasswordSchema } from '@gastrohub/shared';
+import { changePasswordSchema } from '@orbitsystems/gastrohub-contracts';
 import { api, errorMessage } from '../../lib/api';
 import { Alert, Button, Dialog, Field, Input, toast } from '../../components/ui';
 

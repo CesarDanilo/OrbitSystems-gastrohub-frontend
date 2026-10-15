@@ -1,4 +1,4 @@
-export { formatBRL } from '@gastrohub/shared';
+export { formatBRL } from '@orbitsystems/gastrohub-contracts';
 
 const dateTime = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 const time = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });

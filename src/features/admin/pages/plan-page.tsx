@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { LIMIT_KEYS, LIMIT_LABEL } from '@gastrohub/shared';
+import { LIMIT_KEYS, LIMIT_LABEL } from '@orbitsystems/gastrohub-contracts';
 import { api, ApiError, errorMessage } from '../../../lib/api';
 import { formatBRL, formatDateTime } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

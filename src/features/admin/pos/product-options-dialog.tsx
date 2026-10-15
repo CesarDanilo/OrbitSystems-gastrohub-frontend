@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { DomainError, priceLine, type PublicProduct } from '@gastrohub/shared';
+import { DomainError, priceLine, type PublicProduct } from '@orbitsystems/gastrohub-contracts';
 import { formatBRL } from '../../../lib/format';
 import {
   Alert,

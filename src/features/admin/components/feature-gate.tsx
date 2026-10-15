@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Lock } from 'lucide-react';
-import { FEATURE_LABEL, type FeatureKey } from '@gastrohub/shared';
+import { FEATURE_LABEL, type FeatureKey } from '@orbitsystems/gastrohub-contracts';
 import { useCan } from '../../auth/session';
 
 /**

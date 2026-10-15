@@ -4,7 +4,7 @@ import {
   type FeatureKey,
   type Permission,
   type SessionInfo,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api, ApiError } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 

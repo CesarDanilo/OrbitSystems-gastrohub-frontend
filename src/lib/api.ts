@@ -1,4 +1,4 @@
-import type { ApiErrorBody, ErrorCategory } from '@gastrohub/shared';
+import type { ApiErrorBody, ErrorCategory } from '@orbitsystems/gastrohub-contracts';
 
 /** Error thrown for any non-2xx API response, carrying the server's stable code. */
 export class ApiError extends Error {

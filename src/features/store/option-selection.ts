@@ -1,4 +1,4 @@
-import type { PublicOptionGroup, PublicProduct } from '@gastrohub/shared';
+import type { PublicOptionGroup, PublicProduct } from '@orbitsystems/gastrohub-contracts';
 
 /** Selected option ids per group. */
 export type Selection = Record<string, string[]>;

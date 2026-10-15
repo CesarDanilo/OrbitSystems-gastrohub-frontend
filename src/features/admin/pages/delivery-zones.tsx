@@ -7,7 +7,7 @@ import {
   type DeliveryRuleInput,
   type DeliveryRuleType,
   type DeliveryRuleView,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL, parseMoneyToCents } from '../../../lib/format';
 import {

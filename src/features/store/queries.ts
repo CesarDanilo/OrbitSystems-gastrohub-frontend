@@ -5,7 +5,7 @@ import {
   type CheckoutInput,
   type PublicOrder,
   type PublicStore,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 import { getSessionId } from '../../lib/session-id';

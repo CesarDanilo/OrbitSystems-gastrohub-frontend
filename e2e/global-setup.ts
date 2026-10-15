@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { PLATFORM } from './helpers';
 
 /** Backend checkout used by E2E; override when the repositories are separate. */
-const API_DIR = process.env.E2E_API_DIR ?? '../api';
+const API_DIR = process.env.E2E_API_DIR ?? '../gastrohub-backend';
 
 /** Fresh, seeded test database for every E2E run. */
 export default function globalSetup() {

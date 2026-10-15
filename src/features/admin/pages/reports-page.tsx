@@ -8,7 +8,7 @@ import {
   type FulfillmentType,
   type OrderChannel,
   type PaymentMethod,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api } from '../../../lib/api';
 import { formatBRL } from '../../../lib/format';
 import {

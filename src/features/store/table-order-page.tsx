@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link, useParams } from '@tanstack/react-router';
 import { CircleCheck, Minus, Plus, UtensilsCrossed } from 'lucide-react';
-import type { PublicOrder, PublicProduct, PublicStore } from '@gastrohub/shared';
+import type { PublicOrder, PublicProduct, PublicStore } from '@orbitsystems/gastrohub-contracts';
 import { api, errorMessage } from '../../lib/api';
 import { formatBRL } from '../../lib/format';
 import { Alert, Button, ErrorState, Field, Input, PageSpinner } from '../../components/ui';

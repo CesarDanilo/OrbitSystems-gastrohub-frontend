@@ -1,0 +1,14 @@
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  sharp: true
+
+minimumReleaseAgeExclude:
+  - vite@8.3.3
+  - mysql2@3.24.6
+
+# Security: patched transitive dependencies of the Prisma CLI (see docs/security/SECURITY-AUDIT.md, DEP-01/02).
+overrides:
+  mysql2: ^3.24.6
+  deepmerge-ts: ^8.0.2

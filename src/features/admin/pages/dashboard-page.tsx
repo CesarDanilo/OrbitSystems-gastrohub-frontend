@@ -7,7 +7,7 @@ import {
   type DashboardSummary,
   type Insight,
   type OrderStatus,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { formatBRL } from '../../../lib/format';
 import {
   Card,

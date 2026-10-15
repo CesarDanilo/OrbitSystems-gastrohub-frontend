@@ -13,7 +13,7 @@ import {
   WEEKDAY_LABELS,
   type PaymentMethod,
   type Role,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import type { z } from 'zod';
 import { api } from '../../../lib/api';
 import { centsToInput, formatPhone, parseMoneyToCents } from '../../../lib/format';

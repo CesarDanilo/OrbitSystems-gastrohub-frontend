@@ -7,7 +7,7 @@ import {
   type AdminOrder,
   type PaymentRecordView,
   type PosPaymentMethod,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { formatBRL, formatRelative, formatTime } from '../../../lib/format';
 import { cn } from '../../../lib/cn';
 import {

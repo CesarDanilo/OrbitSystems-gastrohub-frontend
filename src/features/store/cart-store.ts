@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { DomainError, priceLine, type PublicProduct, type PublicStore } from '@gastrohub/shared';
+import {
+  DomainError,
+  priceLine,
+  type PublicProduct,
+  type PublicStore,
+} from '@orbitsystems/gastrohub-contracts';
 
 /**
  * Local cart state (zustand + localStorage). Remote data stays in TanStack Query; the cart is

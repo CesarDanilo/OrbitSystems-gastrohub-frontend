@@ -18,7 +18,7 @@ import {
   isTerminal,
   type OrderStatus,
   type PublicOrder,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { cn } from '../../lib/cn';
 import { api, ApiError } from '../../lib/api';
 import { formatBRL, formatTime } from '../../lib/format';

@@ -11,7 +11,7 @@ import {
   type AdminOrder,
   type OrderStatus,
   type Paginated,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL, formatPhone, formatRelative, formatTime } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

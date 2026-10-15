@@ -10,7 +10,7 @@ import {
 } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { hasPermission, type Permission } from '@gastrohub/shared';
+import { hasPermission, type Permission } from '@orbitsystems/gastrohub-contracts';
 import { ApiError } from '../lib/api';
 import { ConfirmHost, ErrorState, PageSpinner, Toaster } from '../components/ui';
 import { sessionQuery } from '../features/auth/session';

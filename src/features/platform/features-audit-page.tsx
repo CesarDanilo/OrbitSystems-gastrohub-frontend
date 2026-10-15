@@ -6,7 +6,7 @@ import {
   FEATURE_STATUSES,
   type FeatureDefinitionView,
   type FeatureStatus,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { api } from '../../lib/api';
 import { formatDateTime } from '../../lib/format';
 import {

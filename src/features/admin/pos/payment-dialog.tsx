@@ -4,7 +4,7 @@ import {
   POS_PAYMENT_METHODS,
   splitEvenly,
   type PosPaymentMethod,
-} from '@gastrohub/shared';
+} from '@orbitsystems/gastrohub-contracts';
 import { formatBRL, parseMoneyToCents } from '../../../lib/format';
 import { Alert, Button, Dialog, Field, Input, Radio } from '../../../components/ui';
 import { useCan, useSession } from '../../auth/session';

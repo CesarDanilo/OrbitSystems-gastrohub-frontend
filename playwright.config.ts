@@ -5,7 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
  * so it never touches development data. `e2e/global-setup.ts` migrates and seeds it.
  */
 try {
-  process.loadEnvFile('../../.env');
+  process.loadEnvFile('.env');
 } catch {
   // CI provides variables directly
 }
@@ -13,7 +13,7 @@ try {
 const API_PORT = 3341;
 const WEB_PORT = 5181;
 /** Backend checkout used by E2E; override when the repositories are separate. */
-const API_DIR = process.env.E2E_API_DIR ?? '../api';
+const API_DIR = process.env.E2E_API_DIR ?? '../gastrohub-backend';
 const databaseUrl = process.env.TEST_DATABASE_URL ?? '';
 
 export default defineConfig({
