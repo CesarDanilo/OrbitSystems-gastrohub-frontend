@@ -9,6 +9,7 @@ import {
 import { api } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 import { getSessionId } from '../../lib/session-id';
+import { idempotencyHeader } from '../../lib/idempotency';
 
 export const storeQuery = (slug: string) =>
   queryOptions({
@@ -30,9 +31,9 @@ export const publicOrderQuery = (token: string) =>
     refetchOnWindowFocus: true,
   });
 
-export const createOrder = (slug: string, input: CheckoutInput) =>
+export const createOrder = (slug: string, input: CheckoutInput, idempotencyKey: string) =>
   api.post<PublicOrder>(`/public/stores/${slug}/orders`, input, {
-    headers: { 'x-session-id': getSessionId() },
+    headers: { 'x-session-id': getSessionId(), ...idempotencyHeader(idempotencyKey) },
   });
 
 export const validateCoupon = (slug: string, code: string, subtotalCents: number) =>

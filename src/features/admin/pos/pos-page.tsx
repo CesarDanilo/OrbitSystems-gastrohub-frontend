@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ShoppingBag, UtensilsCrossed } from 'lucide-react';
-import { type AdminOrder, type PublicProduct } from '../../../contracts';
+import { type AdminOrder, type PosOrderInput, type PublicProduct } from '../../../contracts';
 import { formatBRL, parseMoneyToCents } from '../../../lib/format';
+import { useSubmissionKey } from '../../../lib/idempotency';
 import {
   Button,
   Dialog,
@@ -136,10 +137,12 @@ function PosScreen() {
       confirmLabel: 'Limpar pedido',
     }).then((ok) => ok && reset());
 
+  // Retrying the same ticket after a network failure must not send it to the kitchen twice.
+  const submission = useSubmissionKey();
   const submit = usePosMutation(
     rid,
-    () =>
-      posApi.createOrder({
+    () => {
+      const input: PosOrderInput = {
         channel: mode === 'counter' ? 'POS' : 'WAITER',
         fulfillment: mode === 'counter' ? 'PICKUP' : 'DINE_IN',
         tableSessionId: mode === 'table' ? tableSessionId || null : null,
@@ -154,13 +157,16 @@ function PosScreen() {
           optionIds: l.optionIds,
           notes: l.notes || null,
         })),
-      }),
+      };
+      return posApi.createOrder(input, submission.keyFor(input));
+    },
     (order) => `Pedido #${order.number} lançado`,
   );
 
   const send = (payNow: boolean) =>
     submit.mutate(undefined, {
       onSuccess: (order) => {
+        submission.done();
         reset();
         if (payNow) setPaying(order);
       },

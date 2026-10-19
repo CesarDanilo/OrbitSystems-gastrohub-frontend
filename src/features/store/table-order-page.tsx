@@ -4,6 +4,7 @@ import { Link, useParams } from '@tanstack/react-router';
 import { CircleCheck, Minus, Plus, UtensilsCrossed } from 'lucide-react';
 import type { PublicOrder, PublicProduct, PublicStore } from '../../contracts';
 import { api, errorMessage } from '../../lib/api';
+import { idempotencyHeader, useSubmissionKey } from '../../lib/idempotency';
 import { formatBRL } from '../../lib/format';
 import { Alert, Button, ErrorState, Field, Input, PageSpinner } from '../../components/ui';
 import { ProductOptionsDialog, type TicketLine } from '../admin/pos/product-options-dialog';
@@ -57,9 +58,11 @@ export function TableOrderPage() {
   const [placed, setPlaced] = useState<PublicOrder | null>(null);
   const [mine, setMine] = useState(() => rememberedOrders(token));
 
+  // Retrying the same round after a network failure must not send it to the kitchen twice.
+  const submission = useSubmissionKey();
   const send = useMutation({
-    mutationFn: () =>
-      api.post<PublicOrder>(`/public/tables/${token}/orders`, {
+    mutationFn: () => {
+      const input = {
         name: name.trim() || null,
         notes: null,
         items: lines.map((l) => ({
@@ -68,8 +71,13 @@ export function TableOrderPage() {
           optionIds: l.optionIds,
           notes: l.notes || null,
         })),
-      }),
+      };
+      return api.post<PublicOrder>(`/public/tables/${token}/orders`, input, {
+        headers: idempotencyHeader(submission.keyFor(input)),
+      });
+    },
     onSuccess: (order) => {
+      submission.done();
       rememberOrder(token, order);
       setMine(rememberedOrders(token));
       setPlaced(order);

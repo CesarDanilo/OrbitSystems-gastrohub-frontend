@@ -39,5 +39,5 @@ test('best sellers open the product they refer to', async ({ page }) => {
   const name = (await first.getAttribute('aria-label'))!.replace(/^1º (.+?):.*$/, '$1');
   await first.click();
   await expect(page).toHaveURL(/\/admin\/cardapio\/[^/]+$/);
-  await expect(page.getByLabel('Nome')).toHaveValue(name);
+  await expect(page.getByRole('textbox', { name: 'Nome', exact: true })).toHaveValue(name);
 });

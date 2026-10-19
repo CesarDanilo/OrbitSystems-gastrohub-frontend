@@ -9,6 +9,7 @@ import type {
   TransferItemsInput,
 } from '../../../contracts';
 import { api, errorMessage } from '../../../lib/api';
+import { idempotencyHeader } from '../../../lib/idempotency';
 import { toast } from '../../../components/ui';
 
 /** DTOs of the counter, tables, tabs and cash register endpoints. */
@@ -189,7 +190,10 @@ export function usePosMutation<TInput, TResult>(
 }
 
 export const posApi = {
-  createOrder: (input: PosOrderInput) => api.post<AdminOrder>('/admin/pos/orders', input),
+  createOrder: (input: PosOrderInput, idempotencyKey: string) =>
+    api.post<AdminOrder>('/admin/pos/orders', input, {
+      headers: idempotencyHeader(idempotencyKey),
+    }),
   pay: (input: PaymentInput) => api.post<PaymentResult>('/admin/payments', input),
   refund: (id: string, reason: string) => api.post(`/admin/payments/${id}/refund`, { reason }),
   cancelItems: (orderId: string, itemIds: string[], reason: string) =>

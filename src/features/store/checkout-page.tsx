@@ -14,6 +14,7 @@ import {
 } from '../../contracts';
 import { cn } from '../../lib/cn';
 import { api, ApiError, errorMessage } from '../../lib/api';
+import { useSubmissionKey } from '../../lib/idempotency';
 import { centsToInput, formatBRL, parseMoneyToCents } from '../../lib/format';
 import { queryKeys } from '../../lib/query-keys';
 import { Alert, Button, Field, Input, Radio, Switch, Textarea } from '../../components/ui';
@@ -157,9 +158,12 @@ export function CheckoutPage() {
     onError: (error) => setErrors((e) => ({ ...e, coupon: errorMessage(error) })),
   });
 
+  // Retrying the same order after a network failure must not create it twice.
+  const submission = useSubmissionKey();
   const orderMutation = useMutation({
-    mutationFn: (input: CheckoutInput) => createOrder(slug, input),
+    mutationFn: (input: CheckoutInput) => createOrder(slug, input, submission.keyFor(input)),
     onSuccess: (order, input) => {
+      submission.done();
       saveCustomer({
         name: input.customer.name,
         phone: input.customer.phone,
