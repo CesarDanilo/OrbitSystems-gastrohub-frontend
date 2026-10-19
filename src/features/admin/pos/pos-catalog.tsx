@@ -1,6 +1,6 @@
 import { Plus, SearchX, SlidersHorizontal, UtensilsCrossed } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
-import type { PublicCategory, PublicProduct } from '@orbitsystems/gastrohub-contracts';
+import type { PublicCategory, PublicProduct } from '../../../contracts';
 import { formatBRL } from '../../../lib/format';
 import { cn } from '../../../lib/cn';
 import { ProductImage } from '../../../components/product-image';

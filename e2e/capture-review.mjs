@@ -1,11 +1,11 @@
 // Captures review screenshots of the running dev server (http://localhost:5180) for the design
 // finish review. Local tool, not part of the test suite. Uses the seeded demo account.
-// Usage: node e2e/capture-review.mjs  (from apps/web, with the dev servers running)
+// Usage: node e2e/capture-review.mjs  (from the repository root, with the dev servers running)
 import { mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 
 const BASE = process.env.REVIEW_BASE_URL ?? 'http://localhost:5180';
-const OUT = '../../.impeccable/review';
+const OUT = '.impeccable/review';
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();

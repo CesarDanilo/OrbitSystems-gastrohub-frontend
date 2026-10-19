@@ -23,8 +23,8 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import type { FeatureKey, Permission } from '@orbitsystems/gastrohub-contracts';
-import { ROLE_LABEL } from '@orbitsystems/gastrohub-contracts';
+import type { FeatureKey, Permission } from '../../contracts';
+import { ROLE_LABEL } from '../../contracts';
 import { cn } from '../../lib/cn';
 import { api } from '../../lib/api';
 import { usePreference } from '../../lib/preferences';

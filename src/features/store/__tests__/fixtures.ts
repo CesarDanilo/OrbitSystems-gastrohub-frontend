@@ -1,4 +1,4 @@
-import type { PublicProduct, PublicStore } from '@orbitsystems/gastrohub-contracts';
+import type { PublicProduct, PublicStore } from '../../../contracts';
 
 export const burger: PublicProduct = {
   id: 'p1',

@@ -7,7 +7,7 @@ import type {
   PlanTerms,
   SubscriptionView,
   UsageView,
-} from '@orbitsystems/gastrohub-contracts';
+} from '../../contracts';
 import { api, errorMessage } from '../../lib/api';
 import { toast } from '../../components/ui';
 

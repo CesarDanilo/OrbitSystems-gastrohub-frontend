@@ -1,10 +1,5 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
-import {
-  hasPermission,
-  type FeatureKey,
-  type Permission,
-  type SessionInfo,
-} from '@orbitsystems/gastrohub-contracts';
+import { hasPermission, type FeatureKey, type Permission, type SessionInfo } from '../../contracts';
 import { api, ApiError } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 

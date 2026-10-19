@@ -11,7 +11,7 @@ import type {
   UsageView,
   Role,
   OptionGroupInput,
-} from '@orbitsystems/gastrohub-contracts';
+} from '../../contracts';
 import { api, errorMessage } from '../../lib/api';
 import { queryKeys } from '../../lib/query-keys';
 import { toast } from '../../components/ui';

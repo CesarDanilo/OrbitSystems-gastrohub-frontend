@@ -8,7 +8,7 @@ import {
   LIMIT_KEYS,
   type FeatureKey,
   type LimitKey,
-} from '@orbitsystems/gastrohub-contracts';
+} from '../../contracts';
 import { api } from '../../lib/api';
 import { formatBRL, formatDateTime } from '../../lib/format';
 import { useDebounced } from '../../lib/use-debounced';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { PublicCategory, PublicProduct } from '@orbitsystems/gastrohub-contracts';
+import type { PublicCategory, PublicProduct } from '../../../../contracts';
 import { ProductImage } from '../../../../components/product-image';
 import { burger } from '../../../store/__tests__/fixtures';
 import { PosCatalog, countByProduct, filterProducts } from '../pos-catalog';

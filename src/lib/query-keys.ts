@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@orbitsystems/gastrohub-contracts';
+import type { OrderStatus } from '../contracts';
 
 /**
  * Single source of query keys. Admin keys start with the restaurant id, so data of one tenant

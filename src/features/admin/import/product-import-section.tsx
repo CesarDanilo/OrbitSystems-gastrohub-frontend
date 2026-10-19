@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { CircleAlert, CircleCheck, Download, FileUp, RefreshCw } from 'lucide-react';
-import type { ProductInput } from '@orbitsystems/gastrohub-contracts';
+import type { ProductInput } from '../../../contracts';
 import { api, errorMessage } from '../../../lib/api';
 import { cn } from '../../../lib/cn';
 import { formatBRL } from '../../../lib/format';

@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
-import {
-  productSchema,
-  WEEKDAY_LABELS,
-  type ProductInput,
-} from '@orbitsystems/gastrohub-contracts';
+import { productSchema, WEEKDAY_LABELS, type ProductInput } from '../../../contracts';
 import { api, ApiError } from '../../../lib/api';
 import { centsToInput, parseMoneyToCents } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

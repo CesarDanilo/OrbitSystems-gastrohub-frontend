@@ -6,15 +6,13 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    permissions: { contents: read, packages: read }
+    permissions: { contents: read }
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 24, cache: pnpm, registry-url: 'https://npm.pkg.github.com' }
+        with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
-      - run: pnpm lint && pnpm exec prettier --check . && pnpm typecheck
+      - run: pnpm lint && pnpm format:check && pnpm typecheck
       - run: pnpm test
       - run: pnpm build

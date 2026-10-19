@@ -10,7 +10,7 @@ import {
   ShoppingBag,
   Store as StoreIcon,
 } from 'lucide-react';
-import type { PublicProduct, PublicStore } from '@orbitsystems/gastrohub-contracts';
+import type { PublicProduct, PublicStore } from '../../contracts';
 import { cn } from '../../lib/cn';
 import { ProductImage as SharedProductImage } from '../../components/product-image';
 import { formatBRL } from '../../lib/format';

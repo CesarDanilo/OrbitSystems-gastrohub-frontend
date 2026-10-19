@@ -11,7 +11,7 @@ import {
   type LimitKey,
   type PlanLimits,
   type PlanTerms,
-} from '@orbitsystems/gastrohub-contracts';
+} from '../../contracts';
 import { api } from '../../lib/api';
 import { cn } from '../../lib/cn';
 import { formatBRL, formatDateTime, parseMoneyToCents } from '../../lib/format';

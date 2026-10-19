@@ -2,10 +2,8 @@
 FROM node:24-slim AS build
 RUN corepack enable
 WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-RUN --mount=type=secret,id=npm_token,env=NODE_AUTH_TOKEN \
-  echo "//npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN" > /root/.npmrc \
-  && pnpm install --frozen-lockfile && rm /root/.npmrc
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm exec vite build
 

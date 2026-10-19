@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowDownLeft, ArrowUpRight, ChevronDown, Wallet } from 'lucide-react';
 import { cn } from '../../../lib/cn';
-import {
-  CASH_MOVEMENT_LABEL,
-  PAYMENT_METHOD_LABEL,
-  type PaymentMethod,
-} from '@orbitsystems/gastrohub-contracts';
+import { CASH_MOVEMENT_LABEL, PAYMENT_METHOD_LABEL, type PaymentMethod } from '../../../contracts';
 import { formatBRL, formatDateTime, formatTime, parseMoneyToCents } from '../../../lib/format';
 import {
   Alert,

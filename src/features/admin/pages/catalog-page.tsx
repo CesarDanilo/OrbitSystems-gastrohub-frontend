@@ -11,7 +11,7 @@ import {
   Trash2,
   UtensilsCrossed,
 } from 'lucide-react';
-import { categorySchema } from '@orbitsystems/gastrohub-contracts';
+import { categorySchema } from '../../../contracts';
 import { api, errorMessage } from '../../../lib/api';
 import { formatBRL } from '../../../lib/format';
 import { queryKeys } from '../../../lib/query-keys';

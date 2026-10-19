@@ -8,7 +8,7 @@ import {
   STOCK_UNITS,
   type StockMovementType,
   type StockUnit,
-} from '@orbitsystems/gastrohub-contracts';
+} from '../../../contracts';
 import { api } from '../../../lib/api';
 import { formatBRL, formatDateTime, parseMoneyToCents } from '../../../lib/format';
 import {
