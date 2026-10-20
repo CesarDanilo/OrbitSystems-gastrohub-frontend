@@ -1,0 +1,20 @@
+name: gastrohub-web
+
+# Server deploy next to the backend stack (gastrohub-backend `docker compose up -d --build`):
+# `docker compose up -d --build` serves the SPA on port 80 and nginx proxies /api and /uploads
+# to the `api` service through the backend's Docker network (same origin, first-party cookie).
+# The API URL is not a build variable: the app always calls the relative path `/api`.
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '${WEB_PORT:-80}:80'
+    networks:
+      - backend
+
+networks:
+  backend:
+    # Default network of the backend compose project (`name: gastrohub`).
+    name: ${API_NETWORK:-gastrohub_default}
+    external: true
