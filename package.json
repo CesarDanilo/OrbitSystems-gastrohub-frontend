@@ -16,7 +16,9 @@
     "test:e2e": "playwright test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "qa": "node qa/coordinator/run.mjs",
+    "qa:test": "node --test \"qa/**/*.test.mjs\""
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.1",

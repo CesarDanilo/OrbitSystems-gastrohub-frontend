@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GastroHub QA run",
+  "description": "run.json written by qa/coordinator/run.mjs. Validated by the coordinator after every run. Version 2 only adds optional fields (tests, classification, evidence), so version 1 files stay valid.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "status",
+    "incomplete",
+    "exitCode",
+    "startedAt",
+    "finishedAt",
+    "durationMs",
+    "environment",
+    "requestedAgents",
+    "summary",
+    "agents",
+    "notes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [1, 2]
+    },
+    "runId": {
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/status"
+    },
+    "incomplete": {
+      "type": "boolean",
+      "description": "True when an agent or check did not run."
+    },
+    "exitCode": {
+      "type": "integer",
+      "enum": [0, 1, 2, 3],
+      "description": "0 passed/warning, 1 failed, 2 incomplete or nothing executed, 3 coordinator error."
+    },
+    "startedAt": {
+      "type": "string"
+    },
+    "finishedAt": {
+      "type": "string"
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "requestedAgents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agent"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "warning", "not_run"]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "warning", "notRun"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warning": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notRun": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commitFront",
+        "frontDirty",
+        "commitBack",
+        "backDirty",
+        "backendStatus",
+        "nodeVersion",
+        "platform",
+        "osRelease",
+        "arch",
+        "packageManager"
+      ],
+      "properties": {
+        "commitFront": {
+          "type": ["string", "null"]
+        },
+        "frontDirty": {
+          "type": ["boolean", "null"],
+          "description": "Uncommitted changes in the frontend checkout."
+        },
+        "commitBack": {
+          "type": ["string", "null"]
+        },
+        "backDirty": {
+          "type": ["boolean", "null"]
+        },
+        "backendStatus": {
+          "type": ["string", "null"],
+          "description": "Why the backend commit is unavailable; null when it was found."
+        },
+        "nodeVersion": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "osRelease": {
+          "type": "string"
+        },
+        "arch": {
+          "type": "string"
+        },
+        "packageManager": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "agent",
+        "status",
+        "startedAt",
+        "finishedAt",
+        "durationMs",
+        "environment",
+        "checks",
+        "notes"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "finishedAt": {
+          "type": "string"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/check"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "command",
+        "dependsOn",
+        "status",
+        "startedAt",
+        "finishedAt",
+        "durationMs",
+        "exitCode",
+        "summary",
+        "error",
+        "outputTail",
+        "reason",
+        "logFile"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "finishedAt": {
+          "type": "string"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exitCode": {
+          "type": ["integer", "null"]
+        },
+        "summary": {
+          "type": ["string", "null"]
+        },
+        "error": {
+          "type": ["string", "null"]
+        },
+        "outputTail": {
+          "type": ["string", "null"],
+          "description": "Last lines of the output (redacted) for failed and warning checks."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "description": "Why the check was not run; null when it ran."
+        },
+        "logFile": {
+          "type": ["string", "null"],
+          "description": "Redacted full output, relative to the run folder."
+        },
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/test"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Evidence files relative to the run folder."
+        }
+      }
+    },
+    "classification": {
+      "type": ["string", "null"],
+      "enum": ["infra", "test", "product", "flaky", "unknown", null],
+      "description": "Suggested cause of a failure, for human triage. Never changes the status."
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "file",
+        "project",
+        "status",
+        "durationMs",
+        "retries",
+        "classification",
+        "evidence",
+        "error"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "file": {
+          "type": ["string", "null"],
+          "description": "Relative to the repository that owns the test."
+        },
+        "project": {
+          "type": ["string", "null"],
+          "description": "Playwright project (desktop, mobile); null for Vitest."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "skipped", "flaky"]
+        },
+        "durationMs": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "As reported; null when the reporter has none."
+        },
+        "retries": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Attempts after the first, as reported; null when unknown."
+        },
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Files relative to the run folder."
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Redacted, shortened failure message."
+        }
+      }
+    }
+  }
+}

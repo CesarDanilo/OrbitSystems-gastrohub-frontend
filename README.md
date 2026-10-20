@@ -7,6 +7,7 @@ A API fica em [gastrohub-backend](https://github.com/OrbitSystems/gastrohub-back
 2. `pnpm install` e `pnpm dev` (http://localhost:5180; o proxy manda `/api` para :3340, `API_URL` muda o destino).
 
 Qualidade: `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+Tudo de uma vez, com relatório em `qa/results/`: `pnpm qa` (veja [qa/README.md](qa/README.md)).
 E2E: `cp .env.example .env`, deixe o backend clonado ao lado em `../gastrohub-backend` (ou defina `E2E_API_DIR`) e rode
 `pnpm test:e2e`.
 

@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 
 /**
  * E2E runs a dedicated API (port 3341) and web (port 5181) against the test database,
@@ -15,6 +15,14 @@ const WEB_PORT = 5181;
 /** Backend checkout used by E2E; override when the repositories are separate. */
 const API_DIR = process.env.E2E_API_DIR ?? '../gastrohub-backend';
 const databaseUrl = process.env.TEST_DATABASE_URL ?? '';
+/** Set by the QA coordinator: folder for the JSON report. */
+const QA_RUN_DIR = process.env.QA_RUN_DIR;
+
+const reporter: ReporterDescription[] = process.env.CI
+  ? [['github'], ['html', { open: 'never' }]]
+  : [['list']];
+// `pnpm qa --agents=functional` reads individual results from this file.
+if (QA_RUN_DIR) reporter.push(['json', { outputFile: `${QA_RUN_DIR}/playwright.json` }]);
 
 export default defineConfig({
   testDir: './e2e',
@@ -22,10 +30,12 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  reporter,
   use: {
     baseURL: `http://localhost:${WEB_PORT}`,
     trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
   },
