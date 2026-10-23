@@ -32,7 +32,7 @@ import { Drawer, IconButton, Tooltip } from '../../components/ui';
 import { ThemeToggle } from '../../components/theme-toggle';
 import { Logo } from '../marketing/logo';
 import { ChangePasswordDialog } from '../auth/change-password-dialog';
-import { useCan, useSession } from '../auth/session';
+import { sessionQuery, useCan, useSession } from '../auth/session';
 import { adminQueries } from './api';
 import { useRealtime } from './realtime';
 
@@ -110,6 +110,26 @@ const SIDEBAR_STATES = ['expanded', 'collapsed'] as const;
  * button that opens the same navigation in a drawer.
  */
 export function AdminLayout() {
+  const session = useSession();
+  if (session.mustChangePassword) return <ForcedPasswordChange />;
+  return <AdminShell />;
+}
+
+/** After a platform password reset the panel stays closed until a new password is chosen. */
+function ForcedPasswordChange() {
+  const queryClient = useQueryClient();
+  return (
+    <div className="min-h-dvh bg-background">
+      <ChangePasswordDialog
+        open
+        forced
+        onClose={() => void queryClient.invalidateQueries({ queryKey: sessionQuery.queryKey })}
+      />
+    </div>
+  );
+}
+
+function AdminShell() {
   const session = useSession();
   const { can, hasFeature } = useCan();
   const pathname = useRouterState({ select: (s) => s.location.pathname });

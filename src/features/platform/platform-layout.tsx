@@ -11,6 +11,7 @@ import {
   ScrollText,
   ShieldCheck,
   Tags,
+  Users,
   type LucideIcon,
 } from 'lucide-react';
 import { api, errorMessage } from '../../lib/api';
@@ -30,7 +31,8 @@ import { platformKeys, platformQueries, type PlatformMe } from './platform-api';
 
 const NAV: { to: string; label: string; icon: LucideIcon; exact?: boolean }[] = [
   { to: '/platform-admin', label: 'Visão geral', icon: LayoutDashboard, exact: true },
-  { to: '/platform-admin/restaurantes', label: 'Restaurantes', icon: Building2 },
+  { to: '/platform-admin/restaurantes', label: 'Empresas', icon: Building2 },
+  { to: '/platform-admin/usuarios', label: 'Usuários', icon: Users },
   { to: '/platform-admin/planos', label: 'Planos', icon: Tags },
   { to: '/platform-admin/funcionalidades', label: 'Funcionalidades', icon: ListChecks },
   { to: '/platform-admin/auditoria', label: 'Auditoria', icon: ScrollText },

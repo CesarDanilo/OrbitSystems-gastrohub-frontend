@@ -182,6 +182,8 @@ export interface SessionInfo {
   role: Role;
   permissions: Permission[];
   entitlements: Entitlements;
+  /** Signed in with a temporary password: must choose a new one before using the panel. */
+  mustChangePassword: boolean;
 }
 
 export interface UsageView {

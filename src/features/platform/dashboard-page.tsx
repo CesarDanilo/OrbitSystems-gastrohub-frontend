@@ -43,11 +43,11 @@ export function PlatformDashboardPage() {
     <>
       <PageHeader
         title="Visão geral da plataforma"
-        description="Todos os restaurantes, assinaturas e receita contratada."
+        description="Empresas, usuários, assinaturas e receita contratada."
       />
-      <MetricGroup label="Restaurantes e receita" columns={4}>
+      <MetricGroup label="Empresas e receita" columns={4}>
         <Metric
-          label="Restaurantes"
+          label="Empresas"
           value={String(d.restaurants.total)}
           hint={`${d.restaurants.suspended} suspensos`}
         />
@@ -68,6 +68,18 @@ export function PlatformDashboardPage() {
         />
       </MetricGroup>
       <p className="mt-2 text-xs text-muted-foreground">{d.revenue.definition}</p>
+
+      <Section title="Usuários" variant="plain" className="mt-8">
+        <MetricGroup label="Usuários" columns={3}>
+          <Metric label="Usuários" value={String(d.users.total)} />
+          <Metric
+            label="Ativos em 30 dias"
+            value={String(d.users.activeLast30Days)}
+            hint="entraram no período"
+          />
+          <Metric label="Bloqueados" value={String(d.users.blocked)} />
+        </MetricGroup>
+      </Section>
 
       <Section title="Cobrança" variant="plain" className="mt-8">
         {d.billing ? (

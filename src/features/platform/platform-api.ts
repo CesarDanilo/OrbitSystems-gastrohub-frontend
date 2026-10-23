@@ -5,6 +5,7 @@ import type {
   PlanInfo,
   PlanLimits,
   PlanTerms,
+  Role,
   SubscriptionView,
   UsageView,
 } from '../../contracts';
@@ -29,6 +30,7 @@ export interface DashboardView {
     newLast30Days: number;
     newPrevious30Days: number;
   };
+  users: { total: number; activeLast30Days: number; blocked: number };
   subscriptions: {
     byStatus: Record<'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'CANCELING', number>;
     byPlan: { code: string; name: string; count: number }[];
@@ -86,7 +88,17 @@ export interface RestaurantDetail {
   whatsapp: string | null;
   city: string | null;
   state: string | null;
+  billingDocument: string | null;
+  billingEmail: string | null;
   owners: { name: string; email: string }[];
+  team: {
+    userId: string;
+    name: string;
+    email: string;
+    role: Role;
+    status: 'ACTIVE' | 'BLOCKED';
+    lastLoginAt: string | null;
+  }[];
   subscription: SubscriptionView;
   usage: UsageView;
   ordersLast30Days: number;
@@ -111,6 +123,30 @@ export interface RestaurantDetail {
     paidAt: string | null;
     description: string;
   }[];
+  audit: AuditRow[];
+}
+
+export interface PlatformUserRow {
+  id: string;
+  name: string;
+  email: string;
+  status: 'ACTIVE' | 'BLOCKED';
+  blockedReason: string | null;
+  blockedAt: string | null;
+  lastLoginAt: string | null;
+  mustChangePassword: boolean;
+  createdAt: string;
+  memberships: {
+    restaurantId: string;
+    restaurantName: string;
+    restaurantSlug: string;
+    restaurantStatus: 'ACTIVE' | 'SUSPENDED';
+    role: Role;
+  }[];
+}
+
+export interface PlatformUser extends PlatformUserRow {
+  activeSessions: number;
   audit: AuditRow[];
 }
 
@@ -166,6 +202,8 @@ export const platformKeys = {
   dashboard: ['platform', 'data', 'dashboard'] as const,
   restaurants: (f: object) => ['platform', 'data', 'restaurants', f] as const,
   restaurant: (id: string) => ['platform', 'data', 'restaurant', id] as const,
+  users: (f: object) => ['platform', 'data', 'users', f] as const,
+  user: (id: string) => ['platform', 'data', 'user', id] as const,
   plans: ['platform', 'data', 'plans'] as const,
   features: ['platform', 'data', 'features'] as const,
   audit: (f: object) => ['platform', 'data', 'audit', f] as const,
@@ -196,6 +234,21 @@ export const platformQueries = {
     queryOptions({
       queryKey: platformKeys.restaurant(id),
       queryFn: () => api.get<RestaurantDetail>(`/platform/restaurants/${id}`),
+    }),
+  users: (f: { search: string; status: string; page: number }) =>
+    queryOptions({
+      queryKey: platformKeys.users(f),
+      queryFn: () => {
+        const q = new URLSearchParams({ page: String(f.page) });
+        if (f.search) q.set('search', f.search);
+        if (f.status) q.set('status', f.status);
+        return api.get<Paged<PlatformUserRow>>(`/platform/users?${q}`);
+      },
+    }),
+  user: (id: string) =>
+    queryOptions({
+      queryKey: platformKeys.user(id),
+      queryFn: () => api.get<PlatformUser>(`/platform/users/${id}`),
     }),
   plans: queryOptions({
     queryKey: platformKeys.plans,

@@ -132,6 +132,24 @@ const platformRestaurantRoute = createRoute({
   ),
 });
 
+const platformUsersRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'usuarios',
+  component: lazyRouteComponent(
+    () => import('../features/platform/users-page'),
+    'PlatformUsersPage',
+  ),
+});
+
+const platformUserRoute = createRoute({
+  getParentRoute: () => platformRoute,
+  path: 'usuarios/$id',
+  component: lazyRouteComponent(
+    () => import('../features/platform/users-page'),
+    'PlatformUserPage',
+  ),
+});
+
 const platformPlansRoute = createRoute({
   getParentRoute: () => platformRoute,
   path: 'planos',
@@ -407,6 +425,8 @@ const routeTree = rootRoute.addChildren([
     platformDashboardRoute,
     platformRestaurantsRoute,
     platformRestaurantRoute,
+    platformUsersRoute,
+    platformUserRoute,
     platformPlansRoute,
     platformFeaturesRoute,
     platformAuditRoute,

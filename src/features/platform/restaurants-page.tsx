@@ -8,6 +8,7 @@ import {
   LIMIT_KEYS,
   type FeatureKey,
   type LimitKey,
+  ROLE_LABEL,
 } from '../../contracts';
 import { api } from '../../lib/api';
 import { formatBRL, formatDateTime } from '../../lib/format';
@@ -50,7 +51,7 @@ export function PlatformRestaurantsPage() {
   const query = useQuery(platformQueries.restaurants({ search: debounced, plan, status, page }));
   return (
     <>
-      <PageHeader title="Restaurantes" description="Busque, filtre e acompanhe cada conta." />
+      <PageHeader title="Empresas" description="Busque, filtre e acompanhe cada conta." />
       <div className="mb-4 grid gap-3 md:grid-cols-[1fr_12rem_12rem]">
         <SearchField
           value={search}
@@ -58,7 +59,7 @@ export function PlatformRestaurantsPage() {
             setSearch(v);
             setPage(1);
           }}
-          label="Buscar restaurante"
+          label="Buscar empresa"
           placeholder="Nome, endereço da loja ou ID"
         />
         <Select
@@ -95,10 +96,10 @@ export function PlatformRestaurantsPage() {
         <ErrorState message={query.error.message} />
       ) : (
         <>
-          <Table label="Restaurantes">
+          <Table label="Empresas">
             <thead>
               <tr>
-                <Th>Restaurante</Th>
+                <Th>Empresa</Th>
                 <Th>Plano</Th>
                 <Th>Assinatura</Th>
                 <Th className="text-right">Valor contratado</Th>
@@ -131,7 +132,7 @@ export function PlatformRestaurantsPage() {
             </tbody>
           </Table>
           <nav aria-label="Paginação" className="mt-4 flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">{query.data.total} restaurantes</span>
+            <span className="text-muted-foreground">{query.data.total} empresas</span>
             <span className="flex gap-2">
               <Button
                 size="sm"
@@ -160,7 +161,9 @@ export function PlatformRestaurantsPage() {
 export function PlatformRestaurantPage() {
   const { id } = useParams({ from: '/platform-admin/restaurantes/$id' });
   const query = useQuery(platformQueries.restaurant(id));
-  const [action, setAction] = useState<'suspend' | 'reactivate' | 'plan' | 'override' | null>(null);
+  const [action, setAction] = useState<
+    'suspend' | 'reactivate' | 'plan' | 'override' | 'edit' | null
+  >(null);
   const [note, setNote] = useState('');
   const addNote = usePlatformMutation(
     () => api.post(`/platform/restaurants/${id}/notes`, { body: note }),
@@ -184,6 +187,9 @@ export function PlatformRestaurantPage() {
         description={`/${r.slug} · cliente desde ${formatDateTime(r.createdAt)}`}
         actions={
           <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => setAction('edit')}>
+              Editar dados
+            </Button>
             <Button variant="outline" onClick={() => setAction('plan')}>
               Trocar plano
             </Button>
@@ -233,12 +239,11 @@ export function PlatformRestaurantPage() {
           </dl>
         </Card>
         <Card className="p-5">
-          <h2 className="font-bold">Suporte</h2>
+          <h2 className="font-bold">Cadastro</h2>
           <dl className="mt-3 space-y-2 text-sm">
-            {r.owners.map((o) => (
-              <Row key={o.email} label="Dono" value={`${o.name} · ${o.email}`} />
-            ))}
             <Row label="WhatsApp" value={r.whatsapp ?? '—'} />
+            <Row label="CPF/CNPJ de cobrança" value={r.billingDocument ?? '—'} />
+            <Row label="E-mail de cobrança" value={r.billingEmail ?? '—'} />
             <Row label="Cidade" value={r.city ? `${r.city}/${r.state ?? ''}` : '—'} />
             <Row label="Pedidos em 30 dias" value={String(r.ordersLast30Days)} />
             <Row label="ID" value={r.id} />
@@ -295,6 +300,37 @@ export function PlatformRestaurantPage() {
           )}
         </Card>
       </div>
+
+      <Section title="Equipe" className="mt-8">
+        <Table label="Equipe">
+          <thead>
+            <tr>
+              <Th>Pessoa</Th>
+              <Th>Papel</Th>
+              <Th>Último acesso</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {r.team.map((m) => (
+              <tr key={m.userId}>
+                <Td>
+                  <Link
+                    to="/platform-admin/usuarios/$id"
+                    params={{ id: m.userId }}
+                    className="font-semibold text-primary"
+                  >
+                    {m.name}
+                  </Link>
+                  <span className="block text-xs text-muted-foreground">{m.email}</span>
+                  {m.status === 'BLOCKED' && <Badge tone="danger">Bloqueado</Badge>}
+                </Td>
+                <Td>{ROLE_LABEL[m.role]}</Td>
+                <Td>{m.lastLoginAt ? formatDateTime(m.lastLoginAt) : 'Nunca'}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Section>
 
       <Section title="Cobranças" className="mt-8">
         {r.invoices.length === 0 ? (
@@ -378,6 +414,7 @@ export function PlatformRestaurantPage() {
         />
       ) : null}
       {action === 'plan' && <AssignPlanDialog restaurantId={id} onClose={() => setAction(null)} />}
+      {action === 'edit' && <EditCompanyDialog company={r} onClose={() => setAction(null)} />}
       {action === 'override' && (
         <OverrideDialog restaurantId={id} onClose={() => setAction(null)} />
       )}
@@ -432,6 +469,76 @@ export function ReasonDialog({
       <Field label="Motivo" hint="Obrigatório. Fica registrado na auditoria.">
         <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3} />
       </Field>
+    </Dialog>
+  );
+}
+
+/** The address (slug) is not editable here: it is printed on QR codes and shared links. */
+function EditCompanyDialog({
+  company,
+  onClose,
+}: {
+  company: RestaurantDetail;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: company.name,
+    whatsapp: company.whatsapp ?? '',
+    billingDocument: company.billingDocument ?? '',
+    billingEmail: company.billingEmail ?? '',
+    reason: '',
+  });
+  const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
+    setForm({ ...form, [key]: e.target.value });
+  const save = usePlatformMutation(
+    () =>
+      api.put(`/platform/restaurants/${company.id}`, {
+        name: form.name.trim(),
+        whatsapp: form.whatsapp.trim() || null,
+        billingDocument: form.billingDocument.trim() || null,
+        billingEmail: form.billingEmail.trim() || null,
+        reason: form.reason.trim(),
+      }),
+    'Dados atualizados',
+  );
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      title="Editar dados da empresa"
+      description={`O endereço da loja (/${company.slug}) não muda.`}
+      footer={
+        <Button
+          block
+          disabled={form.name.trim().length < 2 || form.reason.trim().length < 5}
+          loading={save.isPending}
+          onClick={() => save.mutate(undefined, { onSuccess: onClose })}
+        >
+          Salvar
+        </Button>
+      }
+    >
+      <div className="space-y-3">
+        <Field label="Nome">
+          <Input value={form.name} onChange={set('name')} maxLength={80} />
+        </Field>
+        <Field label="WhatsApp" hint="Com DDD. Opcional.">
+          <Input inputMode="tel" value={form.whatsapp} onChange={set('whatsapp')} />
+        </Field>
+        <Field label="CPF ou CNPJ de cobrança" hint="Opcional.">
+          <Input
+            inputMode="numeric"
+            value={form.billingDocument}
+            onChange={set('billingDocument')}
+          />
+        </Field>
+        <Field label="E-mail de cobrança" hint="Opcional.">
+          <Input type="email" value={form.billingEmail} onChange={set('billingEmail')} />
+        </Field>
+        <Field label="Motivo" hint="Obrigatório. Fica registrado na auditoria.">
+          <Textarea value={form.reason} onChange={set('reason')} rows={2} />
+        </Field>
+      </div>
     </Dialog>
   );
 }

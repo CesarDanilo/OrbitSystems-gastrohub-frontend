@@ -8,7 +8,16 @@ import { Alert, Button, Dialog, Field, Input, toast } from '../../components/ui'
  * Changes the signed-in user's password. The API asks for the current password and ends the
  * user's other sessions (other devices must log in again).
  */
-export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function ChangePasswordDialog({
+  open,
+  onClose,
+  forced = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  /** Temporary password from a platform reset: the dialog cannot be dismissed. */
+  forced?: boolean;
+}) {
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -43,17 +52,24 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
     <Dialog
       open={open}
       onClose={() => {
+        if (forced) return;
         reset();
         onClose();
       }}
-      title="Alterar senha"
-      description="Os outros aparelhos conectados com a sua conta serão desconectados."
+      title={forced ? 'Crie uma nova senha' : 'Alterar senha'}
+      description={
+        forced
+          ? 'Você entrou com uma senha temporária. Escolha uma senha nova para continuar.'
+          : 'Os outros aparelhos conectados com a sua conta serão desconectados.'
+      }
       size="sm"
       footer={
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            Cancelar
-          </Button>
+          {!forced && (
+            <Button variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+          )}
           <Button onClick={submit} loading={save.isPending}>
             Salvar nova senha
           </Button>
@@ -68,7 +84,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
         }}
       >
         {error && <Alert tone="danger">{error}</Alert>}
-        <Field label="Senha atual">
+        <Field label={forced ? 'Senha temporária' : 'Senha atual'}>
           <Input
             type="password"
             autoComplete="current-password"
